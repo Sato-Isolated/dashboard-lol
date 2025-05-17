@@ -1,8 +1,15 @@
 "use client";
-import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation"
+import { useUser } from "@/context/UserContext"
+import { PlatformRegion } from "@/types/platformregion";
 
 export default function Home() {
-  const { user, setUser } = useUser();
+  const { user, setUser } = useUser()
+  const router = useRouter()
+
+  const handleSubmit = () => {
+    router.push(`/${user.region}/summoner/${user.summonerName}/${user.tagline}`)
+  }
 
   return (
     <main className="flex flex-col gap-2 min-h-screen items-center p-24">
@@ -28,14 +35,17 @@ export default function Home() {
           value={user.region}
           onChange={(e) => setUser({ ...user, region: e.target.value })}
         >
-          <option value="euw1">euw1</option>
-          <option value="na1">na1</option>
+         {Object.entries(PlatformRegion).map(([key, value]) => (
+            <option key={key} value={value}>
+              {value}
+            </option>
+          ))}
         </select>
       </div>
       <div>
         <button
           className="btn btn-outline p-2 w-96"
-          onClick={() => console.log(user)}
+          onClick={handleSubmit}
         >
           Submit
         </button>
