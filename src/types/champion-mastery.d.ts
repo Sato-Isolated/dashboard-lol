@@ -1,4 +1,4 @@
-interface ChampionMasteryDto {
+export interface ChampionMasteryDto {
   puuid: string;
   championPointsUntilNextLevel: number;
   chestGranted: boolean;
@@ -14,14 +14,14 @@ interface ChampionMasteryDto {
   milestoneGrades: string[];
 }
 
-interface NextSeasonMilestonesDto {
+export interface NextSeasonMilestonesDto {
   requireGradeCounts: object;
   rewardMarks: number;
   bonus: boolean;
   rewardConfig: RewardConfigDto;
 }
 
-interface RewardConfigDto {
+export interface RewardConfigDto {
   rewardValue: string;
   rewardType: string;
   maximumReward: number;

@@ -1,15 +1,15 @@
-interface MatchDto {
+export interface MatchDto {
   metadata: MetadataDto;
   info: InfoDto;
 }
 
-interface MetadataDto {
+export interface MetadataDto {
   dataVersion: string;
   matchId: string;
   participants: string[];
 }
 
-interface InfoDto {
+export interface InfoDto {
   endOfGameResult: string;
   gameCreation: number;
   gameDuration: number;
@@ -28,7 +28,7 @@ interface InfoDto {
   tournamentCode: string;
 }
 
-interface ParticipantDto {
+export interface ParticipantDto {
   allInPings: number;
   assistMePings: number;
   assists: number;
