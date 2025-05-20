@@ -2,8 +2,8 @@ import { RiotApiClient } from "./RiotApiClient";
 import { RiotAccountDto } from "../types/account";
 
 export class AccountService extends RiotApiClient {
-  constructor(apiKey: string, region: string) {
-    super(apiKey, region);
+  constructor(region: string) {
+    super(region);
   }
 
   public async getAccountByRiotId(gameName: string, tagLine: string) {

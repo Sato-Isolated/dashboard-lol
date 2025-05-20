@@ -8,8 +8,10 @@ export abstract class RiotApiClient {
   private lastSecond = Date.now();
   private lastTwoMinutes = Date.now();
 
-  constructor(apiKey: string, region: string) {
-    this.apiKey = apiKey;
+  constructor( region: string) {
+    const key = process.env.RIOT_API_KEY;
+    if (!key) throw new Error("Missing RIOT_API_KEY in environment variables");
+    this.apiKey = key;
     this.baseUrl = `https://${region}.api.riotgames.com`;
   }
 
@@ -51,6 +53,7 @@ export abstract class RiotApiClient {
       headers: {
         "X-Riot-Token": this.apiKey,
       },
+      next: { revalidate: 60 }, // Cache for 60 seconds
     });
 
     if (!response.ok) {

@@ -2,8 +2,8 @@ import { MatchDto } from "@/types/match";
 import { RiotApiClient } from "./RiotApiClient";
 
 export class MatchService extends RiotApiClient {
-  constructor(apiKey: string, region: string) {
-    super(apiKey, region);
+   constructor(region: string) {
+    super(region);
   }
 
   public async getMatchById(matchId: string) {

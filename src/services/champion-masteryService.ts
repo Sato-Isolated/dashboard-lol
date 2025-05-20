@@ -2,8 +2,8 @@ import { ChampionMasteryDto } from "@/types/champion-mastery";
 import { RiotApiClient } from "./RiotApiClient";
 
 export class ChampionMasteryService extends RiotApiClient {
-  constructor(apiKey: string, region: string) {
-    super(apiKey, region);
+   constructor(region: string) {
+    super(region);
   }
 
   public async getChampionMastery(puuid: string) {
