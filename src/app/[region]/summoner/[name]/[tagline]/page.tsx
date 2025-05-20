@@ -1,10 +1,10 @@
-import MainLayout from "@/components/MainLayout";
+import MainLayout from "@/components/layout/MainLayout";
 import { fetchSummonerFull } from "@/lib/summoner";
-import HeaderSection from "@/components/HeaderSection";
-import TabsSection from "@/components/TabsSection";
-import LeftColumn from "@/components/LeftColumn";
-import CenterColumn from "@/components/CenterColumn";
-import RightColumn from "@/components/RightColumn";
+import HeaderSection from "@/components/layout/HeaderSection";
+import TabsSection from "@/components/match/TabsSection";
+import LeftColumn from "@/components/layout/LeftColumn";
+import CenterColumn from "@/components/layout/CenterColumn";
+import RightColumn from "@/components/layout/RightColumn";
 
 interface PageParams {
   region: string; // ex: "euw1"
@@ -24,11 +24,7 @@ export default async function Page({ params }: { params: PageParams }) {
   return (
     <MainLayout>
       <div className="flex flex-col gap-8 w-full">
-        <HeaderSection
-          summoner={summoner}
-          account={account}
-          region={region}
-        />
+        <HeaderSection summoner={summoner} account={account} region={region} />
         <TabsSection />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
           <LeftColumn />

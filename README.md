@@ -34,3 +34,80 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+```
+dashboard-lol
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package.json
+├─ pnpm-lock.yaml
+├─ pnpm-workspace.yaml
+├─ postcss.config.mjs
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ match.json
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ src
+│  ├─ app
+│  │  ├─ favicon.ico
+│  │  ├─ globals.css
+│  │  ├─ layout.tsx
+│  │  ├─ page.tsx
+│  │  ├─ README.md
+│  │  └─ [region]
+│  │     └─ summoner
+│  │        └─ [name]
+│  │           └─ [tagline]
+│  │              └─ page.tsx
+│  ├─ components
+│  │  ├─ CenterColumn.tsx
+│  │  ├─ HeaderSection.tsx
+│  │  ├─ LeftColumn.tsx
+│  │  ├─ MainLayout.tsx
+│  │  ├─ MatchCard.tsx
+│  │  ├─ README.md
+│  │  ├─ RightColumn.tsx
+│  │  ├─ SearchBar.tsx
+│  │  └─ TabsSection.tsx
+│  ├─ context
+│  │  ├─ README.md
+│  │  └─ UserContext.tsx
+│  ├─ layout
+│  │  └─ header.tsx
+│  ├─ lib
+│  │  └─ summoner.ts
+│  ├─ services
+│  │  ├─ lol
+│  │  │  ├─ accountService.ts
+│  │  │  ├─ champion-masteryService.ts
+│  │  │  ├─ championService.ts
+│  │  │  ├─ matchService.ts
+│  │  │  ├─ RiotApiClient.ts
+│  │  │  ├─ riotServiceFactory.ts
+│  │  │  └─ summonerService.ts
+│  │  └─ README.md
+│  ├─ styles
+│  │  └─ README.md
+│  ├─ types
+│  │  ├─ account.d.ts
+│  │  ├─ champion-mastery.d.ts
+│  │  ├─ champion.d.ts
+│  │  ├─ data
+│  │  │  └─ champion.ts
+│  │  ├─ match.d.ts
+│  │  ├─ platformregion.ts
+│  │  ├─ README.md
+│  │  ├─ regions.ts
+│  │  ├─ summoners.d.ts
+│  │  └─ ui-match.ts
+│  └─ utils
+│     ├─ formatName.ts
+│     ├─ helper.ts
+│     └─ README.md
+└─ tsconfig.json
+
+```

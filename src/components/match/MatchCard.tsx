@@ -1,16 +1,9 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import type { Match } from "@/types/match";
-import type { UIMatch, UIPlayer } from "@/types/ui-match";
+import { UIPlayer } from "@/types/ui-match";
+import { Match } from "@/types/match";
+import { UIMatch } from "@/types/ui-match";
 import { getChampionIcon } from "@/utils/helper";
 import Image from "next/image";
-
-const fakeStats = {
-  kda: "3.2",
-  winrate: "58%",
-  championPool: ["Ahri", "Lee Sin", "Jinx"],
-};
-
+import React, { useState } from "react";
 const TeamTable = ({
   players,
   team,
@@ -23,8 +16,8 @@ const TeamTable = ({
   <div
     className={`rounded-xl mb-2 border ${
       teamColor === "red"
-        ? "border-red-400 bg-red-50/60"
-        : "border-blue-400 bg-blue-50/60"
+        ? "border-red-400"
+        : "border-blue-400"
     }`}
   >
     <div
@@ -89,7 +82,7 @@ const TeamTable = ({
   </div>
 );
 
-const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
+export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("overview");
   const redTeam = match.players.filter((p) => p.team === "Red");
@@ -101,9 +94,16 @@ const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex flex-wrap gap-2 items-center">
-          <span className="font-bold text-base-content text-lg">
-            {match.champion}
-          </span>
+          <div className="avatar">
+            <div className="mask mask-squircle h-12 w-12">
+              <Image
+                src={getChampionIcon(match.champion)}
+                alt={match.champion}
+                width={48}
+                height={48}
+              />
+            </div>
+          </div>
           <span className="text-base-content/80">{match.kda}</span>
           <span
             className={match.result === "Win" ? "text-success" : "text-error"}
@@ -196,7 +196,7 @@ const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
 };
 
 // Transform Riot API match to UI match structure
-function mapRiotMatchToUIMatch(
+export function mapRiotMatchToUIMatch(
   riotMatch: Match,
   summonerName: string
 ): UIMatch {
@@ -282,78 +282,3 @@ function mapRiotMatchToUIMatch(
     },
   };
 }
-
-const summonerName = "RafaleDeBlanche"; // TODO: Dynamically get from context or props
-
-const CenterColumn: React.FC = () => {
-  const [matches, setMatches] = useState<UIMatch[]>([]);
-  const [parseError, setParseError] = useState<string | null>(null);
-  useEffect(() => {
-    fetch("/match.json")
-      .then((res) => res.json())
-      .then((data) => {
-        // Debug: log the data type and structure
-        console.log("Fetched match.json:", data);
-        // Riot API single match: { metadata, info }
-        if (data && data.info && Array.isArray(data.info.participants)) {
-          setMatches([mapRiotMatchToUIMatch(data as Match, summonerName)]);
-        } else if (Array.isArray(data)) {
-          setMatches(
-            (data as Match[]).map((m) => mapRiotMatchToUIMatch(m, summonerName))
-          );
-        } else if (data && Array.isArray(data.matches)) {
-          setMatches(
-            (data.matches as Match[]).map((m) =>
-              mapRiotMatchToUIMatch(m, summonerName)
-            )
-          );
-        } else {
-          setParseError(
-            "Match data is not an array. Type: " +
-              typeof data +
-              ", keys: " +
-              Object.keys(data)
-          );
-        }
-      })
-      .catch((e) =>
-        setParseError(e?.message || "Unknown error fetching match data.")
-      );
-  }, []);
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="bg-base-100 rounded-xl shadow p-4 min-h-[120px] flex flex-col items-center justify-center w-full">
-        <span className="font-semibold text-base-content mb-2">
-          Main Stats & Graphs
-        </span>
-        <div className="flex flex-col items-center gap-1">
-          <div className="text-base-content/80">
-            KDA: <b>{fakeStats.kda}</b>
-          </div>
-          <div className="text-base-content/80">
-            Winrate: <b>{fakeStats.winrate}</b>
-          </div>
-          <div className="text-base-content/80">
-            Champion Pool: {fakeStats.championPool.join(", ")}
-          </div>
-        </div>
-      </div>
-      <div className="bg-base-100 rounded-xl shadow p-4 min-h-[200px] flex flex-col items-center w-full">
-        <span className="font-semibold text-base-content mb-2">
-          Match History
-        </span>
-        <div className="w-full flex flex-col gap-2">
-          {parseError && (
-            <div className="text-xs text-error">Debug: {parseError}</div>
-          )}
-          {matches.map((match, idx) => (
-            <MatchCard key={idx} match={match} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default CenterColumn;
