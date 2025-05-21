@@ -4,6 +4,8 @@ import { UIMatch } from "@/types/ui-match";
 import { getChampionIcon } from "@/utils/helper";
 import Image from "next/image";
 import React, { useState } from "react";
+import Link from "next/link";
+
 const TeamTable = ({
   players,
   team,
@@ -15,9 +17,7 @@ const TeamTable = ({
 }) => (
   <div
     className={`rounded-xl mb-2 border ${
-      teamColor === "red"
-        ? "border-red-400"
-        : "border-blue-400"
+      teamColor === "red" ? "border-red-400" : "border-blue-400"
     }`}
   >
     <div
@@ -51,7 +51,16 @@ const TeamTable = ({
                     />
                   </div>
                 </div>
-                <span>{p.name}</span>
+                <Link
+                  href={`/${getRegion()}/summoner/${encodeURIComponent(
+                    p.name
+                  )}/${encodeURIComponent(p.tagline || "EUW")}`}
+                  className="hover:underline text-primary"
+                  onClick={(e) => e.stopPropagation()}
+                  prefetch={false}
+                >
+                  {p.name}
+                </Link>
                 {p.mvp && <span className="badge badge-warning ml-1">MVP</span>}
               </td>
               <td>{p.kda}</td>
@@ -216,6 +225,7 @@ export function mapRiotMatchToUIMatch(
   // Compose players for UI
   const players: UIPlayer[] = [...redTeam, ...blueTeam].map((p) => ({
     name: p.riotIdGameName || p.summonerName || "?",
+    tagline: p.riotIdTagline || undefined,
     champion: p.championName,
     kda: `${p.kills}/${p.deaths}/${p.assists}`,
     cs: p.totalMinionsKilled + p.neutralMinionsKilled,
@@ -282,3 +292,13 @@ export function mapRiotMatchToUIMatch(
     },
   };
 }
+
+// Get region from props or fallback
+const getRegion = () => {
+  if (typeof window !== "undefined") {
+    const path = window.location.pathname.split("/");
+    // /euw1/summoner/Name/Tagline
+    if (path.length > 1 && path[1]) return path[1];
+  }
+  return "euw1";
+};

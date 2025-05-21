@@ -5,7 +5,12 @@ import {
   createMatchService,
 } from "@/services/lol/riotServiceFactory";
 import { insertMatch } from "@/repositories/matchRepo";
-import { getOrCreateSummoner, setFetchOldGames, setLastFetchedGameEndTimestamp, getSummoner } from "@/repositories/summonerRepo";
+import {
+  getOrCreateSummoner,
+  setFetchOldGames,
+  setLastFetchedGameEndTimestamp,
+  getSummoner,
+} from "@/repositories/summonerRepo";
 
 /**
  * Fetches matches from Riot API for a given summoner and stores them in MongoDB.
@@ -30,7 +35,12 @@ export async function fetchAndStoreMatches(
   if (!summoner) throw new Error("Summoner not found");
 
   // Get or create summoner doc in DB
-  const summonerDoc = await getOrCreateSummoner(platformRegion, name, tagline, account.puuid);
+  const summonerDoc = await getOrCreateSummoner(
+    platformRegion,
+    name,
+    tagline,
+    account.puuid
+  );
 
   // Définir la période : du 9 janvier 2025 à maintenant, ou juste les nouvelles games si fetchOldGames est true
   const now = Math.floor(Date.now() / 1000); // en secondes
@@ -38,10 +48,13 @@ export async function fetchAndStoreMatches(
   let toTimestamp: number = now;
   if (!summonerDoc.fetchOldGames) {
     // On fetch tout l'historique jusqu'à janvier 2025
-    fromTimestamp = Math.floor(new Date("2025-01-09T00:00:00Z").getTime() / 1000);
+    fromTimestamp = Math.floor(
+      new Date("2025-01-09T00:00:00Z").getTime() / 1000
+    );
   } else {
     // On fetch uniquement les games récentes
-    fromTimestamp = summonerDoc.lastFetchedGameEndTimestamp || (now - 60 * 60 * 24 * 7); // fallback: 1 semaine
+    fromTimestamp =
+      summonerDoc.lastFetchedGameEndTimestamp || now - 60 * 60 * 24 * 7; // fallback: 1 semaine
   }
   const options = {
     startTime: fromTimestamp,
@@ -59,7 +72,10 @@ export async function fetchAndStoreMatches(
     try {
       const match = await matchApi.getMatchById(matchId);
       await insertMatch(match);
-      if (match.info?.gameEndTimestamp && match.info.gameEndTimestamp > mostRecentGameEnd) {
+      if (
+        match.info?.gameEndTimestamp &&
+        match.info.gameEndTimestamp > mostRecentGameEnd
+      ) {
         mostRecentGameEnd = match.info.gameEndTimestamp;
       }
       console.log(`Stored match ${matchId}`);
@@ -81,7 +97,12 @@ export async function fetchAndStoreMatches(
   }
   // On met à jour la date du match le plus récent
   if (mostRecentGameEnd) {
-    await setLastFetchedGameEndTimestamp(platformRegion, name, tagline, mostRecentGameEnd);
+    await setLastFetchedGameEndTimestamp(
+      platformRegion,
+      name,
+      tagline,
+      mostRecentGameEnd
+    );
   }
 }
 

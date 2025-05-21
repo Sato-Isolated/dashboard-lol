@@ -36,6 +36,7 @@ export interface UIMatch {
 
 export interface UIPlayer {
   name: string;
+  tagline?: string;
   champion: string;
   kda: string;
   cs: number;

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import type { Match } from "@/types/api/match";
 import type { UIMatch } from "@/types/ui-match";
 import { MatchCard, mapRiotMatchToUIMatch } from "../match/MatchCard";
+import { useUser } from "@/context/UserContext";
+import { useParams } from "next/navigation";
 
 const fakeStats = {
   kda: "3.2",
@@ -10,20 +12,20 @@ const fakeStats = {
   championPool: ["Ahri", "Lee Sin", "Jinx"],
 };
 
-const summonerName = "RafaleDeBlanche"; // TODO: Dynamically get from context or props
-
 const CenterColumn: React.FC = () => {
+  const params = useParams();
+  const { user } = useUser();
+  // On récupère les infos de l'URL si présentes, sinon du contexte
+  const region = (params?.region as string) || user.region;
+  const tagline = (params?.tagline as string) || user.tagline;
+  const name = (params?.name as string) || user.summonerName;
+
   const [matches, setMatches] = useState<UIMatch[]>([]);
   const [parseError, setParseError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [start, setStart] = useState(0);
   const count = 10;
   const [hasMore, setHasMore] = useState(true);
-
-  // TODO: Dynamically get these from context/props
-  const region = "euw1";
-  const tagline = "EUW";
-  const name = summonerName;
 
   // Optionally, set from/to for a specific day
   // const from = ...; const to = ...;
@@ -59,9 +61,17 @@ const CenterColumn: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!name || !region || !tagline) {
+      setParseError(
+        "Veuillez renseigner un nom de joueur et un tagline pour afficher l'historique."
+      );
+      setMatches([]);
+      setHasMore(false);
+      return;
+    }
     fetchMatches(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [name, region, tagline]);
 
   return (
     <div className="flex flex-col gap-4">
