@@ -8,8 +8,8 @@ const fakeTabs = [
 
 const TabsSection: React.FC = () => (
   <div className="flex gap-2 w-full border-b border-base-300 pb-2">
-    {fakeTabs.map((tab, i) => (
-      <button key={i} className={`tab${tab.active ? " tab-active" : ""}`}>
+    {fakeTabs.map((tab) => (
+      <button key={tab.label} className={`tab${tab.active ? " tab-active" : ""}`}>
         {tab.label}
       </button>
     ))}

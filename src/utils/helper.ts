@@ -24,3 +24,91 @@ export const getChampionTags = (champion: ChampionData) => {
   return champion.tags.map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1)).join(", ");
 };
 
+export const getRegion = () => {
+  if (typeof window !== "undefined") {
+    const path = window.location.pathname.split("/");
+    if (path.length > 1 && path[1]) return path[1];
+  }
+  return "euw1";
+};
+
+import type { Match } from "@/types/api/match";
+import type { UIMatch, UIPlayer } from "@/types/ui-match";
+
+export function mapRiotMatchToUIMatch(
+  riotMatch: Match,
+  summonerName: string
+): UIMatch {
+  const participant = riotMatch.info.participants.find(
+    (p) => p.riotIdGameName === summonerName
+  );
+  const redTeam = riotMatch.info.participants.filter((p) => p.teamId === 200);
+  const blueTeam = riotMatch.info.participants.filter((p) => p.teamId === 100);
+  const win = participant?.win;
+  const kda = participant
+    ? `${participant.kills}/${participant.deaths}/${participant.assists}`
+    : "-/-/-";
+  const players: UIPlayer[] = [...redTeam, ...blueTeam].map((p) => ({
+    name: p.riotIdGameName || p.summonerName || "?",
+    tagline: p.riotIdTagline || undefined,
+    champion: p.championName,
+    kda: `${p.kills}/${p.deaths}/${p.assists}`,
+    cs: p.totalMinionsKilled + p.neutralMinionsKilled,
+    damage: p.totalDamageDealtToChampions,
+    gold: p.goldEarned,
+    items: [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6],
+    team: p.teamId === 200 ? "Red" : "Blue",
+    win: p.win,
+    mvp: false,
+  }));
+  const result = win ? "Win" : "Loss";
+  const date = riotMatch.info.gameEndTimestamp
+    ? new Date(riotMatch.info.gameEndTimestamp).toLocaleDateString()
+    : "";
+  const mode = riotMatch.info.gameMode || "";
+  const duration = riotMatch.info.gameDuration
+    ? `${Math.floor(riotMatch.info.gameDuration / 60)}m ${
+        riotMatch.info.gameDuration % 60
+      }s`
+    : "";
+  const teamKills = redTeam.reduce((acc, p) => acc + p.kills, 0);
+  const enemyKills = blueTeam.reduce((acc, p) => acc + p.kills, 0);
+  const teamGold = redTeam.reduce((acc, p) => acc + p.goldEarned, 0);
+  const enemyGold = blueTeam.reduce((acc, p) => acc + p.goldEarned, 0);
+  let towers = { red: 0, blue: 0 };
+  let dragons = { red: 0, blue: 0 };
+  if (riotMatch.info.teams && riotMatch.info.teams.length === 2) {
+    const red = riotMatch.info.teams.find((t) => t.teamId === 200);
+    const blue = riotMatch.info.teams.find((t) => t.teamId === 100);
+    towers = {
+      red: red?.objectives?.tower?.kills ?? 0,
+      blue: blue?.objectives?.tower?.kills ?? 0,
+    };
+    dragons = {
+      red: red?.objectives?.dragon?.kills ?? 0,
+      blue: blue?.objectives?.dragon?.kills ?? 0,
+    };
+  }
+  return {
+    champion: participant?.championName || "?",
+    result,
+    kda,
+    date,
+    mode,
+    duration,
+    team: win ? "Red" : "Blue",
+    teamKills,
+    teamGold,
+    enemyKills,
+    enemyGold,
+    players,
+    details: {
+      duration,
+      gold: { red: teamGold, blue: enemyGold },
+      kills: { red: teamKills, blue: enemyKills },
+      towers,
+      dragons,
+    },
+  };
+}
+

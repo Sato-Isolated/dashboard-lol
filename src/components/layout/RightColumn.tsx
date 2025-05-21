@@ -13,9 +13,9 @@ const RightColumn: React.FC = () => (
         Widgets & Actions
       </span>
       <div className="flex flex-col gap-2 w-full items-center">
-        {fakeWidgets.map((w, i) => (
+        {fakeWidgets.map((w) => (
           <button
-            key={i}
+            key={w.label}
             className="btn btn-sm btn-outline flex items-center gap-2 w-full justify-center"
           >
             <span>{w.icon}</span> {w.label}

@@ -7,10 +7,12 @@ import {
   handleUserChampionMastery,
   handleUserRecentlyPlayedUpdate,
 } from "@/lib/backgroundApiFetcher";
+import type { RiotAccountDto } from "@/types/api/account";
+import type { SummonerDto } from "@/types/api/summoners";
 
 interface HeaderSectionProps {
-  summoner: any;
-  account: any;
+  summoner: SummonerDto;
+  account: RiotAccountDto;
   region: string;
 }
 
@@ -20,8 +22,10 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   region,
 }) => {
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   const handleUpdate = async () => {
     setLoading(true);
+    setError(null);
     try {
       await handleUserUpdate(region, account.gameName, account.tagLine);
       await handleUserChampionMastery(
@@ -36,8 +40,8 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
       );
       // Forcer le rafraîchissement des colonnes (LeftColumn, CenterColumn)
       window.location.reload();
-    } catch (e) {
-      // Optionnel : gestion d'erreur utilisateur
+    } catch (e: any) {
+      setError(e?.message || "Erreur lors de la mise à jour.");
     }
     setLoading(false);
   };
@@ -46,7 +50,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
       <div className="flex items-center gap-4 w-full md:w-auto">
         <Image
           src={getSummonerIcon(summoner.profileIconId)}
-          alt={summoner.name}
+          alt={account.gameName}
           width={80}
           height={80}
           className="rounded-full border-4 border-primary"
@@ -76,6 +80,11 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           {loading ? "Mise à jour..." : "Update"}
         </button>
       </div>
+      {error && (
+        <div className="text-error text-xs text-center w-full mt-2">
+          {error}
+        </div>
+      )}
     </div>
   );
 };

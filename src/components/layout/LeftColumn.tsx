@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { getChampionNameFromId } from "@/utils/helper";
 import championData from "@/../public/assets/data/en_US/champion.json";
 import { useUserStore } from "@/store/userStore";
+import type { UIRecentlyPlayed, UIMastery } from "@/types/ui-leftcolumn";
 
 const fakeRanks = [
   {
@@ -34,11 +35,13 @@ const LeftColumn: React.FC = () => {
       });
     }
   }, [params, setUser]);
-  const [recentlyPlayed, setRecentlyPlayed] = useState<any[]>([]);
-  const [mastery, setMastery] = useState<any[]>([]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState<UIRecentlyPlayed[]>([]);
+  const [mastery, setMastery] = useState<UIMastery[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
+    setFetchError(null);
     // Fetch recently played with
     fetch(
       `/api/leftcolumn/recently-played?name=${encodeURIComponent(
@@ -47,8 +50,15 @@ const LeftColumn: React.FC = () => {
         effectiveRegion
       )}&tagline=${encodeURIComponent(effectiveTagline)}&limit=5`
     )
-      .then((res) => res.json())
-      .then(setRecentlyPlayed);
+      .then((res) => {
+        if (!res.ok)
+          throw new Error(
+            "Erreur lors du chargement des joueurs récemment joués"
+          );
+        return res.json();
+      })
+      .then(setRecentlyPlayed)
+      .catch((e) => setFetchError(e.message));
     // Fetch mastery
     fetch(
       `/api/leftcolumn/mastery?name=${encodeURIComponent(
@@ -57,12 +67,19 @@ const LeftColumn: React.FC = () => {
         effectiveRegion
       )}&tagline=${encodeURIComponent(effectiveTagline)}`
     )
-      .then((res) => res.json())
-      .then(setMastery);
+      .then((res) => {
+        if (!res.ok) throw new Error("Erreur lors du chargement des masteries");
+        return res.json();
+      })
+      .then(setMastery)
+      .catch((e) => setFetchError(e.message));
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
   return (
     <div className="flex flex-col gap-4">
+      {fetchError && (
+        <div className="text-error text-xs text-center mb-2">{fetchError}</div>
+      )}
       <div className="bg-base-100 rounded-xl shadow p-4 w-full flex flex-col items-center">
         <span className="font-semibold text-base-content/80 mb-2">
           Rank & Badges

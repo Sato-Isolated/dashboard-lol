@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import type { Match } from "@/types/api/match";
+import React, { useState, useEffect, useRef } from "react";
 import type { UIMatch } from "@/types/ui-match";
-import { MatchCard, mapRiotMatchToUIMatch } from "../match/MatchCard";
-import { useUserStore } from "@/store/userStore";
-import { useParams } from "next/navigation";
+import { MatchCard } from "../match/MatchCard";
+import SectionCard from "../common/SectionCard";
+import { useMatchHistory } from "@/hooks/useMatchHistory";
+import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 
 const fakeStats = {
   kda: "3.2",
@@ -13,57 +13,24 @@ const fakeStats = {
 };
 
 const CenterColumn: React.FC = () => {
-  const params = useParams();
-  const { region, tagline, summonerName } = useUserStore();
-  // On récupère les infos de l'URL si présentes, sinon du store
-  const effectiveRegion = (params?.region as string) || region;
-  const effectiveTagline = (params?.tagline as string) || tagline;
-  const effectiveName = (params?.name as string) || summonerName;
+  const { effectiveRegion, effectiveTagline, effectiveName } = useEffectiveUser();
 
-  const [matches, setMatches] = useState<UIMatch[]>([]);
-  const [parseError, setParseError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    matches,
+    error: parseError,
+    loading,
+    hasMore,
+    fetchMatches,
+  } = useMatchHistory();
+
   const [start, setStart] = useState(0);
   const count = 10;
-  const [hasMore, setHasMore] = useState(true);
-
-  const fetchMatches = async (reset = false) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        name: effectiveName,
-        region: effectiveRegion,
-        tagline: effectiveTagline,
-        start: reset ? "0" : String(start),
-        count: String(count),
-      });
-      const res = await fetch(`/api/matches?${params.toString()}`);
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        const uiMatches = data.map((m) =>
-          mapRiotMatchToUIMatch(m, effectiveName)
-        );
-        setMatches((prev) => (reset ? uiMatches : [...prev, ...uiMatches]));
-        setHasMore(data.length === count);
-        setStart((prev) => (reset ? count : prev + count));
-      } else {
-        setParseError("API error: " + JSON.stringify(data));
-        setHasMore(false);
-      }
-    } catch (e: any) {
-      setParseError(e?.message || "Unknown error fetching match data.");
-      setHasMore(false);
-    }
-    setLoading(false);
-  };
+  // Simple cache local (mémoire vive)
+  const cacheMatches = useRef<Record<string, UIMatch[]>>({});
 
   useEffect(() => {
     if (!effectiveName || !effectiveRegion || !effectiveTagline) {
-      setParseError(
-        "Veuillez renseigner un nom de joueur et un tagline pour afficher l'historique."
-      );
-      setMatches([]);
-      setHasMore(false);
+      // Afficher un message d'erreur si les paramètres sont manquants
       return;
     }
     fetchMatches(true);
@@ -88,20 +55,27 @@ const CenterColumn: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="bg-base-100 rounded-xl shadow p-4 min-h-[200px] flex flex-col items-center w-full">
-        <span className="font-semibold text-base-content mb-2">
-          Match History
-        </span>
+      <SectionCard
+        title="Match History"
+        loading={loading}
+        error={parseError}
+      >
         <div className="w-full flex flex-col gap-2">
           <span className="text-xs text-base-content/60 mb-1">
             Matchs affichés : {matches.length}
           </span>
-          {parseError && (
-            <div className="text-xs text-error">Debug: {parseError}</div>
+          {(!effectiveName || !effectiveRegion || !effectiveTagline) && (
+            <SectionCard title="Match History" loading={false} error={"Veuillez renseigner un nom de joueur et un tagline pour afficher l'historique."}>
+              <span className="text-base-content/50 text-xs">No data</span>
+            </SectionCard>
           )}
-          {matches.map((match, idx) => (
-            <MatchCard key={idx} match={match} />
-          ))}
+          {matches.length === 0 && !loading && !parseError ? (
+            <span className="text-base-content/50 text-xs">No data</span>
+          ) : (
+            matches.map((match) => (
+              <MatchCard key={match.champion + match.date + match.mode} match={match} />
+            ))
+          )}
           {hasMore && (
             <button
               className="btn btn-sm btn-outline mt-2"
@@ -112,7 +86,7 @@ const CenterColumn: React.FC = () => {
             </button>
           )}
         </div>
-      </div>
+      </SectionCard>
     </div>
   );
 };
