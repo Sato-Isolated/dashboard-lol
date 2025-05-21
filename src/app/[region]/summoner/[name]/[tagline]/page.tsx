@@ -19,8 +19,6 @@ export default async function Page({ params }: { params: PageParams }) {
   if (!data)
     return <div className="text-center text-error mt-8">Account not found</div>;
 
-  const { account, summoner } = data;
-
   return (
     <MainLayout>
       <div className="flex flex-col gap-8 w-full">

@@ -2,8 +2,6 @@
 import { connectToDatabase } from "@/lib/mongo";
 
 export async function initDb() {
-  const db = await connectToDatabase();
-  const matches = db.collection("matches");
-
+  await connectToDatabase();
   console.log("[Mongo] DB initialized with index.");
 }

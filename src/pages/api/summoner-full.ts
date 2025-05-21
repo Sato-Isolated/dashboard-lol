@@ -18,7 +18,7 @@ export default async function handler(
     );
     if (!data) return res.status(404).json({ error: "Not found" });
     return res.status(200).json(data);
-  } catch (e: any) {
-    return res.status(500).json({ error: e.message });
+  } catch (e: unknown) {
+    return res.status(500).json({ error: e instanceof Error ? e.message : "Unknown error" });
   }
 }

@@ -11,4 +11,10 @@ export class SummonerService extends RiotApiClient {
       `/lol/summoner/v4/summoners/by-puuid/${puuid}`
     );
   }
+
+  public async getLeaguesBySummonerId(summonerId: string) {
+    return this.fetch<import("@/types/api/summoners").LeagueEntry[]>(
+      `/lol/league/v4/entries/by-summoner/${summonerId}`
+    );
+  }
 }

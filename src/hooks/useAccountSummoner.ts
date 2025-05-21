@@ -1,11 +1,12 @@
-import { useFetch } from "./useFetch";
+import { useApiResource } from "./useApiResource";
 import { useEffectiveUser } from "./useEffectiveUser";
 import type { RiotAccountDto } from "@/types/api/account";
-import type { SummonerDto } from "@/types/api/summoners";
+import type { SummonerDto, LeagueEntry } from "@/types/api/summoners";
 
 interface AccountSummonerResult {
   account: RiotAccountDto | null;
   summoner: SummonerDto | null;
+  leagues: LeagueEntry[];
   loading: boolean;
   error: string | null;
   refetch: () => void;
@@ -29,14 +30,16 @@ export function useAccountSummoner(
           r
         )}&name=${encodeURIComponent(n)}&tagline=${encodeURIComponent(t)}`
       : null;
-  const { data, loading, error, refetch } = useFetch<{
+  const { data, loading, error, refetch } = useApiResource<{
     account: RiotAccountDto;
     summoner: SummonerDto;
+    leagues: LeagueEntry[];
   }>(url, `account-summoner-${r}-${n}-${t}`);
 
   return {
     account: data?.account || null,
     summoner: data?.summoner || null,
+    leagues: data?.leagues || [],
     loading,
     error,
     refetch,

@@ -9,7 +9,6 @@ import {
   getOrCreateSummoner,
   setFetchOldGames,
   setLastFetchedGameEndTimestamp,
-  getSummoner,
 } from "@/repositories/summonerRepo";
 
 /**
@@ -17,13 +16,11 @@ import {
  * @param platformRegion Riot platform region (e.g., "euw1")
  * @param name Summoner name
  * @param tagline Riot tagline (e.g., "EUW")
- * @param count Number of matches to fetch (default: 10)
  */
 export async function fetchAndStoreMatches(
   platformRegion: string,
   name: string,
-  tagline: string,
-  count = 10
+  tagline: string
 ) {
   // Get account and summoner info
   const accountApi = createAccountService(platformRegion);
@@ -45,7 +42,7 @@ export async function fetchAndStoreMatches(
   // Définir la période : du 9 janvier 2025 à maintenant, ou juste les nouvelles games si fetchOldGames est true
   const now = Math.floor(Date.now() / 1000); // en secondes
   let fromTimestamp: number;
-  let toTimestamp: number = now;
+  const toTimestamp: number = now;
   if (!summonerDoc.fetchOldGames) {
     // On fetch tout l'historique jusqu'à janvier 2025
     fromTimestamp = Math.floor(
@@ -63,7 +60,7 @@ export async function fetchAndStoreMatches(
     count: 100,
   };
   const matchApi = createMatchService(platformRegion);
-  let allMatchIds: string[] = [];
+  const allMatchIds: string[] = [];
   let start = 0;
   const batchSize = 100;
   let keepFetching = true;
@@ -80,8 +77,8 @@ export async function fetchAndStoreMatches(
         account.puuid,
         optionsBatch
       );
-    } catch (e: any) {
-      if (e.message?.includes("Too Many Requests")) {
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message?.includes("Too Many Requests")) {
         console.warn("Rate limit hit, waiting 10s...");
         await new Promise((res) => setTimeout(res, 10000));
         continue; // retry this batch
@@ -101,7 +98,7 @@ export async function fetchAndStoreMatches(
     await new Promise((res) => setTimeout(res, 1200));
   }
 
-  let mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
+  const mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
 
   // Fetch and store each match
   for (const matchId of allMatchIds) {
@@ -116,8 +113,8 @@ export async function fetchAndStoreMatches(
       }
       console.log(`Stored match ${matchId}`);
       await new Promise((res) => setTimeout(res, 1200)); // Respect Riot rate limit
-    } catch (e: any) {
-      if (e.message?.includes("Too Many Requests")) {
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message?.includes("Too Many Requests")) {
         console.warn("Rate limit hit, waiting 10s...");
         await new Promise((res) => setTimeout(res, 10000)); // Wait 10s if 429
         // Optionally: retry here
@@ -146,4 +143,4 @@ export async function fetchAndStoreMatches(
 }
 
 // Example usage (uncomment to run directly)
-// fetchAndStoreMatches("euw1", "RafaleDeBlanche", "EUW", 10).then(() => process.exit(0));
+// fetchAndStoreMatches("euw1", "RafaleDeBlanche", "EUW").then(() => process.exit(0));

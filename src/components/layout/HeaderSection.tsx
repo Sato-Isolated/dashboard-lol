@@ -17,8 +17,7 @@ const HeaderSection: React.FC = () => {
     account,
     summoner,
     loading: loadingSummoner,
-    error: errorSummoner,
-    refetch,
+    error: errorSummoner
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -38,8 +37,8 @@ const HeaderSection: React.FC = () => {
         effectiveTagline
       );
       window.location.reload();
-    } catch (e: any) {
-      setError(e?.message || "Erreur lors de la mise à jour.");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la mise à jour.");
     }
     setLoading(false);
   };

@@ -1,10 +1,17 @@
 // src/app/api/update-matches/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
+import { apiErrorHandler } from "@/utils/apiErrorHandler";
 
 // POST /api/update-matches
 export async function POST(req: NextRequest) {
   try {
+    if (req.method !== "POST") {
+      return NextResponse.json(
+        { error: "Method not allowed" },
+        { status: 405 }
+      );
+    }
     const { region, name, tagline } = await req.json();
     if (!region || !name || !tagline) {
       return NextResponse.json(
@@ -12,7 +19,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    // Lancer la récupération côté serveur (Node)
     const { totalFetched } = await fetchAndStoreMatches(
       region,
       name,
@@ -20,10 +26,7 @@ export async function POST(req: NextRequest) {
       100
     );
     return NextResponse.json({ ok: true, totalFetched });
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: e?.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (e: unknown) {
+    return apiErrorHandler(e);
   }
 }

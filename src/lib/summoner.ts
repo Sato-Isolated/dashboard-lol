@@ -1,5 +1,6 @@
 // lib/summoner.ts
 import { createAccountService, createSummonerService } from "@/services/lol/riotServiceFactory";
+import type { LeagueEntry } from "@/types/api/summoners";
 
 export async function fetchSummonerFull(platformRegion: string, name: string, tagline: string) {
   const accountApi = createAccountService(platformRegion);
@@ -9,6 +10,16 @@ export async function fetchSummonerFull(platformRegion: string, name: string, ta
 
   const summonerApi = createSummonerService(platformRegion);
   const summonerDto = await summonerApi.getSummonerByPuuid(account.puuid);
+
+  // Récupération des leagues/rangs
+  let leagues: LeagueEntry[] = [];
+  if (summonerDto && summonerDto.id) {
+    try {
+      leagues = await summonerApi.getLeaguesBySummonerId(summonerDto.id);
+    } catch (e) {
+      leagues = [];
+    }
+  }
 
   const version = await fetch("https://ddragon.leagueoflegends.com/api/versions.json")
     .then((res) => res.json())
@@ -24,5 +35,6 @@ export async function fetchSummonerFull(platformRegion: string, name: string, ta
   return {
     account,
     summoner,
+    leagues,
   };
 }

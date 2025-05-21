@@ -2,7 +2,11 @@ import { useParams } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
 
-export function useEffectiveUser() {
+export function useEffectiveUser(): {
+  effectiveRegion: string;
+  effectiveTagline: string;
+  effectiveName: string;
+} {
   const params = useParams();
   const { region, tagline, summonerName, setUser } = useUserStore();
   const effectiveRegion = (params?.region as string) || region;
@@ -21,4 +25,4 @@ export function useEffectiveUser() {
   }, [params, setUser]);
 
   return { effectiveRegion, effectiveTagline, effectiveName };
-} 
+}

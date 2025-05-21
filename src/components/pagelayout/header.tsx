@@ -1,6 +1,7 @@
+import React from "react";
 import SearchBar from "@/components/SearchBar";
 
-function Header() {
+const Header: React.FC = () => {
   return (
     <header className="flex flex-col items-center justify-center w-full h-24 bg-gradient-to-b from-[#0f172a] to-[#1e293b] text-white">
       <div className="relative flex items-center w-full h-24">

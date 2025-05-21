@@ -14,8 +14,8 @@ export async function insertMatch(match: Match) {
 
   try {
     await collection.insertOne(matchDoc);
-  } catch (e: any) {
-    if (e.code === 11000) {
+  } catch (e: unknown) {
+    if (e instanceof Error && e.message.includes("duplicate key")) {
       console.warn(`[Mongo] Match ${matchDoc._id} already exists.`);
     } else {
       throw e;

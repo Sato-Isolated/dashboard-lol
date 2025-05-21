@@ -1,20 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAndStoreMasteries } from "@/scripts/fetchAndStoreMasteries";
+import { apiErrorHandler } from "@/utils/apiErrorHandler";
 
 // POST /api/update-masteries
 export async function POST(req: NextRequest) {
-  const { region, name, tagline } = await req.json();
-  if (!region || !name || !tagline) {
-    return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
-  }
   try {
+    if (req.method !== "POST") {
+      return NextResponse.json(
+        { error: "Method not allowed" },
+        { status: 405 }
+      );
+    }
+    const { region, name, tagline } = await req.json();
+    if (!region || !name || !tagline) {
+      return NextResponse.json(
+        { error: "Missing parameters" },
+        { status: 400 }
+      );
+    }
     // Correction de l'ordre des paramètres : name, tagline, region
     const result = await fetchAndStoreMasteries(name, tagline, region);
     return NextResponse.json({ success: true, result });
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (e: unknown) {
+    return apiErrorHandler(e);
   }
 }

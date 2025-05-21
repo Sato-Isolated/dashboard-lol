@@ -21,23 +21,34 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
   }
 
-  const db = await connectToDatabase();
-  const query: any = {
-    "info.participants": { $elemMatch: { riotIdGameName: name } },
-  };
-  if (from || to) {
-    query["info.gameEndTimestamp"] = {};
-    if (from) query["info.gameEndTimestamp"].$gte = from;
-    if (to) query["info.gameEndTimestamp"].$lt = to;
+  try {
+    const db = await connectToDatabase();
+    const query: Record<string, unknown> = {
+      "info.participants": { $elemMatch: { riotIdGameName: name } },
+    };
+    if (from || to) {
+      query["info.gameEndTimestamp"] = {};
+      if (from) query["info.gameEndTimestamp"].$gte = from;
+      if (to) query["info.gameEndTimestamp"].$lt = to;
+    }
+
+    const matches = await db
+      .collection("matches")
+      .find(query)
+      .sort({ "info.gameEndTimestamp": -1 })
+      .skip(start)
+      .limit(count)
+      .toArray();
+
+    return NextResponse.json(matches);
+  } catch {
+    // Fallback explicite si la DB ou l'API est en erreur
+    return NextResponse.json(
+      {
+        error:
+          "Impossible de récupérer les matchs. L'API Riot ou la base de données est peut-être indisponible. Réessayez plus tard.",
+      },
+      { status: 502 }
+    );
   }
-
-  const matches = await db
-    .collection("matches")
-    .find(query)
-    .sort({ "info.gameEndTimestamp": -1 })
-    .skip(start)
-    .limit(count)
-    .toArray();
-
-  return NextResponse.json(matches);
 }

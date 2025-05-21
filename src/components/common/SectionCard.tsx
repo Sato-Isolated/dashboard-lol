@@ -1,16 +1,19 @@
 import React from "react";
-const SectionCard = ({
-  title,
-  loading,
-  error,
-  children,
-  role = "region",
-}: {
+
+interface SectionCardProps {
   title: string;
   loading: boolean;
   error: string | null;
   children: React.ReactNode;
   role?: string;
+}
+
+const SectionCard: React.FC<SectionCardProps> = ({
+  title,
+  loading,
+  error,
+  children,
+  role = "region",
 }) => (
   <section
     className="bg-base-100 rounded-xl shadow p-4 min-h-[200px] flex flex-col items-center w-full"

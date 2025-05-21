@@ -1,17 +1,17 @@
+import React from "react";
 import { UIPlayer } from "@/types/ui-match";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { getRegion } from "@/utils/helper";
 
-const TeamTable = ({
-  players,
-  team,
-  teamColor,
-}: {
+const TeamTable: React.FC<{
   players: UIPlayer[];
   team: string;
   teamColor: string;
+}> = ({
+  players,
+  team,
+  teamColor,
 }) => (
   <div
     className={`rounded-xl mb-2 border ${

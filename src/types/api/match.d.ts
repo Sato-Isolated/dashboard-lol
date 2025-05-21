@@ -339,7 +339,7 @@ export enum Role {
 }
 
 export interface Team {
-    bans:       any[];
+    bans:       unknown[];
     feats:      Feats;
     objectives: Objectives;
     teamId:     number;

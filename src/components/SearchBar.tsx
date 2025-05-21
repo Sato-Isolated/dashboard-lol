@@ -6,72 +6,66 @@ import { Search } from "lucide-react";
 import { useUserStore } from "@/store/userStore";
 import { PlatformRegion } from "@/types/api/platformregion";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
+import { mapLangToRegion } from "@/utils/langToRegion";
 
+// Typage explicite des props pour SearchBar
 const SearchBar: React.FC = () => {
+  // Utilisation d'un état local pour le formulaire, synchronisé avec le store seulement au submit
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
   const { setUser } = useUserStore();
   const router = useRouter();
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [region, setRegion] = useState<PlatformRegion | "">(
+    (effectiveRegion as PlatformRegion) || ""
+  );
+  const [tagline, setTagline] = useState<string>(effectiveTagline || "");
+  const [summonerName, setSummonerName] = useState<string>(effectiveName || "");
 
-  // Préselectionne la région selon la langue/navigateur si aucune région n'est déjà définie
+  // Préselectionne la région selon la langue/navigateur ou localStorage si aucune région n'est déjà définie
   useEffect(() => {
-    if (!effectiveRegion) {
-      let browserLang = navigator.language || navigator.languages?.[0] || "";
-      browserLang = browserLang.toLowerCase();
-      let defaultRegion = "euw1";
-      if (browserLang.startsWith("fr")) defaultRegion = "euw1";
-      else if (browserLang.startsWith("en-us")) defaultRegion = "na1";
-      else if (browserLang.startsWith("en-gb")) defaultRegion = "euw1";
-      else if (browserLang.startsWith("es")) defaultRegion = "euw1";
-      else if (browserLang.startsWith("tr")) defaultRegion = "tr1";
-      else if (browserLang.startsWith("ru")) defaultRegion = "ru";
-      else if (browserLang.startsWith("ja")) defaultRegion = "jp1";
-      else if (browserLang.startsWith("ko")) defaultRegion = "kr";
-      setUser({
-        region: defaultRegion,
-        tagline: effectiveTagline,
-        summonerName: effectiveName,
-      });
+    const savedRegion =
+      typeof window !== "undefined"
+        ? localStorage.getItem("preferredRegion")
+        : null;
+    if (savedRegion && !region) {
+      setRegion(savedRegion as PlatformRegion);
+      return;
     }
-  }, [effectiveRegion, effectiveTagline, effectiveName, setUser]);
+    if (!region) {
+      const browserLang = navigator.language || navigator.languages?.[0] || "";
+      const defaultRegion = mapLangToRegion(browserLang) as PlatformRegion;
+      setRegion(defaultRegion);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("preferredRegion", defaultRegion);
+      }
+    }
+  }, [region]);
+
+  // Mémorise le choix de région à chaque changement
+  useEffect(() => {
+    if (region && typeof window !== "undefined") {
+      localStorage.setItem("preferredRegion", region);
+    }
+  }, [region]);
+
+  // Synchronise l'état local avec les valeurs effectives (ex: navigation directe)
+  useEffect(() => {
+    setRegion((effectiveRegion as PlatformRegion) || "");
+    setTagline(effectiveTagline || "");
+    setSummonerName(effectiveName || "");
+  }, [effectiveRegion, effectiveTagline, effectiveName]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const isInvalid =
-      effectiveName.trim() === "" || effectiveTagline.trim() === "";
-
+    const isInvalid = summonerName.trim() === "" || tagline.trim() === "";
     if (isInvalid) {
       setHasError(true);
       return;
     }
-
     setHasError(false);
-    router.push(
-      `/${effectiveRegion}/summoner/${effectiveName}/${effectiveTagline}`
-    );
-  };
-
-  const handleSummonerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({
-      region: effectiveRegion,
-      tagline: effectiveTagline,
-      summonerName: e.target.value.trimStart(),
-    });
-  };
-  const handleTaglineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({
-      region: effectiveRegion,
-      tagline: e.target.value.trimStart(),
-      summonerName: effectiveName,
-    });
-  };
-  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setUser({
-      region: e.target.value,
-      tagline: effectiveTagline,
-      summonerName: effectiveName,
-    });
+    setUser({ region, tagline, summonerName });
+    router.push(`/${region}/summoner/${summonerName}/${tagline}`);
   };
 
   return (
@@ -84,37 +78,47 @@ const SearchBar: React.FC = () => {
           hasError ? "border-error" : "border-base-300"
         }`}
       >
+        <label htmlFor="summonerName" className="sr-only">
+          Summoner Name
+        </label>
         <input
+          id="summonerName"
           type="text"
-          value={effectiveName}
-          onChange={handleSummonerNameChange}
+          value={summonerName}
+          onChange={(e) => setSummonerName(e.target.value.trimStart())}
           placeholder="SummonerName"
-          className={`bg-transparent border-0 outline-none  text-lg w-1/3 min-w-[120px] max-w-xs ${
-            hasError ? "text-error" : ""
+          aria-invalid={hasError && summonerName.trim() === ""}
+          className={`bg-transparent border-0 outline-none text-lg w-1/3 min-w-[120px] max-w-xs ${
+            hasError && summonerName.trim() === "" ? "text-error" : ""
           }`}
         />
-
         <span className="mx-4 border-l h-8 border-b-blue-50" />
-
+        <label htmlFor="tagline" className="sr-only">
+          Tagline
+        </label>
         <input
+          id="tagline"
           type="text"
-          value={effectiveTagline}
-          onChange={handleTaglineChange}
+          value={tagline}
+          onChange={(e) => setTagline(e.target.value.trimStart())}
           placeholder="Tagline"
-          className={`bg-transparent border-0 outline-none  text-lg w-1/4 min-w-[80px] max-w-xs ${
-            hasError ? "text-error" : ""
+          aria-invalid={hasError && tagline.trim() === ""}
+          className={`bg-transparent border-0 outline-none text-lg w-1/4 min-w-[80px] max-w-xs ${
+            hasError && tagline.trim() === "" ? "text-error" : ""
           }`}
         />
-
+        <label htmlFor="region" className="sr-only">
+          Region
+        </label>
         <select
           name="region"
           id="region"
           className="select select-ghost bg-transparent border-0 outline-none text-lg w-24 ml-auto"
-          value={effectiveRegion}
-          onChange={handleRegionChange}
+          value={region}
+          onChange={(e) => setRegion(e.target.value as PlatformRegion)}
         >
           {Object.entries(PlatformRegion).map(([key, value]) => (
-            <option key={key} value={value} className=" text-lg">
+            <option key={key} value={value} className="text-lg">
               {value}
             </option>
           ))}

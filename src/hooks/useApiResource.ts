@@ -1,6 +1,10 @@
+// src/hooks/useApiResource.ts
 import { useState, useRef, useEffect, useCallback } from "react";
 
-export function useFetch<T = unknown>(url: string | null, cacheKey: string) {
+export function useApiResource<T = unknown>(
+  url: string | null,
+  cacheKey: string
+) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,12 +21,22 @@ export function useFetch<T = unknown>(url: string | null, cacheKey: string) {
     }
     try {
       const res = await fetch(url);
-      if (!res.ok) throw new Error("Erreur lors du chargement des données");
-      const json = await res.json();
-      setData(json);
-      cache.current[cacheKey] = json;
+      let json;
+      try {
+        json = await res.json();
+      } catch {
+        json = null;
+      }
+      if (!res.ok) {
+        setError(json?.error || "Erreur lors du chargement des données");
+        setData(null);
+      } else {
+        setData(json);
+        cache.current[cacheKey] = json;
+      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Erreur lors du chargement des données");
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -34,4 +48,4 @@ export function useFetch<T = unknown>(url: string | null, cacheKey: string) {
   }, [url, cacheKey]);
 
   return { data, loading, error, refetch: fetchData };
-} 
+}

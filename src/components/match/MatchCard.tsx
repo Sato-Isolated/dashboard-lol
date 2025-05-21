@@ -1,10 +1,7 @@
-import { UIPlayer } from "@/types/ui-match";
-import { Match } from "@/types/api/match";
 import { UIMatch } from "@/types/ui-match";
-import { getChampionIcon, getRegion, mapRiotMatchToUIMatch } from "@/utils/helper";
+import { getChampionIcon } from "@/utils/helper";
 import Image from "next/image";
 import React, { useState } from "react";
-import Link from "next/link";
 import TeamTable from "./TeamTable";
 
 export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
