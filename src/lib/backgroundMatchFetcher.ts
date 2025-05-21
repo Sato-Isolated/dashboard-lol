@@ -11,9 +11,12 @@ export async function handleUserUpdate(
   name: string,
   tagline: string
 ) {
-  await fetch("/api/update-matches", {
+  const res = await fetch("/api/update-matches", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),
   });
+  if (!res.ok) throw new Error("Erreur lors de la mise à jour des matchs");
+  const data = await res.json();
+  return data.totalFetched;
 }

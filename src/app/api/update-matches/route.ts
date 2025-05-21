@@ -13,8 +13,13 @@ export async function POST(req: NextRequest) {
       );
     }
     // Lancer la récupération côté serveur (Node)
-    await fetchAndStoreMatches(region, name, tagline, 100);
-    return NextResponse.json({ ok: true });
+    const { totalFetched } = await fetchAndStoreMatches(
+      region,
+      name,
+      tagline,
+      100
+    );
+    return NextResponse.json({ ok: true, totalFetched });
   } catch (e: any) {
     return NextResponse.json(
       { error: e?.message || "Unknown error" },

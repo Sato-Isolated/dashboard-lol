@@ -27,9 +27,6 @@ const CenterColumn: React.FC = () => {
   const count = 10;
   const [hasMore, setHasMore] = useState(true);
 
-  // Optionally, set from/to for a specific day
-  // const from = ...; const to = ...;
-
   const fetchMatches = async (reset = false) => {
     setLoading(true);
     try {
@@ -96,6 +93,9 @@ const CenterColumn: React.FC = () => {
           Match History
         </span>
         <div className="w-full flex flex-col gap-2">
+          <span className="text-xs text-base-content/60 mb-1">
+            Matchs affichés : {matches.length}
+          </span>
           {parseError && (
             <div className="text-xs text-error">Debug: {parseError}</div>
           )}

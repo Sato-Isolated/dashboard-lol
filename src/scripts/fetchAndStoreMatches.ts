@@ -63,12 +63,48 @@ export async function fetchAndStoreMatches(
     count: 100,
   };
   const matchApi = createMatchService(platformRegion);
-  const matchIds = await matchApi.getMatchlistByPuuid(account.puuid, options);
+  let allMatchIds: string[] = [];
+  let start = 0;
+  const batchSize = 100;
+  let keepFetching = true;
+
+  while (keepFetching) {
+    const optionsBatch = {
+      ...options,
+      start,
+      count: batchSize,
+    };
+    let matchIdsBatch: string[] = [];
+    try {
+      matchIdsBatch = await matchApi.getMatchlistByPuuid(
+        account.puuid,
+        optionsBatch
+      );
+    } catch (e: any) {
+      if (e.message?.includes("Too Many Requests")) {
+        console.warn("Rate limit hit, waiting 10s...");
+        await new Promise((res) => setTimeout(res, 10000));
+        continue; // retry this batch
+      } else {
+        console.error(`Error fetching matchlist batch at start=${start}:`, e);
+        break;
+      }
+    }
+    if (!matchIdsBatch.length) break;
+    allMatchIds.push(...matchIdsBatch);
+    if (matchIdsBatch.length < batchSize) {
+      keepFetching = false;
+    } else {
+      start += batchSize;
+    }
+    // Respect Riot rate limit
+    await new Promise((res) => setTimeout(res, 1200));
+  }
 
   let mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
 
   // Fetch and store each match
-  for (const matchId of matchIds) {
+  for (const matchId of allMatchIds) {
     try {
       const match = await matchApi.getMatchById(matchId);
       await insertMatch(match);
@@ -104,6 +140,9 @@ export async function fetchAndStoreMatches(
       mostRecentGameEnd
     );
   }
+
+  // Retourne le nombre total de matchs stockés
+  return { totalFetched: allMatchIds.length };
 }
 
 // Example usage (uncomment to run directly)

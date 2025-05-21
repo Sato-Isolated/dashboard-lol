@@ -17,7 +17,11 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   const [loading, setLoading] = React.useState(false);
   const handleUpdate = async () => {
     setLoading(true);
-    await handleUserUpdate(region, account.gameName, account.tagLine);
+    try {
+      await handleUserUpdate(region, account.gameName, account.tagLine);
+    } catch (e) {
+      // Optionnel : gestion d'erreur utilisateur
+    }
     setLoading(false);
   };
   return (
