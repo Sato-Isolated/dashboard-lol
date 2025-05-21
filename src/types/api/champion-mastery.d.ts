@@ -10,7 +10,7 @@ export interface ChampionMasteryDto {
   markRequiredForNextLevel: number;
   championSeasonMilestone: number;
   nextSeasonMilestone: NextSeasonMilestonesDto;
-  tokestEarned: number;
+  tokensEarned: number;
   milestoneGrades: string[];
 }
 

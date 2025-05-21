@@ -1,4 +1,4 @@
-import { SummonerDto } from "@/types/summoners";
+import { SummonerDto } from "@/types/api/summoners";
 import { RiotApiClient } from "./RiotApiClient";
 
 export class SummonerService extends RiotApiClient {

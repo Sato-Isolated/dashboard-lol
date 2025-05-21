@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
 import Header from "@/components/layout/header";
+import { initDb } from "@/db/init";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,6 +18,12 @@ export const metadata: Metadata = {
   title: "Dashboard - League of Legends Aram",
   description: "Dashboard for League of Legends Aram",
 };
+
+initDb()
+  .then(() => {
+    console.log("[Mongo] DB initialized.");
+  }
+);
 
 export default function RootLayout({
   children,

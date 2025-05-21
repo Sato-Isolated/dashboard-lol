@@ -1,5 +1,5 @@
 import { RiotApiClient } from "./RiotApiClient";
-import { RiotAccountDto } from "../../types/account";
+import { RiotAccountDto } from "../../types/api/account";
 
 export class AccountService extends RiotApiClient {
   constructor(region: string) {

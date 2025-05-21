@@ -1,4 +1,4 @@
-import { ChampionInfoDto } from "@/types/champion";
+import { ChampionInfoDto } from "@/types/api/champion";
 import { RiotApiClient } from "./RiotApiClient";
 
 export class ChampionService extends RiotApiClient {

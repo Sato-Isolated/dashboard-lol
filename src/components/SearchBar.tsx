@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useUser } from "@/context/UserContext";
-import { PlatformRegion } from "@/types/platformregion";
+import { PlatformRegion } from "@/types/api/platformregion";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 

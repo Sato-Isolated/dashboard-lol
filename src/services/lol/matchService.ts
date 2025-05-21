@@ -1,4 +1,4 @@
-import { MatchDto } from "@/types/match";
+import { Match } from "@/types/api/match";
 import { RiotApiClient } from "./RiotApiClient";
 
 export class MatchService extends RiotApiClient {
@@ -7,7 +7,7 @@ export class MatchService extends RiotApiClient {
   }
 
   public async getMatchById(matchId: string) {
-    return this.fetch<MatchDto>(`/lol/match/v5/matches/${matchId}`);
+    return this.fetch<Match>(`/lol/match/v5/matches/${matchId}`);
   }
 
   public async getMatchlistByPuuid(

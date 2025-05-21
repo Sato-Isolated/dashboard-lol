@@ -1,4 +1,4 @@
-import { RegionalRegionMap } from "@/types/regions";
+import { RegionalRegionMap } from "@/types/api/regions";
 import { AccountService } from "./accountService";
 import { ChampionService } from "./championService";
 import { SummonerService } from "./summonerService";

@@ -1,5 +1,5 @@
 import { UIPlayer } from "@/types/ui-match";
-import { Match } from "@/types/match";
+import { Match } from "@/types/api/match";
 import { UIMatch } from "@/types/ui-match";
 import { getChampionIcon } from "@/utils/helper";
 import Image from "next/image";
