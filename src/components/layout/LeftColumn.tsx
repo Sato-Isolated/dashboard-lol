@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { getChampionNameFromId } from "@/utils/helper";
 import championData from "@/../public/assets/data/en_US/champion.json";
-import { useUserStore } from "@/store/userStore";
 import type { UIRecentlyPlayed, UIMastery } from "@/types/ui-leftcolumn";
+import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 
 const fakeRanks = [
   {
@@ -19,22 +18,8 @@ const fakeRanks = [
 ];
 
 const LeftColumn: React.FC = () => {
-  const params = useParams();
-  const { region, tagline, summonerName, setUser } = useUserStore();
-  // On récupère les infos de l'URL si présentes, sinon du store
-  const effectiveRegion = (params?.region as string) || region;
-  const effectiveTagline = (params?.tagline as string) || tagline;
-  const effectiveName = (params?.name as string) || summonerName;
-  // Sync store if params are present
-  React.useEffect(() => {
-    if (params?.region && params?.tagline && params?.name) {
-      setUser({
-        region: params.region as string,
-        tagline: params.tagline as string,
-        summonerName: params.name as string,
-      });
-    }
-  }, [params, setUser]);
+  const { effectiveRegion, effectiveTagline, effectiveName } = useEffectiveUser();
+
   const [recentlyPlayed, setRecentlyPlayed] = useState<UIRecentlyPlayed[]>([]);
   const [mastery, setMastery] = useState<UIMastery[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);

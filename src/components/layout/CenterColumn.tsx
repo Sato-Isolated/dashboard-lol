@@ -23,11 +23,6 @@ const CenterColumn: React.FC = () => {
     fetchMatches,
   } = useMatchHistory();
 
-  const [start, setStart] = useState(0);
-  const count = 10;
-  // Simple cache local (mémoire vive)
-  const cacheMatches = useRef<Record<string, UIMatch[]>>({});
-
   useEffect(() => {
     if (!effectiveName || !effectiveRegion || !effectiveTagline) {
       // Afficher un message d'erreur si les paramètres sont manquants

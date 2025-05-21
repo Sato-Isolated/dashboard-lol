@@ -7,44 +7,45 @@ import {
   handleUserChampionMastery,
   handleUserRecentlyPlayedUpdate,
 } from "@/lib/backgroundApiFetcher";
-import type { RiotAccountDto } from "@/types/api/account";
-import type { SummonerDto } from "@/types/api/summoners";
+import { useAccountSummoner } from "@/hooks/useAccountSummoner";
+import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 
-interface HeaderSectionProps {
-  summoner: SummonerDto;
-  account: RiotAccountDto;
-  region: string;
-}
-
-const HeaderSection: React.FC<HeaderSectionProps> = ({
-  summoner,
-  account,
-  region,
-}) => {
+const HeaderSection: React.FC = () => {
+  const { effectiveRegion, effectiveTagline, effectiveName } =
+    useEffectiveUser();
+  const {
+    account,
+    summoner,
+    loading: loadingSummoner,
+    error: errorSummoner,
+    refetch,
+  } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const handleUpdate = async () => {
     setLoading(true);
     setError(null);
     try {
-      await handleUserUpdate(region, account.gameName, account.tagLine);
+      await handleUserUpdate(effectiveRegion, effectiveName, effectiveTagline);
       await handleUserChampionMastery(
-        region,
-        account.gameName,
-        account.tagLine
+        effectiveRegion,
+        effectiveName,
+        effectiveTagline
       );
       await handleUserRecentlyPlayedUpdate(
-        region,
-        account.gameName,
-        account.tagLine
+        effectiveRegion,
+        effectiveName,
+        effectiveTagline
       );
-      // Forcer le rafraîchissement des colonnes (LeftColumn, CenterColumn)
       window.location.reload();
     } catch (e: any) {
       setError(e?.message || "Erreur lors de la mise à jour.");
     }
     setLoading(false);
   };
+  if (loadingSummoner) return <div>Chargement...</div>;
+  if (errorSummoner || !account || !summoner)
+    return <div className="text-error">Erreur de chargement du joueur.</div>;
   return (
     <div className="flex flex-col md:flex-row items-center gap-4 w-full bg-base-200 rounded-xl p-6 shadow">
       <div className="flex items-center gap-4 w-full md:w-auto">
@@ -60,11 +61,11 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         />
         <div className="flex flex-col">
           <span className="text-2xl font-bold text-base-content">
-            {account.gameName}
-            <span className="text-base-content/60">#{account.tagLine}</span>
+            {effectiveName}
+            <span className="text-base-content/60">#{effectiveTagline}</span>
           </span>
           <span className="text-base-content/70 text-sm mt-1">
-            {region.toUpperCase()}
+            {effectiveRegion.toUpperCase()}
           </span>
           <span className="text-base-content/50 text-xs">
             Level {summoner.summonerLevel}

@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: PageParams }) {
   return (
     <MainLayout>
       <div className="flex flex-col gap-8 w-full">
-        <HeaderSection summoner={summoner} account={account} region={region} />
+        <HeaderSection/>
         <TabsSection />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
           <LeftColumn />
