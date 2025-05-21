@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import type { Match } from "@/types/api/match";
 import type { UIMatch } from "@/types/ui-match";
 import { MatchCard, mapRiotMatchToUIMatch } from "../match/MatchCard";
-import { useUser } from "@/context/UserContext";
+import { useUserStore } from "@/store/userStore";
 import { useParams } from "next/navigation";
 
 const fakeStats = {
@@ -14,11 +14,11 @@ const fakeStats = {
 
 const CenterColumn: React.FC = () => {
   const params = useParams();
-  const { user } = useUser();
-  // On récupère les infos de l'URL si présentes, sinon du contexte
-  const region = (params?.region as string) || user.region;
-  const tagline = (params?.tagline as string) || user.tagline;
-  const name = (params?.name as string) || user.summonerName;
+  const { region, tagline, summonerName } = useUserStore();
+  // On récupère les infos de l'URL si présentes, sinon du store
+  const effectiveRegion = (params?.region as string) || region;
+  const effectiveTagline = (params?.tagline as string) || tagline;
+  const effectiveName = (params?.name as string) || summonerName;
 
   const [matches, setMatches] = useState<UIMatch[]>([]);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -31,18 +31,18 @@ const CenterColumn: React.FC = () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
-        name,
-        region,
-        tagline,
+        name: effectiveName,
+        region: effectiveRegion,
+        tagline: effectiveTagline,
         start: reset ? "0" : String(start),
         count: String(count),
-        // from: String(from),
-        // to: String(to),
       });
       const res = await fetch(`/api/matches?${params.toString()}`);
       const data = await res.json();
       if (Array.isArray(data)) {
-        const uiMatches = data.map((m) => mapRiotMatchToUIMatch(m, name));
+        const uiMatches = data.map((m) =>
+          mapRiotMatchToUIMatch(m, effectiveName)
+        );
         setMatches((prev) => (reset ? uiMatches : [...prev, ...uiMatches]));
         setHasMore(data.length === count);
         setStart((prev) => (reset ? count : prev + count));
@@ -58,7 +58,7 @@ const CenterColumn: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!name || !region || !tagline) {
+    if (!effectiveName || !effectiveRegion || !effectiveTagline) {
       setParseError(
         "Veuillez renseigner un nom de joueur et un tagline pour afficher l'historique."
       );
@@ -68,7 +68,7 @@ const CenterColumn: React.FC = () => {
     }
     fetchMatches(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, region, tagline]);
+  }, [effectiveName, effectiveRegion, effectiveTagline]);
 
   return (
     <div className="flex flex-col gap-4">

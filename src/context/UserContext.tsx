@@ -1,4 +1,7 @@
-'use client';
+// Plus utilisé : remplacé par Zustand (userStore)
+// Fichier conservé pour historique, peut être supprimé en toute sécurité.
+
+"use client";
 import React, { createContext, useContext, useState } from "react";
 
 // Interface user defines the structure of the user object

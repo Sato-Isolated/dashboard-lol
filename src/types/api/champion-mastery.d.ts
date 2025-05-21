@@ -1,28 +1,26 @@
 export interface ChampionMasteryDto {
-  puuid: string;
-  championPointsUntilNextLevel: number;
-  chestGranted: boolean;
-  championId: number;
-  lastPlayTime: number;
-  championLevel: number;
-  championPoints: number;
-  championPointsSinceLastLevel: number;
-  markRequiredForNextLevel: number;
-  championSeasonMilestone: number;
-  nextSeasonMilestone: NextSeasonMilestonesDto;
-  tokensEarned: number;
-  milestoneGrades: string[];
+    puuid:                        string;
+    championId:                   number;
+    championLevel:                number;
+    championPoints:               number;
+    lastPlayTime:                 number;
+    championPointsSinceLastLevel: number;
+    championPointsUntilNextLevel: number;
+    markRequiredForNextLevel:     number;
+    tokensEarned:                 number;
+    championSeasonMilestone:      number;
+    milestoneGrades?:             string[];
+    nextSeasonMilestone:          NextSeasonMilestone;
 }
 
-export interface NextSeasonMilestonesDto {
-  requireGradeCounts: object;
-  rewardMarks: number;
-  bonus: boolean;
-  rewardConfig: RewardConfigDto;
+export interface NextSeasonMilestone {
+    requireGradeCounts: RequireGradeCounts;
+    rewardMarks:        number;
+    bonus:              boolean;
+    totalGamesRequires: number;
 }
 
-export interface RewardConfigDto {
-  rewardValue: string;
-  rewardType: string;
-  maximumReward: number;
+export interface RequireGradeCounts {
+    "A-"?: number;
+    "S-"?: number;
 }

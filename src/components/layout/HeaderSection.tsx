@@ -2,7 +2,12 @@
 import React from "react";
 import Image from "next/image";
 import { getSummonerIcon } from "@/utils/helper";
-import { handleUserUpdate } from "@/lib/backgroundMatchFetcher";
+import {
+  handleUserUpdate,
+  handleUserChampionMastery,
+  handleUserRecentlyPlayedUpdate,
+} from "@/lib/backgroundApiFetcher";
+
 interface HeaderSectionProps {
   summoner: any;
   account: any;
@@ -19,6 +24,18 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
     setLoading(true);
     try {
       await handleUserUpdate(region, account.gameName, account.tagLine);
+      await handleUserChampionMastery(
+        region,
+        account.gameName,
+        account.tagLine
+      );
+      await handleUserRecentlyPlayedUpdate(
+        region,
+        account.gameName,
+        account.tagLine
+      );
+      // Forcer le rafraîchissement des colonnes (LeftColumn, CenterColumn)
+      window.location.reload();
     } catch (e) {
       // Optionnel : gestion d'erreur utilisateur
     }

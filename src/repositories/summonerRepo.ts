@@ -26,6 +26,30 @@ export async function getOrCreateSummoner(
   return summoner;
 }
 
+export async function insertOrUpdateChampionMastery(
+  region: string,
+  name: string,
+  tagline: string,
+  championId: number,
+  championLevel: number,
+  championPoints: number
+) {
+  const db = await connectToDatabase();
+  const collection = db.collection<SummonerCollection>("summoners");
+  await collection.updateOne(
+    { region, name, tagline },
+    {
+      $set: {
+        [`championMastery.${championId}`]: {
+          championLevel,
+          championPoints,
+        },
+      },
+    }
+  );
+}
+
+
 export async function setFetchOldGames(
   region: string,
   name: string,

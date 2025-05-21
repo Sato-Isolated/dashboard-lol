@@ -119,3 +119,100 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 For any questions or contributions, open an issue or PR on this repo.
 
 </details>
+
+```
+dashboard-lol
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package.json
+├─ pnpm-lock.yaml
+├─ pnpm-workspace.yaml
+├─ postcss.config.mjs
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ src
+│  ├─ app
+│  │  ├─ api
+│  │  │  ├─ matches
+│  │  │  │  └─ route.ts
+│  │  │  └─ update-matches
+│  │  │     └─ route.ts
+│  │  ├─ favicon.ico
+│  │  ├─ globals.css
+│  │  ├─ layout.tsx
+│  │  ├─ page.tsx
+│  │  ├─ README.md
+│  │  └─ [region]
+│  │     └─ summoner
+│  │        └─ [name]
+│  │           └─ [tagline]
+│  │              └─ page.tsx
+│  ├─ components
+│  │  ├─ layout
+│  │  │  ├─ CenterColumn.tsx
+│  │  │  ├─ header.tsx
+│  │  │  ├─ HeaderSection.tsx
+│  │  │  ├─ LeftColumn.tsx
+│  │  │  ├─ MainLayout.tsx
+│  │  │  └─ RightColumn.tsx
+│  │  ├─ match
+│  │  │  ├─ MatchCard.tsx
+│  │  │  └─ TabsSection.tsx
+│  │  ├─ README.md
+│  │  └─ SearchBar.tsx
+│  ├─ context
+│  │  ├─ README.md
+│  │  └─ UserContext.tsx
+│  ├─ db
+│  │  └─ init.ts
+│  ├─ lib
+│  │  ├─ backgroundMatchFetcher.ts
+│  │  ├─ mongo.ts
+│  │  └─ summoner.ts
+│  ├─ repositories
+│  │  ├─ matchRepo.ts
+│  │  └─ summonerRepo.ts
+│  ├─ scripts
+│  │  ├─ fetchAndStoreMasteries.ts
+│  │  └─ fetchAndStoreMatches.ts
+│  ├─ services
+│  │  ├─ lol
+│  │  │  ├─ accountService.ts
+│  │  │  ├─ champion-masteryService.ts
+│  │  │  ├─ championService.ts
+│  │  │  ├─ data.json
+│  │  │  ├─ matchService.ts
+│  │  │  ├─ RiotApiClient.ts
+│  │  │  ├─ riotServiceFactory.ts
+│  │  │  └─ summonerService.ts
+│  │  └─ README.md
+│  ├─ styles
+│  │  └─ README.md
+│  ├─ types
+│  │  ├─ api
+│  │  │  ├─ account.d.ts
+│  │  │  ├─ champion-mastery.d.ts
+│  │  │  ├─ champion.d.ts
+│  │  │  ├─ match.d.ts
+│  │  │  ├─ platformregion.ts
+│  │  │  ├─ regions.ts
+│  │  │  └─ summoners.d.ts
+│  │  ├─ data
+│  │  │  └─ champion.ts
+│  │  ├─ README.md
+│  │  ├─ schema
+│  │  │  ├─ MatchCollection.ts
+│  │  │  └─ SummonerCollection.ts
+│  │  └─ ui-match.ts
+│  └─ utils
+│     ├─ formatName.ts
+│     ├─ helper.ts
+│     └─ README.md
+└─ tsconfig.json
+
+```
