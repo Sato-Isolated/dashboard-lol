@@ -12,12 +12,22 @@ export async function fetchSummonerFull(
   tagline: string
 ) {
   const accountApi = createAccountService(platformRegion);
+
+  // DEBUG: log les paramètres envoyés à l'API Riot
+  console.log("[fetchSummonerFull] getAccountByRiotId:", { name, tagline });
   const account = await accountApi.getAccountByRiotId(name, tagline);
 
-  if (!account) return null;
+  if (!account) {
+    console.error("[fetchSummonerFull] Account not found for:", { name, tagline });
+    return null;
+  }
 
   const summonerApi = createSummonerService(platformRegion);
   const summonerDto = await summonerApi.getSummonerByPuuid(account.puuid);
+  if (!summonerDto) {
+    console.error("[fetchSummonerFull] Summoner not found for puuid:", account.puuid);
+    return null;
+  }
 
   // Récupération des leagues/rangs
   let leagues: LeagueEntry[] = [];
@@ -30,14 +40,28 @@ export async function fetchSummonerFull(
   }
 
   // Ajout récupération du score ARAM depuis la base
-  const dbSummoner = await getSummoner(platformRegion, account.gameName, tagline);
+  const dbSummoner = await getSummoner(
+    platformRegion,
+    account.gameName,
+    tagline
+  );
   const aramScore = dbSummoner?.aramScore ?? 0;
 
-  const version = await fetch(
-    "https://ddragon.leagueoflegends.com/api/versions.json"
-  )
-    .then((res) => res.json())
-    .then((versions) => versions[0]);
+  // Récupération sécurisée de la version du jeu
+  let version = "latest";
+  try {
+    const res = await fetch(
+      "https://ddragon.leagueoflegends.com/api/versions.json"
+    );
+    if (res.ok) {
+      const versions = await res.json();
+      if (Array.isArray(versions) && versions.length > 0) {
+        version = versions[0];
+      }
+    }
+  } catch (e) {
+    version = "latest";
+  }
 
   const summoner = {
     ...summonerDto,

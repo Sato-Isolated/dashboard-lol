@@ -8,7 +8,7 @@ export abstract class RiotApiClient {
   private lastSecond = Date.now();
   private lastTwoMinutes = Date.now();
 
-  constructor( region: string) {
+  constructor(region: string) {
     const key = process.env.RIOT_API_KEY;
     if (!key) throw new Error("Missing RIOT_API_KEY in environment variables");
     this.apiKey = key;
@@ -60,6 +60,12 @@ export abstract class RiotApiClient {
       throw new Error(`Error fetching data: ${response.statusText}`);
     }
 
-    return response.json();
+    // Check for empty body before parsing JSON
+    const text = await response.text();
+    if (!text) {
+      // Optionally: throw new Error('Empty response body');
+      return null as any;
+    }
+    return JSON.parse(text);
   }
 }

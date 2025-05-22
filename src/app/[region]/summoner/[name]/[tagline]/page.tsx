@@ -14,6 +14,7 @@ interface PageParams {
 
 export default async function Page(props: { params: Promise<PageParams> }) {
   const params = await props.params;
+  console.log("[SummonerPage] params:", params);
   const { region, name, tagline } = params;
   const data = await fetchSummonerFull(region, name, tagline);
 
