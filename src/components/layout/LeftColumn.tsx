@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getChampionNameFromId } from "@/utils/helper";
-import championData from "@/../public/assets/data/en_US/champion.json";
-import type { UIRecentlyPlayed, UIMastery } from "@/types/ui-leftcolumn";
+import type { UIRecentlyPlayed } from "@/types/ui-leftcolumn";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { useAccountSummoner } from "@/hooks/useAccountSummoner";
 

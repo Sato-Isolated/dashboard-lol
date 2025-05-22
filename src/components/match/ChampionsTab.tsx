@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import championData from "@/../public/assets/data/en_US/champion.json";
 import { getChampionIcon } from "@/utils/helper";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
+import Image from "next/image";
 
 interface ChampionStats {
   champion: string;
@@ -13,17 +14,6 @@ interface ChampionStats {
   deaths: number;
   assists: number;
 }
-
-const sortOptions = [
-  { key: "champion", label: "Champion" },
-  { key: "games", label: "Parties" },
-  { key: "wins", label: "Victoires" },
-  { key: "winrate", label: "Winrate" },
-  { key: "kda", label: "KDA" },
-  { key: "kills", label: "Kills" },
-  { key: "deaths", label: "Deaths" },
-  { key: "assists", label: "Assists" },
-];
 
 const ChampionsTab: React.FC = () => {
   const { effectiveRegion, effectiveTagline, effectiveName } =
@@ -173,9 +163,11 @@ const ChampionsTab: React.FC = () => {
             return (
               <tr key={champ.champion} className="hover:bg-base-200">
                 <td className="flex items-center gap-2">
-                  <img
+                  <Image
                     src={getChampionIcon(champ.champion)}
                     alt={champ.champion}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded"
                   />
                   <span>{champInfo ? champInfo.name : champ.champion}</span>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import championData from "@/../public/assets/data/en_US/champion.json";
 import { getChampionIcon } from "@/utils/helper";
+import Image from "next/image";
 
 interface Mastery {
   championId: number;
@@ -74,11 +75,13 @@ const MasteryTab: React.FC = () => {
             return (
               <tr key={m.championId} className="hover:bg-base-200">
                 <td className="flex items-center gap-2">
-                  <img
+                  <Image
                     src={getChampionIcon(
                       champ ? champ.id : String(m.championId)
                     )}
                     alt={champ ? champ.name : String(m.championId)}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded"
                   />
                   <span>{champ ? champ.name : m.championId}</span>

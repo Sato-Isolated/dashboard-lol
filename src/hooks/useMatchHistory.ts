@@ -27,15 +27,20 @@ export function useMatchHistory(): {
           effectiveName
         )}&region=${encodeURIComponent(
           effectiveRegion
-        )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${start}&count=${count}`
+        )}&tagline=${encodeURIComponent(
+          effectiveTagline
+        )}&start=${start}&count=${count}`
       : null;
 
-  const { data, error, loading } = useApiResource<unknown>(url, cacheKey);
+  const { data, error, loading } = useApiResource<{ data: Match[] }>(
+    url,
+    cacheKey
+  );
 
   useEffect(() => {
     if (!data) return;
-    const matchesArr = (data as any)?.data || [];
-    const uiMatches = (matchesArr as Match[]).map((m) =>
+    const matchesArr = data.data || [];
+    const uiMatches = matchesArr.map((m) =>
       mapRiotMatchToUIMatch(m, effectiveName)
     );
     setMatches(resetFlag ? uiMatches : [...matches, ...uiMatches]);

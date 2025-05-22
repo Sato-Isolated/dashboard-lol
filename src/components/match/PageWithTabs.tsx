@@ -1,8 +1,7 @@
 "use client";
 import React from "react";
-import TabsSection, { Tab } from "@/components/match/TabsSection";
 
-const tabs: Tab[] = [
+const tabs = [
   { label: "Summary", key: "summary" },
   { label: "Champions", key: "champions" },
   { label: "Mastery", key: "mastery" },

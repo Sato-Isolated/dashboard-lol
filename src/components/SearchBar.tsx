@@ -21,7 +21,9 @@ const SearchBar: React.FC = () => {
   );
   const [tagline, setTagline] = useState<string>(effectiveTagline || "");
   const [summonerName, setSummonerName] = useState<string>(effectiveName || "");
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<
+    { name: string; tagline: string; region: string }[]
+  >([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -145,7 +147,7 @@ const SearchBar: React.FC = () => {
               const s = suggestions[highlightedIndex];
               setSummonerName(s.name);
               setTagline(s.tagline);
-              setRegion(s.region);
+              setRegion(s.region as PlatformRegion);
               setShowSuggestions(false);
             }
           }}
@@ -196,7 +198,7 @@ const SearchBar: React.FC = () => {
                 onClick={() => {
                   setSummonerName(s.name);
                   setTagline(s.tagline);
-                  setRegion(s.region);
+                  setRegion(s.region as PlatformRegion);
                   setShowSuggestions(false);
                 }}
                 onMouseEnter={() => setHighlightedIndex(i)}

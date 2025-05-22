@@ -40,9 +40,13 @@ const themes = [
   "abyss",
 ];
 
-const ThemeContext = createContext({
-  theme: "light",
-  setTheme: (theme: string) => {},
+interface ThemeContextType {
+  setTheme: (theme: string) => void;
+  themes: string[];
+}
+
+const ThemeContext = createContext<ThemeContextType>({
+  setTheme: () => {},
   themes,
 });
 
@@ -62,7 +66,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const setTheme = (t: string) => setThemeState(t);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, themes }}>
+    <ThemeContext.Provider value={{ setTheme, themes }}>
       {children}
     </ThemeContext.Provider>
   );

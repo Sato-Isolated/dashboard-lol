@@ -30,20 +30,24 @@ function saveFavorites(favs: Favorite[]) {
 }
 
 const HeaderSection: React.FC = () => {
-  console.log('HeaderSection render');
+  console.log("HeaderSection render");
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
   const {
     account,
     summoner,
     loading: loadingSummoner,
-    error: errorSummoner
+    error: errorSummoner,
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const setUser = useUserStore((s) => s.setUser);
   const [favorites, setFavorites] = React.useState<Favorite[]>([]);
   const [isFav, setIsFav] = React.useState(false);
   const [shareMsg, setShareMsg] = React.useState("");
-  const { loading: updateUserDataLoading, error: updateUserDataError, updateUserData } = useUpdateUserData();
+  const {
+    loading: updateUserDataLoading,
+    error: updateUserDataError,
+    updateUserData,
+  } = useUpdateUserData();
 
   React.useEffect(() => {
     const favs = getFavorites();
@@ -59,7 +63,7 @@ const HeaderSection: React.FC = () => {
   }, [effectiveRegion, effectiveTagline, effectiveName]);
 
   const handleToggleFavorite = () => {
-    let favs = getFavorites();
+    const favs = getFavorites();
     const idx = favs.findIndex(
       (f) =>
         f.region === effectiveRegion &&
@@ -69,7 +73,11 @@ const HeaderSection: React.FC = () => {
     if (idx !== -1) {
       favs.splice(idx, 1);
     } else {
-      favs.push({ region: effectiveRegion, tagline: effectiveTagline, name: effectiveName });
+      favs.push({
+        region: effectiveRegion,
+        tagline: effectiveTagline,
+        name: effectiveName,
+      });
     }
     saveFavorites(favs);
     setFavorites(favs);
@@ -77,7 +85,9 @@ const HeaderSection: React.FC = () => {
   };
 
   const handleShare = () => {
-    const url = `${window.location.origin}/${effectiveRegion}/summoner/${encodeURIComponent(
+    const url = `${
+      window.location.origin
+    }/${effectiveRegion}/summoner/${encodeURIComponent(
       effectiveName
     )}/${encodeURIComponent(effectiveTagline)}`;
     navigator.clipboard.writeText(url);
@@ -86,8 +96,14 @@ const HeaderSection: React.FC = () => {
   };
 
   const handleSelectFavorite = (fav: Favorite) => {
-    setUser({ region: fav.region, tagline: fav.tagline, summonerName: fav.name });
-    window.location.href = `/${fav.region}/summoner/${encodeURIComponent(fav.name)}/${encodeURIComponent(fav.tagline)}`;
+    setUser({
+      region: fav.region,
+      tagline: fav.tagline,
+      summonerName: fav.name,
+    });
+    window.location.href = `/${fav.region}/summoner/${encodeURIComponent(
+      fav.name
+    )}/${encodeURIComponent(fav.tagline)}`;
   };
 
   if (loadingSummoner) return <div>Chargement...</div>;
@@ -122,10 +138,13 @@ const HeaderSection: React.FC = () => {
       <div className="flex-1 flex flex-col md:flex-row justify-end items-center gap-4 w-full md:w-auto">
         <div className="flex flex-col gap-2 w-full md:w-auto items-center">
           <button
-            className={`btn btn-sm btn-outline flex items-center gap-2 w-full justify-center ${isFav ? "btn-success" : ""}`}
+            className={`btn btn-sm btn-outline flex items-center gap-2 w-full justify-center ${
+              isFav ? "btn-success" : ""
+            }`}
             onClick={handleToggleFavorite}
           >
-            <span>⭐</span> {isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
+            <span>⭐</span>{" "}
+            {isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
           </button>
           <button
             className="btn btn-sm btn-outline flex items-center gap-2 w-full justify-center"
@@ -163,7 +182,9 @@ const HeaderSection: React.FC = () => {
               >
                 <span>
                   {fav.name}
-                  <span className="text-base-content/40 ml-1">#{fav.tagline}</span>
+                  <span className="text-base-content/40 ml-1">
+                    #{fav.tagline}
+                  </span>
                 </span>
                 <span className="text-xs">{fav.region.toUpperCase()}</span>
               </button>
