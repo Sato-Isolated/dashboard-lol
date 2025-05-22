@@ -3,6 +3,7 @@ import {
   createAccountService,
   createSummonerService,
 } from "@/services/lol/riotServiceFactory";
+import { getSummoner } from "@/repositories/summonerRepo";
 import type { LeagueEntry } from "@/types/api/summoners";
 
 export async function fetchSummonerFull(
@@ -28,6 +29,10 @@ export async function fetchSummonerFull(
     }
   }
 
+  // Ajout récupération du score ARAM depuis la base
+  const dbSummoner = await getSummoner(platformRegion, account.gameName, tagline);
+  const aramScore = dbSummoner?.aramScore ?? 0;
+
   const version = await fetch(
     "https://ddragon.leagueoflegends.com/api/versions.json"
   )
@@ -45,5 +50,6 @@ export async function fetchSummonerFull(
     account,
     summoner,
     leagues,
+    aramScore,
   };
 }

@@ -49,7 +49,6 @@ export async function insertOrUpdateChampionMastery(
   );
 }
 
-
 export async function setFetchOldGames(
   region: string,
   name: string,
@@ -86,4 +85,19 @@ export async function getSummoner(
   return db
     .collection<SummonerCollection>("summoners")
     .findOne({ region, name, tagline });
+}
+
+export async function setAramScore(
+  region: string,
+  name: string,
+  tagline: string,
+  aramScore: number
+) {
+  const db = await connectToDatabase();
+  await db
+    .collection<SummonerCollection>("summoners")
+    .updateOne(
+      { region, name, tagline },
+      { $set: { aramScore } }
+    );
 }

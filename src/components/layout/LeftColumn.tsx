@@ -3,15 +3,19 @@ import React, { useEffect, useState } from "react";
 import type { UIRecentlyPlayed } from "@/types/ui-leftcolumn";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { useAccountSummoner } from "@/hooks/useAccountSummoner";
+import { getAramRank } from "@/utils/aramRankSystem";
+import RankBadge from "./RankBadge";
 
 const LeftColumn: React.FC = () => {
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
-  const { leagues } = useAccountSummoner(
+  const { leagues, aramScore = 0 } = useAccountSummoner(
     effectiveRegion,
     effectiveName,
     effectiveTagline
   );
+  const userAramScore = aramScore;
+  const aramRank = getAramRank(userAramScore, "fr"); // 'fr' or 'en' for language
 
   const [recentlyPlayed, setRecentlyPlayed] = useState<UIRecentlyPlayed[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -51,34 +55,8 @@ const LeftColumn: React.FC = () => {
           Rank & Badges
         </span>
         <div className="flex flex-col gap-2 w-full">
-          {leagues.length === 0 ? (
-            <span className="badge badge-outline text-base-content/50 text-xs py-2 px-4">
-              Unranked
-            </span>
-          ) : (
-            leagues.map((rank, i) => (
-              <div
-                key={i}
-                className="flex justify-between items-center w-full bg-base-200 rounded-lg px-3 py-2 mb-1 border border-base-300 hover:shadow-md transition"
-              >
-                <span className="font-semibold text-base-content/90">
-                  {rank.queueType.replace("RANKED_", "")}
-                </span>
-                <span className="text-primary font-bold">
-                  {rank.tier} {rank.rank}{" "}
-                  <span className="text-xs text-base-content/60">
-                    ({rank.leaguePoints} LP)
-                  </span>
-                </span>
-                <span className="text-xs text-success font-semibold">
-                  {rank.wins}W
-                </span>
-                <span className="text-xs text-error font-semibold">
-                  {rank.losses}L
-                </span>
-              </div>
-            ))
-          )}
+          {/* ARAM Rank Display */}
+          <RankBadge aramScore={aramScore} leagues={leagues} lang="fr" />
         </div>
       </div>
       <div className="card bg-base-100 rounded-xl shadow-xl p-4 w-full flex flex-col items-center border border-primary/20">

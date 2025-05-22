@@ -14,6 +14,25 @@ export function useUpdateUserData() {
       await handleUserUpdate(effectiveRegion, effectiveName, effectiveTagline);
       await handleUserChampionMastery(effectiveRegion, effectiveName, effectiveTagline);
       await handleUserRecentlyPlayedUpdate(effectiveRegion, effectiveName, effectiveTagline);
+      // Appel à syncAramScore via l'API
+      const res = await fetch("/api/summoner/aram-score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          region: effectiveRegion,
+          name: effectiveName,
+          tagline: effectiveTagline,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.calculated) {
+          // Optionnel: afficher une notification "Score ARAM recalculé"
+          // alert("Score ARAM recalculé: " + data.aramScore);
+        } else {
+          // Optionnel: afficher une notification "Score ARAM déjà calculé"
+        }
+      }
       window.location.reload();
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Erreur lors de la mise à jour.");

@@ -6,6 +6,7 @@ import { useAccountSummoner } from "@/hooks/useAccountSummoner";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { useUserStore } from "@/store/userStore";
 import { useUpdateUserData } from "@/hooks/useUpdateUserData";
+import { getAramRank } from "@/utils/aramRankSystem";
 
 interface Favorite {
   region: string;
@@ -38,11 +39,13 @@ const HeaderSection: React.FC = () => {
     summoner,
     loading: loadingSummoner,
     error: errorSummoner,
+    refetch: refetchSummoner,
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const setUser = useUserStore((s) => s.setUser);
   const [favorites, setFavorites] = React.useState<Favorite[]>([]);
   const [isFav, setIsFav] = React.useState(false);
   const [shareMsg, setShareMsg] = React.useState("");
+  const [rankMsg, setRankMsg] = React.useState<string>("");
   const {
     loading: updateUserDataLoading,
     error: updateUserDataError,
@@ -106,6 +109,19 @@ const HeaderSection: React.FC = () => {
     )}/${encodeURIComponent(fav.tagline)}`;
   };
 
+  const handleUpdateAndRank = async () => {
+    await updateUserData();
+    await refetchSummoner();
+    setTimeout(() => {
+      if (summoner) {
+        const aramScore = (summoner as any).aramScore ?? 0;
+        const aramRank = getAramRank(aramScore, "fr");
+        setRankMsg(`Nouveau rang ARAM : ${aramRank.displayName} (score ${aramScore})`);
+        setTimeout(() => setRankMsg("") , 2500);
+      }
+    }, 300);
+  };
+
   if (loadingSummoner) return <div>Chargement...</div>;
   if (errorSummoner || !account || !summoner)
     return <div className="text-error">Erreur de chargement du joueur.</div>;
@@ -156,7 +172,7 @@ const HeaderSection: React.FC = () => {
         </div>
         <button
           className="btn btn-primary btn-sm"
-          onClick={updateUserData}
+          onClick={handleUpdateAndRank}
           disabled={updateUserDataLoading}
         >
           {updateUserDataLoading ? "Mise à jour..." : "Update"}
@@ -197,6 +213,7 @@ const HeaderSection: React.FC = () => {
           {updateUserDataError}
         </div>
       )}
+      {rankMsg && <span className="text-info text-xs animate-fade-in mt-1">{rankMsg}</span>}
     </div>
   );
 };
