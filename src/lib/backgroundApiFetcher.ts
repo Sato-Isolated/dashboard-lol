@@ -11,7 +11,7 @@ export async function handleUserUpdate(
   name: string,
   tagline: string
 ) {
-  const res = await fetch("/api/update-matches", {
+  const res = await fetch("/api/summoner/matches", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),
@@ -24,7 +24,7 @@ export async function handleUserChampionMastery(
   name: string,
   tagline: string
 ) {
-  const res = await fetch("/api/update-masteries", {
+  const res = await fetch("/api/summoner/masteries", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),
@@ -37,7 +37,7 @@ export async function handleUserRecentlyPlayedUpdate(
   name: string,
   tagline: string
 ) {
-  const res = await fetch("/api/leftcolumn/recently-played", {
+  const res = await fetch("/api/summoner/recently-played", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),

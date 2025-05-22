@@ -2,6 +2,7 @@
 
 export interface UIMatch {
   champion: string;
+  gameId: string;
   result: "Win" | "Loss";
   kda: string;
   date: string;

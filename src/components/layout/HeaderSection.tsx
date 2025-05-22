@@ -2,15 +2,35 @@
 import React from "react";
 import Image from "next/image";
 import { getSummonerIcon } from "@/utils/helper";
-import {
-  handleUserUpdate,
-  handleUserChampionMastery,
-  handleUserRecentlyPlayedUpdate,
-} from "@/lib/backgroundApiFetcher";
 import { useAccountSummoner } from "@/hooks/useAccountSummoner";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
+import { useUserStore } from "@/store/userStore";
+import { useUpdateUserData } from "@/hooks/useUpdateUserData";
+
+interface Favorite {
+  region: string;
+  tagline: string;
+  name: string;
+}
+
+const FAVORITES_KEY = "lol-favorites";
+
+function getFavorites(): Favorite[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites(favs: Favorite[]) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+}
 
 const HeaderSection: React.FC = () => {
+  console.log('HeaderSection render');
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
   const {
@@ -19,29 +39,59 @@ const HeaderSection: React.FC = () => {
     loading: loadingSummoner,
     error: errorSummoner
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
+  const setUser = useUserStore((s) => s.setUser);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const handleUpdate = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await handleUserUpdate(effectiveRegion, effectiveName, effectiveTagline);
-      await handleUserChampionMastery(
-        effectiveRegion,
-        effectiveName,
-        effectiveTagline
-      );
-      await handleUserRecentlyPlayedUpdate(
-        effectiveRegion,
-        effectiveName,
-        effectiveTagline
-      );
-      window.location.reload();
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Erreur lors de la mise à jour.");
+  const [favorites, setFavorites] = React.useState<Favorite[]>([]);
+  const [isFav, setIsFav] = React.useState(false);
+  const [shareMsg, setShareMsg] = React.useState("");
+  const { loading: updateUserDataLoading, error: updateUserDataError, updateUserData } = useUpdateUserData();
+
+  React.useEffect(() => {
+    const favs = getFavorites();
+    setFavorites(favs);
+    setIsFav(
+      favs.some(
+        (f) =>
+          f.region === effectiveRegion &&
+          f.tagline === effectiveTagline &&
+          f.name === effectiveName
+      )
+    );
+  }, [effectiveRegion, effectiveTagline, effectiveName]);
+
+  const handleToggleFavorite = () => {
+    let favs = getFavorites();
+    const idx = favs.findIndex(
+      (f) =>
+        f.region === effectiveRegion &&
+        f.tagline === effectiveTagline &&
+        f.name === effectiveName
+    );
+    if (idx !== -1) {
+      favs.splice(idx, 1);
+    } else {
+      favs.push({ region: effectiveRegion, tagline: effectiveTagline, name: effectiveName });
     }
-    setLoading(false);
+    saveFavorites(favs);
+    setFavorites(favs);
+    setIsFav(idx === -1);
   };
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/${effectiveRegion}/summoner/${encodeURIComponent(
+      effectiveName
+    )}/${encodeURIComponent(effectiveTagline)}`;
+    navigator.clipboard.writeText(url);
+    setShareMsg("Lien copié !");
+    setTimeout(() => setShareMsg(""), 1500);
+  };
+
+  const handleSelectFavorite = (fav: Favorite) => {
+    setUser({ region: fav.region, tagline: fav.tagline, summonerName: fav.name });
+    window.location.href = `/${fav.region}/summoner/${encodeURIComponent(fav.name)}/${encodeURIComponent(fav.tagline)}`;
+  };
+
   if (loadingSummoner) return <div>Chargement...</div>;
   if (errorSummoner || !account || !summoner)
     return <div className="text-error">Erreur de chargement du joueur.</div>;
@@ -71,18 +121,61 @@ const HeaderSection: React.FC = () => {
           </span>
         </div>
       </div>
-      <div className="flex-1 flex justify-end items-center gap-2 w-full md:w-auto">
+      <div className="flex-1 flex flex-col md:flex-row justify-end items-center gap-4 w-full md:w-auto">
+        <div className="flex flex-col gap-2 w-full md:w-auto items-center">
+          <button
+            className={`btn btn-sm btn-outline flex items-center gap-2 w-full justify-center ${isFav ? "btn-success" : ""}`}
+            onClick={handleToggleFavorite}
+          >
+            <span>⭐</span> {isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
+          </button>
+          <button
+            className="btn btn-sm btn-outline flex items-center gap-2 w-full justify-center"
+            onClick={handleShare}
+          >
+            <span>🔗</span> Partager le profil
+          </button>
+          {shareMsg && <span className="text-success text-xs">{shareMsg}</span>}
+        </div>
         <button
           className="btn btn-primary btn-sm"
-          onClick={handleUpdate}
-          disabled={loading}
+          onClick={updateUserData}
+          disabled={updateUserDataLoading}
         >
-          {loading ? "Mise à jour..." : "Update"}
+          {updateUserDataLoading ? "Mise à jour..." : "Update"}
         </button>
       </div>
-      {error && (
+      <div className="flex flex-col items-center w-full md:w-auto">
+        <span className="font-semibold text-base-content mb-2">Favoris</span>
+        <div className="flex flex-col gap-1 w-full">
+          {favorites.length === 0 ? (
+            <span className="text-base-content/50 text-xs">Aucun favori</span>
+          ) : (
+            favorites.map((fav, i) => (
+              <button
+                key={fav.region + fav.tagline + fav.name + i}
+                className={`btn btn-xs btn-outline w-full justify-between ${
+                  fav.region === effectiveRegion &&
+                  fav.tagline === effectiveTagline &&
+                  fav.name === effectiveName
+                    ? "btn-primary"
+                    : ""
+                }`}
+                onClick={() => handleSelectFavorite(fav)}
+              >
+                <span>
+                  {fav.name}
+                  <span className="text-base-content/40 ml-1">#{fav.tagline}</span>
+                </span>
+                <span className="text-xs">{fav.region.toUpperCase()}</span>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+      {updateUserDataError && (
         <div className="text-error text-xs text-center w-full mt-2">
-          {error}
+          {updateUserDataError}
         </div>
       )}
     </div>

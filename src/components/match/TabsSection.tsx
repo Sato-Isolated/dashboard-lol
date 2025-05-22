@@ -1,15 +1,25 @@
 import React from "react";
 
-const fakeTabs = [
-  { label: "Summary", active: true },
-  { label: "Champions", active: false },
-  { label: "Mastery", active: false },
-];
+export interface Tab {
+  label: string;
+  key: string;
+}
 
-const TabsSection: React.FC = () => (
+interface TabsSectionProps {
+  tabs: Tab[];
+  activeTab: string;
+  onTabChange: (key: string) => void;
+}
+
+const TabsSection: React.FC<TabsSectionProps> = ({ tabs, activeTab, onTabChange }) => (
   <div className="flex gap-2 w-full border-b border-base-300 pb-2">
-    {fakeTabs.map((tab) => (
-      <button key={tab.label} className={`tab${tab.active ? " tab-active" : ""}`}>
+    {tabs.map((tab) => (
+      <button
+        key={tab.key}
+        className={`tab${activeTab === tab.key ? " tab-active" : ""}`}
+        onClick={() => onTabChange(tab.key)}
+        type="button"
+      >
         {tab.label}
       </button>
     ))}

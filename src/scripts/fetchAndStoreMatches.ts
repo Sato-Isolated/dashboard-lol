@@ -98,7 +98,7 @@ export async function fetchAndStoreMatches(
     await new Promise((res) => setTimeout(res, 1200));
   }
 
-  const mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
+  let mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
 
   // Fetch and store each match
   for (const matchId of allMatchIds) {

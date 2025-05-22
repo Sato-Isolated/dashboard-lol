@@ -11,7 +11,6 @@ const LeftColumn: React.FC = () => {
   const { leagues } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
 
   const [recentlyPlayed, setRecentlyPlayed] = useState<UIRecentlyPlayed[]>([]);
-  const [mastery, setMastery] = useState<UIMastery[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,7 +18,7 @@ const LeftColumn: React.FC = () => {
     setFetchError(null);
     // Fetch recently played with
     fetch(
-      `/api/leftcolumn/recently-played?name=${encodeURIComponent(
+      `/api/summoner/recently-played?name=${encodeURIComponent(
         effectiveName
       )}&region=${encodeURIComponent(
         effectiveRegion
@@ -32,21 +31,7 @@ const LeftColumn: React.FC = () => {
           );
         return res.json();
       })
-      .then(setRecentlyPlayed)
-      .catch((e) => setFetchError(e.message));
-    // Fetch mastery
-    fetch(
-      `/api/leftcolumn/mastery?name=${encodeURIComponent(
-        effectiveName
-      )}&region=${encodeURIComponent(
-        effectiveRegion
-      )}&tagline=${encodeURIComponent(effectiveTagline)}`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error("Erreur lors du chargement des masteries");
-        return res.json();
-      })
-      .then(setMastery)
+      .then((data) => setRecentlyPlayed(data.data || []))
       .catch((e) => setFetchError(e.message));
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
@@ -98,29 +83,6 @@ const LeftColumn: React.FC = () => {
                 <span className="text-xs">
                   {p.winrate}% WR ({p.wins}W/{p.games - p.wins}L)
                 </span>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-      <div className="bg-base-100 rounded-xl shadow p-4 w-full flex flex-col items-center">
-        <span className="font-semibold text-base-content/80 mb-2">Mastery</span>
-        <div className="flex flex-col gap-1 w-full">
-          {mastery.length === 0 ? (
-            <span className="text-base-content/50 text-xs">No data</span>
-          ) : (
-            mastery.map((m, i) => (
-              <div
-                key={i}
-                className="flex justify-between w-full text-base-content/80"
-              >
-                <span>
-                  {getChampionNameFromId(
-                    m.championId,
-                    championData.data as Record<string, import("@/types/data/champion").ChampionData>
-                  )}
-                </span>
-                <span>{m.championPoints.toLocaleString()} pts</span>
               </div>
             ))
           )}

@@ -1,10 +1,6 @@
-import MainLayout from "@/components/layout/MainLayout";
+
 import { fetchSummonerFull } from "@/lib/summoner";
-import HeaderSection from "@/components/layout/HeaderSection";
-import TabsSection from "@/components/match/TabsSection";
-import LeftColumn from "@/components/layout/LeftColumn";
-import CenterColumn from "@/components/layout/CenterColumn";
-import RightColumn from "@/components/layout/RightColumn";
+import PageWithTabs from "./PageWithTabs";
 
 interface PageParams {
   region: string; // ex: "euw1"
@@ -14,22 +10,10 @@ interface PageParams {
 
 export default async function Page({ params }: { params: PageParams }) {
   const { region, name, tagline } = await params;
-  const data = await fetchSummonerFull(region, name, tagline); // ✅ CLASSIQUE
+  const data = await fetchSummonerFull(region, name, tagline);
 
   if (!data)
     return <div className="text-center text-error mt-8">Account not found</div>;
 
-  return (
-    <MainLayout>
-      <div className="flex flex-col gap-8 w-full">
-        <HeaderSection/>
-        <TabsSection />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
-          <LeftColumn />
-          <CenterColumn />
-          <RightColumn />
-        </div>
-      </div>
-    </MainLayout>
-  );
+  return <PageWithTabs data={data} />;
 }

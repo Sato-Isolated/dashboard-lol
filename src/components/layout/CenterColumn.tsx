@@ -104,9 +104,9 @@ const CenterColumn: React.FC = () => {
           {matches.length === 0 && !loading && !parseError ? (
             <span className="text-base-content/50 text-xs">No data</span>
           ) : (
-            matches.map((match) => (
+            matches.map((match, idx) => (
               <MatchCard
-                key={match.champion + match.date + match.mode}
+                key={match.gameId || idx}
                 match={match}
               />
             ))

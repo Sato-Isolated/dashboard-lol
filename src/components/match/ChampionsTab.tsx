@@ -1,0 +1,150 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import championData from "@/../public/assets/data/en_US/champion.json";
+import { getChampionIcon } from "@/utils/helper";
+import { useEffectiveUser } from "@/hooks/useEffectiveUser";
+
+interface ChampionStats {
+  champion: string;
+  games: number;
+  wins: number;
+  kda: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+}
+
+const sortOptions = [
+  { key: "champion", label: "Champion" },
+  { key: "games", label: "Parties" },
+  { key: "wins", label: "Victoires" },
+  { key: "winrate", label: "Winrate" },
+  { key: "kda", label: "KDA" },
+  { key: "kills", label: "Kills" },
+  { key: "deaths", label: "Deaths" },
+  { key: "assists", label: "Assists" },
+];
+
+const ChampionsTab: React.FC = () => {
+  const { effectiveRegion, effectiveTagline, effectiveName } = useEffectiveUser();
+  const [stats, setStats] = useState<ChampionStats[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<string>("games");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  useEffect(() => {
+    if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
+    setLoading(true);
+    setError(null);
+    fetch(`/api/stats/champions?name=${encodeURIComponent(effectiveName)}&region=${encodeURIComponent(effectiveRegion)}&tagline=${encodeURIComponent(effectiveTagline)}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Erreur lors du chargement des stats");
+        return res.json();
+      })
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e.message);
+        setLoading(false);
+      });
+  }, [effectiveName, effectiveRegion, effectiveTagline]);
+
+  const getWinrate = (champ: ChampionStats) => champ.games > 0 ? (champ.wins / champ.games) * 100 : 0;
+
+  const sortedStats = [...stats].sort((a, b) => {
+    let aValue = a[sortKey as keyof ChampionStats] ?? 0;
+    let bValue = b[sortKey as keyof ChampionStats] ?? 0;
+    if (sortKey === "winrate") {
+      aValue = getWinrate(a);
+      bValue = getWinrate(b);
+    }
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      return sortDir === "asc"
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue);
+    } else if (typeof aValue === "number" && typeof bValue === "number") {
+      return sortDir === "asc" ? aValue - bValue : bValue - aValue;
+    }
+    return 0;
+  });
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir(key === "champion" ? "asc" : "desc");
+    }
+  };
+
+  if (loading) return <div>Chargement...</div>;
+  if (error) return <div className="text-error">Erreur : {error}</div>;
+  if (!stats || stats.length === 0) return <div>Aucun champion joué.</div>;
+
+  // Calcul des totaux
+  const totalGames = stats.reduce((acc, champ) => acc + champ.games, 0);
+  const totalWins = stats.reduce((acc, champ) => acc + champ.wins, 0);
+  const globalWinrate = totalGames > 0 ? (totalWins / totalGames) * 100 : 0;
+  const globalKda = stats.length > 0 ? (stats.reduce((acc, champ) => acc + champ.kda * champ.games, 0) / totalGames) : 0;
+
+  const sortIcon = (key: string) => {
+    if (sortKey !== key) return <span className="opacity-30">⇅</span>;
+    return sortDir === "asc" ? <span>▲</span> : <span>▼</span>;
+  };
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="table table-zebra">
+        <thead>
+          <tr>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("champion")}>Champion {sortIcon("champion")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("games")}>Parties {sortIcon("games")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("wins")}>Victoires {sortIcon("wins")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("winrate")}>Winrate {sortIcon("winrate")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("kda")}>KDA {sortIcon("kda")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("kills")}>Kills {sortIcon("kills")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("deaths")}>Deaths {sortIcon("deaths")}</th>
+            <th className="cursor-pointer select-none" onClick={() => handleSort("assists")}>Assists {sortIcon("assists")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedStats.map((champ) => {
+            const champInfo = championData.data[champ.champion as keyof typeof championData.data];
+            return (
+              <tr key={champ.champion}>
+                <td className="flex items-center gap-2">
+                  <img src={getChampionIcon(champ.champion)} alt={champ.champion} className="w-8 h-8 rounded" />
+                  <span>{champInfo ? champInfo.name : champ.champion}</span>
+                </td>
+                <td>{champ.games}</td>
+                <td>{champ.wins}</td>
+                <td>{getWinrate(champ).toFixed(1)}%</td>
+                <td>{champ.kda.toFixed(2)}</td>
+                <td>{champ.kills}</td>
+                <td>{champ.deaths}</td>
+                <td>{champ.assists}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          <tr className="font-bold">
+            <td>Total</td>
+            <td>{totalGames}</td>
+            <td>{totalWins}</td>
+            <td>{globalWinrate.toFixed(1)}%</td>
+            <td>{globalKda.toFixed(2)}</td>
+            <td>{stats.reduce((acc, champ) => acc + champ.kills, 0)}</td>
+            <td>{stats.reduce((acc, champ) => acc + champ.deaths, 0)}</td>
+            <td>{stats.reduce((acc, champ) => acc + champ.assists, 0)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+};
+
+export default ChampionsTab; 

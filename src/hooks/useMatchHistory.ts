@@ -23,27 +23,24 @@ export function useMatchHistory(): {
   const cacheKey = `${effectiveRegion}-${effectiveTagline}-${effectiveName}-${start}-${resetFlag}`;
   const url =
     effectiveName && effectiveRegion && effectiveTagline
-      ? `/api/matches?name=${encodeURIComponent(
+      ? `/api/summoner/matches?name=${encodeURIComponent(
           effectiveName
         )}&region=${encodeURIComponent(
           effectiveRegion
         )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${start}&count=${count}`
       : null;
 
-  const { data, error, loading } = useApiResource<unknown[]>(url, cacheKey);
+  const { data, error, loading } = useApiResource<unknown>(url, cacheKey);
 
   useEffect(() => {
     if (!data) return;
-    const uiMatches = (data as Match[]).map((m) =>
+    const matchesArr = (data as any)?.data || [];
+    const uiMatches = (matchesArr as Match[]).map((m) =>
       mapRiotMatchToUIMatch(m, effectiveName)
     );
     setMatches(resetFlag ? uiMatches : [...matches, ...uiMatches]);
     setHasMore(uiMatches.length === count);
-    if (resetFlag) {
-      setStart(count);
-    } else {
-      setStart((prev) => prev + count);
-    }
+    // Removed setStart from here to avoid infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, resetFlag]);
 
@@ -55,9 +52,10 @@ export function useMatchHistory(): {
         setMatches([]);
       } else {
         setResetFlag(false);
+        setStart((prev) => prev + count); // increment start only when loading more
       }
     },
-    []
+    [count]
   );
 
   return { matches, error: error || null, loading, hasMore, fetchMatches };
