@@ -12,7 +12,8 @@ interface PageParams {
   tagline: string;
 }
 
-export default async function Page({ params }: { params: PageParams }) {
+export default async function Page(props: { params: Promise<PageParams> }) {
+  const params = await props.params;
   const { region, name, tagline } = params;
   const data = await fetchSummonerFull(region, name, tagline);
 
