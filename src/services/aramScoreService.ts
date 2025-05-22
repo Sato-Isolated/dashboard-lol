@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/mongo";
 import { getSummoner } from "@/repositories/summonerRepo";
 import type { Participant } from "@/types/api/match";
+import type { SummonerCollection } from "@/types/schema/SummonerCollection";
 
 /**
  * Calcule un score ARAM unique pour un joueur sur une partie.
@@ -86,7 +87,7 @@ export function computeAramScore(
 }
 
 export class AramScoreService {
-  static async shouldCalculateAramScore(summoner: any): Promise<boolean> {
+  static async shouldCalculateAramScore(summoner: SummonerCollection): Promise<boolean> {
     return !summoner.aramScoreFirstCalculated;
   }
 
@@ -120,15 +121,7 @@ export class AramScoreService {
       );
       const score = computeAramScore(participant, teamParticipants);
       totalScore += score;
-      console.log(
-        `[ARAMScore] Match ${
-          match.metadata?.matchId || "?"
-        } : ${score} points (${participant.win ? "win" : "loss"})`
-      );
     }
-    console.log(
-      `[ARAMScore] Calculated for ${name}#${tagline} (puuid: ${puuid}): ${totalScore} total points on ${matches.length} ARAM games`
-    );
     return totalScore;
   }
 
@@ -152,15 +145,12 @@ export class AramScoreService {
   }
 
   static async syncAramScore(region: string, name: string, tagline: string) {
-    const summoner = await getSummoner(region, name, tagline);
+    const summoner = await getSummoner(region, name, tagline) as SummonerCollection | null;
     if (!summoner) throw new Error("Summoner not found");
 
-    // Cast pour accéder aux champs custom
-    const aramScoreFirstCalculated = (summoner as any)[
-      "aramScoreFirstCalculated"
-    ];
-    const aramScoreLastCheck = (summoner as any)["aramScoreLastCheck"];
-    const aramScore = (summoner as any)["aramScore"];
+    const aramScoreFirstCalculated = summoner.aramScoreFirstCalculated;
+    const aramScoreLastCheck = summoner.aramScoreLastCheck;
+    const aramScore = summoner.aramScore;
 
     if (!aramScoreFirstCalculated) {
       const score = await this.calculateAramScore(region, name, tagline);

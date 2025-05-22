@@ -14,24 +14,18 @@ export async function fetchSummonerFull(
   const accountApi = createAccountService(platformRegion);
 
   // DEBUG: log les paramètres envoyés à l'API Riot
-  console.log("[fetchSummonerFull] getAccountByRiotId:", { name, tagline });
+  // SUPPRIMER: console.log("[fetchSummonerFull] getAccountByRiotId:", { name, tagline });
   const account = await accountApi.getAccountByRiotId(name, tagline);
 
   if (!account) {
-    console.error("[fetchSummonerFull] Account not found for:", {
-      name,
-      tagline,
-    });
+    // SUPPRIMER: console.error("[fetchSummonerFull] Account not found for:", { name, tagline });
     return null;
   }
 
   const summonerApi = createSummonerService(platformRegion);
   const summonerDto = await summonerApi.getSummonerByPuuid(account.puuid);
   if (!summonerDto) {
-    console.error(
-      "[fetchSummonerFull] Summoner not found for puuid:",
-      account.puuid
-    );
+    // SUPPRIMER: console.error("[fetchSummonerFull] Summoner not found for puuid:", account.puuid);
     return null;
   }
 

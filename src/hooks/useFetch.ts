@@ -1,37 +1,27 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import useSWR from "swr";
 
 export function useFetch<T = unknown>(url: string | null, cacheKey: string) {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const cache = useRef<Record<string, T>>({});
+  const fetcher = async (url: string) => {
+    const res = await fetch(url);
+    const json = await res.json();
+    if (!res.ok)
+      throw new Error(json?.error || "Erreur lors du chargement des données");
+    return json;
+  };
 
-  const fetchData = useCallback(async () => {
-    if (!url) return;
-    setLoading(true);
-    setError(null);
-    if (cache.current[cacheKey]) {
-      setData(cache.current[cacheKey]);
-      setLoading(false);
-      return;
-    }
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Erreur lors du chargement des données");
-      const json = await res.json();
-      setData(json);
-      cache.current[cacheKey] = json;
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Erreur lors du chargement des données");
-    } finally {
-      setLoading(false);
-    }
-  }, [url, cacheKey]);
+  const { data, error, isLoading, mutate } = useSWR<T>(
+    url ? [url, cacheKey] : null,
+    ([url]) => fetcher(url)
+  );
 
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, cacheKey]);
-
-  return { data, loading, error, refetch: fetchData };
-} 
+  return {
+    data: data ?? null,
+    loading: isLoading,
+    error: error
+      ? error instanceof Error
+        ? error.message
+        : String(error)
+      : null,
+    refetch: () => mutate(),
+  };
+}

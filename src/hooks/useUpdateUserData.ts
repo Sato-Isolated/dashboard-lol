@@ -1,9 +1,14 @@
 import { useState, useCallback } from "react";
-import { handleUserUpdate, handleUserChampionMastery, handleUserRecentlyPlayedUpdate } from "@/lib/backgroundApiFetcher";
+import {
+  handleUserUpdate,
+  handleUserChampionMastery,
+  handleUserRecentlyPlayedUpdate,
+} from "@/lib/backgroundApiFetcher";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 
 export function useUpdateUserData() {
-  const { effectiveRegion, effectiveName, effectiveTagline } = useEffectiveUser();
+  const { effectiveRegion, effectiveName, effectiveTagline } =
+    useEffectiveUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,8 +17,16 @@ export function useUpdateUserData() {
     setError(null);
     try {
       await handleUserUpdate(effectiveRegion, effectiveName, effectiveTagline);
-      await handleUserChampionMastery(effectiveRegion, effectiveName, effectiveTagline);
-      await handleUserRecentlyPlayedUpdate(effectiveRegion, effectiveName, effectiveTagline);
+      await handleUserChampionMastery(
+        effectiveRegion,
+        effectiveName,
+        effectiveTagline
+      );
+      await handleUserRecentlyPlayedUpdate(
+        effectiveRegion,
+        effectiveName,
+        effectiveTagline
+      );
       // Appel à syncAramScore via l'API
       const res = await fetch("/api/summoner/aram-score", {
         method: "POST",
@@ -33,12 +46,13 @@ export function useUpdateUserData() {
           // Optionnel: afficher une notification "Score ARAM déjà calculé"
         }
       }
-      window.location.reload();
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Erreur lors de la mise à jour.");
+      setError(
+        e instanceof Error ? e.message : "Erreur lors de la mise à jour."
+      );
     }
     setLoading(false);
   }, [effectiveRegion, effectiveName, effectiveTagline]);
 
   return { loading, error, updateUserData };
-} 
+}

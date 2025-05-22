@@ -16,14 +16,16 @@ export async function insertMatch(match: Match) {
     await collection.insertOne(matchDoc);
   } catch (e: unknown) {
     if (e instanceof Error && e.message.includes("duplicate key")) {
-      console.warn(`[Mongo] Match ${matchDoc._id} already exists.`);
+      // console.warn(`[Mongo] Match ${matchDoc._id} already exists.`);
     } else {
       throw e;
     }
   }
 }
 
-export async function getMatchById(matchId: string): Promise<MatchCollection | null> {
+export async function getMatchById(
+  matchId: string
+): Promise<MatchCollection | null> {
   const db = await connectToDatabase();
   return db.collection<MatchCollection>("matches").findOne({ _id: matchId });
 }

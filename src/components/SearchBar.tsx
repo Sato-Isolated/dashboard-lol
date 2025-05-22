@@ -27,6 +27,7 @@ const SearchBar: React.FC = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
   // Préselectionne la région selon la langue/navigateur ou localStorage si aucune région n'est déjà définie
   useEffect(() => {
@@ -63,13 +64,30 @@ const SearchBar: React.FC = () => {
   }, [effectiveRegion, effectiveTagline, effectiveName]);
 
   useEffect(() => {
+    const controller = new AbortController();
     if (summonerName.length >= 2) {
-      fetch(`/api/summoner/search?q=${encodeURIComponent(summonerName)}`)
-        .then((res) => res.json())
-        .then((data) => setSuggestions(data));
+      setSuggestionError(null);
+      fetch(`/api/summoner/search?q=${encodeURIComponent(summonerName)}`, {
+        signal: controller.signal,
+      })
+        .then((res) => {
+          if (!res.ok)
+            throw new Error("Erreur lors de la recherche de joueurs.");
+          return res.json();
+        })
+        .then((data) => setSuggestions(data))
+        .catch((e) => {
+          if (e.name === "AbortError") return;
+          setSuggestionError(
+            e.message || "Erreur lors de la recherche de joueurs."
+          );
+          setSuggestions([]);
+        });
     } else {
       setSuggestions([]);
+      setSuggestionError(null);
     }
+    return () => controller.abort();
   }, [summonerName]);
 
   // Fermer suggestions si clic en dehors
@@ -101,6 +119,45 @@ const SearchBar: React.FC = () => {
     setUser({ region, tagline, summonerName });
     router.push(`/${region}/summoner/${summonerName}/${tagline}`);
   };
+
+  // Ajout du sous-composant SuggestionList
+  interface Suggestion {
+    name: string;
+    tagline: string;
+    region: string;
+  }
+
+  interface SuggestionListProps {
+    suggestions: Suggestion[];
+    highlightedIndex: number;
+    onSelect: (s: Suggestion) => void;
+    onHighlight: (i: number) => void;
+  }
+
+  const SuggestionList: React.FC<SuggestionListProps> = ({
+    suggestions,
+    highlightedIndex,
+    onSelect,
+    onHighlight,
+  }) => (
+    <ul className="absolute left-0 top-full mt-2 w-full bg-base-100 border border-base-300 rounded-xl shadow z-50 max-h-60 overflow-auto">
+      {suggestions.map((s, i) => (
+        <li
+          key={s.name + s.tagline + s.region + i}
+          className={`px-4 py-2 cursor-pointer flex justify-between ${
+            i === highlightedIndex ? "bg-base-200" : "hover:bg-base-200"
+          }`}
+          onClick={() => onSelect(s)}
+          onMouseEnter={() => onHighlight(i)}
+        >
+          <span>{s.name}</span>
+          <span className="text-xs text-base-content/60 ml-2">
+            #{s.tagline} ({s.region})
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <form
@@ -188,34 +245,26 @@ const SearchBar: React.FC = () => {
           <Search size={28} strokeWidth={2.5} />
         </button>
         {showSuggestions && suggestions.length > 0 && (
-          <ul className="absolute left-0 top-full mt-2 w-full bg-base-100 border border-base-300 rounded-xl shadow z-50 max-h-60 overflow-auto">
-            {suggestions.map((s, i) => (
-              <li
-                key={s.name + s.tagline + s.region + i}
-                className={`px-4 py-2 cursor-pointer flex justify-between ${
-                  i === highlightedIndex ? "bg-base-200" : "hover:bg-base-200"
-                }`}
-                onClick={() => {
-                  setSummonerName(s.name);
-                  setTagline(s.tagline);
-                  setRegion(s.region as PlatformRegion);
-                  setShowSuggestions(false);
-                }}
-                onMouseEnter={() => setHighlightedIndex(i)}
-              >
-                <span>{s.name}</span>
-                <span className="text-xs text-base-content/60 ml-2">
-                  #{s.tagline} ({s.region})
-                </span>
-              </li>
-            ))}
-          </ul>
+          <SuggestionList
+            suggestions={suggestions}
+            highlightedIndex={highlightedIndex}
+            onSelect={(s) => {
+              setSummonerName(s.name);
+              setTagline(s.tagline);
+              setRegion(s.region as PlatformRegion);
+              setShowSuggestions(false);
+            }}
+            onHighlight={setHighlightedIndex}
+          />
         )}
       </div>
       {hasError && (
         <p className="text-error text-sm ml-1">
           Please fill in both summoner name and tagline.
         </p>
+      )}
+      {suggestionError && (
+        <p className="text-error text-xs mt-1 ml-1">{suggestionError}</p>
       )}
     </form>
   );

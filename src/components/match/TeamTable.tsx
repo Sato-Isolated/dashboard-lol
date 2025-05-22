@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { getRegion } from "@/utils/helper";
 
-const TeamTable: React.FC<{
+export const TeamTable: React.FC<{
   players: UIPlayer[];
   team: string;
   teamColor: string;
   teamStats?: { kills: number; gold: number };
-}> = ({ players, team, teamColor, teamStats }) => (
+}> = React.memo(({ players, team, teamColor, teamStats }) => (
   <div
     className={`card rounded-xl mb-4 border shadow bg-base-200 ${
       teamColor === "red" ? "border-red-400" : "border-blue-400"
@@ -25,8 +25,12 @@ const TeamTable: React.FC<{
       <span>{team} Team</span>
       {teamStats && (
         <>
-          <span className="badge badge-info badge-outline ml-2">{teamStats.kills} Kills</span>
-          <span className="badge badge-success badge-outline ml-1">{teamStats.gold} Gold</span>
+          <span className="badge badge-info badge-outline ml-2">
+            {teamStats.kills} Kills
+          </span>
+          <span className="badge badge-success badge-outline ml-1">
+            {teamStats.gold} Gold
+          </span>
         </>
       )}
     </div>
@@ -34,9 +38,7 @@ const TeamTable: React.FC<{
       <table className="table table-zebra rounded-xl">
         <thead>
           <tr className="text-base-content/70">
-            <th className="p-1 ">
-              Summoner
-            </th>
+            <th className="p-1 ">Summoner</th>
             <th>KDA</th>
             <th>CS</th>
             <th>Damage</th>
@@ -112,5 +114,6 @@ const TeamTable: React.FC<{
       </table>
     </div>
   </div>
-);
+));
+
 export default TeamTable;

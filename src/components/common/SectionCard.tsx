@@ -23,7 +23,11 @@ const SectionCard: React.FC<SectionCardProps> = ({
   >
     <span className="font-semibold text-base-content mb-2">{title}</span>
     {loading ? (
-      <span className="text-base-content/50 text-xs">Loading...</span>
+      <div className="flex flex-col gap-2 w-full animate-pulse">
+        <div className="skeleton h-6 w-32 mb-2" />
+        <div className="skeleton h-4 w-full mb-1" />
+        <div className="skeleton h-4 w-full mb-1" />
+      </div>
     ) : error ? (
       <span className="text-error text-xs text-center mb-2">{error}</span>
     ) : (
@@ -31,4 +35,4 @@ const SectionCard: React.FC<SectionCardProps> = ({
     )}
   </section>
 );
-export default SectionCard; 
+export default SectionCard;

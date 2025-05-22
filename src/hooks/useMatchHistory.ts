@@ -1,9 +1,11 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback } from "react";
+import useSWRInfinite from "swr/infinite";
 import type { UIMatch } from "@/types/ui-match";
 import { mapRiotMatchToUIMatch } from "@/utils/helper";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
-import { useApiResource } from "./useApiResource";
 import type { Match } from "@/types/api/match";
+
+const PAGE_SIZE = 10;
 
 export function useMatchHistory(): {
   matches: UIMatch[];
@@ -14,54 +16,75 @@ export function useMatchHistory(): {
 } {
   const { effectiveName, effectiveRegion, effectiveTagline } =
     useEffectiveUser();
-  const [matches, setMatches] = useState<UIMatch[]>([]);
-  const [start, setStart] = useState(0);
-  const count = 10;
-  const [hasMore, setHasMore] = useState(true);
-  const [resetFlag, setResetFlag] = useState(false);
 
-  const cacheKey = `${effectiveRegion}-${effectiveTagline}-${effectiveName}-${start}-${resetFlag}`;
-  const url =
-    effectiveName && effectiveRegion && effectiveTagline
-      ? `/api/summoner/matches?name=${encodeURIComponent(
-          effectiveName
-        )}&region=${encodeURIComponent(
-          effectiveRegion
-        )}&tagline=${encodeURIComponent(
-          effectiveTagline
-        )}&start=${start}&count=${count}`
-      : null;
+  const getKey = (
+    pageIndex: number,
+    previousPageData: { data: Match[] } | null
+  ) => {
+    if (!effectiveName || !effectiveRegion || !effectiveTagline) return null;
+    if (
+      previousPageData &&
+      previousPageData.data &&
+      previousPageData.data.length === 0
+    )
+      return null; // plus de pages
+    return [
+      `/api/summoner/matches?name=${encodeURIComponent(
+        effectiveName
+      )}&region=${encodeURIComponent(
+        effectiveRegion
+      )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${
+        pageIndex * PAGE_SIZE
+      }&count=${PAGE_SIZE}`,
+      effectiveRegion,
+      effectiveTagline,
+      effectiveName,
+    ];
+  };
 
-  const { data, error, loading } = useApiResource<{ data: Match[] }>(
-    url,
-    cacheKey
-  );
+  const fetcher = async (url: string) => {
+    const res = await fetch(url);
+    const json = await res.json();
+    if (!res.ok)
+      throw new Error(json?.error || "Erreur lors du chargement des données");
+    return json;
+  };
 
-  useEffect(() => {
-    if (!data) return;
-    const matchesArr = data.data || [];
-    const uiMatches = matchesArr.map((m) =>
-      mapRiotMatchToUIMatch(m, effectiveName)
-    );
-    setMatches(resetFlag ? uiMatches : [...matches, ...uiMatches]);
-    setHasMore(uiMatches.length === count);
-    // Removed setStart from here to avoid infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, resetFlag]);
+  const { data, error, isLoading, setSize, size, mutate, isValidating } =
+    useSWRInfinite<{ data: Match[] }>(getKey, ([url]) => fetcher(url));
 
+  // Concatène toutes les pages de matchs
+  const matches: UIMatch[] =
+    data?.flatMap((page) =>
+      (page.data || []).map((m) => mapRiotMatchToUIMatch(m, effectiveName))
+    ) || [];
+
+  const hasMore = data
+    ? data[data.length - 1]?.data.length === PAGE_SIZE
+    : true;
+
+  // fetchMatches: reset = true => reset la pagination, sinon charge la page suivante
   const fetchMatches = useCallback(
     (reset = false) => {
       if (reset) {
-        setResetFlag(true);
-        setStart(0);
-        setMatches([]);
+        setSize(1);
+        mutate();
       } else {
-        setResetFlag(false);
-        setStart((prev) => prev + count); // increment start only when loading more
+        setSize(size + 1);
       }
     },
-    [count]
+    [setSize, size, mutate]
   );
 
-  return { matches, error: error || null, loading, hasMore, fetchMatches };
+  return {
+    matches,
+    error: error
+      ? error instanceof Error
+        ? error.message
+        : String(error)
+      : null,
+    loading: isLoading || isValidating,
+    hasMore,
+    fetchMatches,
+  };
 }

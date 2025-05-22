@@ -7,7 +7,7 @@ import {
 
 import {
   getOrCreateSummoner,
-  insertOrUpdateChampionMastery
+  insertOrUpdateChampionMastery,
 } from "@/repositories/summonerRepo";
 
 export async function fetchAndStoreMasteries(
@@ -30,7 +30,12 @@ export async function fetchAndStoreMasteries(
     );
     if (!championMastery) throw new Error("Champion mastery not found");
 
-    const summonerDoc = await getOrCreateSummoner(region, name, tagLine, account.puuid);
+    const summonerDoc = await getOrCreateSummoner(
+      region,
+      name,
+      tagLine,
+      account.puuid
+    );
     if (!summonerDoc) throw new Error("Summoner doc not found");
 
     for (const mastery of championMastery) {
@@ -44,12 +49,11 @@ export async function fetchAndStoreMasteries(
           mastery.championPoints
         );
       } catch (err) {
-        console.error(`Error storing mastery for championId ${mastery.championId}:`, err);
+        // console.error(`Error storing mastery for championId ${mastery.championId}:`, err);
       }
     }
-    console.log("Champion masteries stored successfully");
   } catch (error) {
-    console.error("Error in fetchAndStoreMasteries:", error);
+    // console.error("Error in fetchAndStoreMasteries:", error);
     throw error;
   }
 }

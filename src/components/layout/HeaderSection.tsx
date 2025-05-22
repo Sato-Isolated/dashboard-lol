@@ -31,7 +31,6 @@ function saveFavorites(favs: Favorite[]) {
 }
 
 const HeaderSection: React.FC = () => {
-  console.log("HeaderSection render");
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
   const {
@@ -88,14 +87,16 @@ const HeaderSection: React.FC = () => {
   };
 
   const handleShare = () => {
-    const url = `${
-      window.location.origin
-    }/${effectiveRegion}/summoner/${encodeURIComponent(
-      effectiveName
-    )}/${encodeURIComponent(effectiveTagline)}`;
-    navigator.clipboard.writeText(url);
-    setShareMsg("Lien copié !");
-    setTimeout(() => setShareMsg(""), 1500);
+    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+      const url = `${
+        window.location.origin
+      }/${effectiveRegion}/summoner/${encodeURIComponent(
+        effectiveName
+      )}/${encodeURIComponent(effectiveTagline)}`;
+      navigator.clipboard.writeText(url);
+      setShareMsg("Lien copié !");
+      setTimeout(() => setShareMsg(""), 1500);
+    }
   };
 
   const handleSelectFavorite = (fav: Favorite) => {
@@ -116,8 +117,10 @@ const HeaderSection: React.FC = () => {
       if (summoner) {
         const aramScore = (summoner as any).aramScore ?? 0;
         const aramRank = getAramRank(aramScore, "fr");
-        setRankMsg(`Nouveau rang ARAM : ${aramRank.displayName} (score ${aramScore})`);
-        setTimeout(() => setRankMsg("") , 2500);
+        setRankMsg(
+          `Nouveau rang ARAM : ${aramRank.displayName} (score ${aramScore})`
+        );
+        setTimeout(() => setRankMsg(""), 2500);
       }
     }, 300);
   };
@@ -125,6 +128,35 @@ const HeaderSection: React.FC = () => {
   if (loadingSummoner) return <div>Chargement...</div>;
   if (errorSummoner || !account || !summoner)
     return <div className="text-error">Erreur de chargement du joueur.</div>;
+  if (updateUserDataLoading) {
+    // Skeleton DaisyUI v5 pour header
+    return (
+      <div className="flex flex-col md:flex-row items-center gap-4 w-full bg-base-200 rounded-xl p-6 shadow animate-pulse">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="skeleton h-20 w-20 rounded-full" />
+          <div className="flex flex-col gap-2">
+            <div className="skeleton h-6 w-32" />
+            <div className="skeleton h-4 w-16" />
+            <div className="skeleton h-3 w-20" />
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col md:flex-row justify-end items-center gap-4 w-full md:w-auto">
+          <div className="flex flex-col gap-2 w-full md:w-auto items-center">
+            <div className="skeleton h-8 w-32 rounded" />
+            <div className="skeleton h-8 w-32 rounded" />
+          </div>
+          <div className="skeleton h-8 w-24 rounded" />
+        </div>
+        <div className="flex flex-col items-center w-full md:w-auto">
+          <div className="skeleton h-4 w-16 mb-2" />
+          <div className="flex flex-col gap-1 w-full">
+            <div className="skeleton h-6 w-24 mb-1" />
+            <div className="skeleton h-6 w-24 mb-1" />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col md:flex-row items-center gap-4 w-full bg-base-200 rounded-xl p-6 shadow">
       <div className="flex items-center gap-4 w-full md:w-auto">
@@ -213,7 +245,11 @@ const HeaderSection: React.FC = () => {
           {updateUserDataError}
         </div>
       )}
-      {rankMsg && <span className="text-info text-xs animate-fade-in mt-1">{rankMsg}</span>}
+      {rankMsg && (
+        <span className="text-info text-xs animate-fade-in mt-1">
+          {rankMsg}
+        </span>
+      )}
     </div>
   );
 };

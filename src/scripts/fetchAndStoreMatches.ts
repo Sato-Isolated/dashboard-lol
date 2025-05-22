@@ -79,11 +79,9 @@ export async function fetchAndStoreMatches(
       );
     } catch (e: unknown) {
       if (e instanceof Error && e.message?.includes("Too Many Requests")) {
-        console.warn("Rate limit hit, waiting 10s...");
         await new Promise((res) => setTimeout(res, 10000));
         continue; // retry this batch
       } else {
-        console.error(`Error fetching matchlist batch at start=${start}:`, e);
         break;
       }
     }
@@ -111,15 +109,11 @@ export async function fetchAndStoreMatches(
       ) {
         mostRecentGameEnd = match.info.gameEndTimestamp;
       }
-      console.log(`Stored match ${matchId}`);
       await new Promise((res) => setTimeout(res, 1200)); // Respect Riot rate limit
     } catch (e: unknown) {
       if (e instanceof Error && e.message?.includes("Too Many Requests")) {
-        console.warn("Rate limit hit, waiting 10s...");
         await new Promise((res) => setTimeout(res, 10000)); // Wait 10s if 429
         // Optionally: retry here
-      } else {
-        console.error(`Error storing match ${matchId}:`, e);
       }
     }
   }

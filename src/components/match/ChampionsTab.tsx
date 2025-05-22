@@ -25,6 +25,7 @@ const ChampionsTab: React.FC = () => {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
+    const controller = new AbortController();
     if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
     setLoading(true);
     setError(null);
@@ -33,7 +34,8 @@ const ChampionsTab: React.FC = () => {
         effectiveName
       )}&region=${encodeURIComponent(
         effectiveRegion
-      )}&tagline=${encodeURIComponent(effectiveTagline)}`
+      )}&tagline=${encodeURIComponent(effectiveTagline)}`,
+      { signal: controller.signal }
     )
       .then((res) => {
         if (!res.ok) throw new Error("Erreur lors du chargement des stats");
@@ -44,9 +46,11 @@ const ChampionsTab: React.FC = () => {
         setLoading(false);
       })
       .catch((e) => {
+        if (e.name === "AbortError") return;
         setError(e.message);
         setLoading(false);
       });
+    return () => controller.abort();
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
   const getWinrate = (champ: ChampionStats) =>

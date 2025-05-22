@@ -19,6 +19,7 @@ const MasteryTab: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
     setLoading(true);
     setError(null);
@@ -27,7 +28,8 @@ const MasteryTab: React.FC = () => {
         effectiveName
       )}&region=${encodeURIComponent(
         effectiveRegion
-      )}&tagline=${encodeURIComponent(effectiveTagline)}`
+      )}&tagline=${encodeURIComponent(effectiveTagline)}`,
+      { signal: controller.signal }
     )
       .then((res) => {
         if (!res.ok) throw new Error("Erreur lors du chargement des masteries");
@@ -38,9 +40,11 @@ const MasteryTab: React.FC = () => {
         setLoading(false);
       })
       .catch((e) => {
+        if (e.name === "AbortError") return;
         setError(e.message);
         setLoading(false);
       });
+    return () => controller.abort();
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
   if (loading)

@@ -37,3 +37,4 @@ export function getAramRank(
   }
   return { ...rank, displayName: rank.name };
 }
+

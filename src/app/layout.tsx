@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 initDb().then(() => {
-  console.log("[Mongo] DB initialized.");
+  // console.log("[Mongo] DB initialized.");
 });
 
 export default function RootLayout({

@@ -9,4 +9,6 @@ export interface SummonerCollection {
   fetchOldGames: boolean;
   lastFetchedGameEndTimestamp?: number; // timestamp of the most recent match fetched
   aramScore?: number; // score ARAM personnalisé
+  aramScoreFirstCalculated?: boolean;
+  aramScoreLastCheck?: number;
 }

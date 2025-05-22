@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { MatchCard } from "../match/MatchCard";
+import { MatchCard, MatchCardSkeleton } from "../match/MatchCard";
 import SectionCard from "../common/SectionCard";
 import { useMatchHistory } from "@/hooks/useMatchHistory";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
@@ -70,6 +70,27 @@ const CenterColumn: React.FC = () => {
     fetchMatches(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveName, effectiveRegion, effectiveTagline]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-4 animate-pulse">
+        <div className="card bg-base-100 rounded-xl shadow p-4 min-h-[120px] flex flex-col items-center justify-center w-full border border-primary/10">
+          <div className="skeleton h-6 w-32 mb-2" />
+          <div className="skeleton h-4 w-24 mb-1" />
+          <div className="skeleton h-4 w-24 mb-1" />
+          <div className="skeleton h-4 w-24 mb-1" />
+        </div>
+        <div className="bg-base-100 rounded-xl shadow p-4 min-h-[200px] flex flex-col gap-2 w-full border border-primary/10">
+          <div className="skeleton h-6 w-32 mb-2" />
+          <div className="flex flex-col gap-2">
+            {[...Array(10)].map((_, i) => (
+              <MatchCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

@@ -1,14 +1,12 @@
 import { UIMatch } from "@/types/ui-match";
 import {
   getChampionIcon,
-  getRegion,
   getSummonerSpellImage,
   getRuneIcon,
 } from "@/utils/helper";
 import Image from "next/image";
 import React, { useState } from "react";
 import TeamTable from "./TeamTable";
-import Link from "next/link";
 
 // TODO: Props pour spells, runes, items, badges spéciaux, ranks, etc.
 
@@ -19,8 +17,6 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const blueTeam = match.players.filter((p) => p.team === "Blue");
 
   // TODO: Remplacer par les vraies données
-  const spells = [];
-  const runes = [];
   const specialBadges = [
     { label: "Quadra Kill", color: "from-pink-500 to-red-500", icon: "🔥" },
     { label: "MVP", color: "from-yellow-400 to-orange-400", icon: "⭐" },
@@ -372,3 +368,57 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
     </div>
   );
 };
+
+export const MatchCardSkeleton: React.FC = () => (
+  <div className="bg-gradient-to-br from-base-200 to-base-100 border-2 border-primary/30 shadow-xl rounded-3xl mb-6 transition-all duration-300 pb-4 animate-pulse">
+    <div className="relative flex flex-row items-stretch gap-0 w-full px-2 pt-2 pb-1 group">
+      {/* Bloc gauche */}
+      <div className="flex flex-col justify-center min-w-[120px] max-w-[160px] bg-base-200/80 rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none border-b sm:border-b-0 sm:border-r border-primary/10 px-2">
+        <div className="skeleton h-4 w-16 mb-2" />
+        <div className="skeleton h-3 w-12 mb-2" />
+        <div className="skeleton h-4 w-14 mb-2" />
+        <div className="skeleton h-3 w-10" />
+      </div>
+      {/* Bloc centre */}
+      <div className="flex flex-row items-center gap-3 px-4">
+        <div className="avatar relative">
+          <div className="mask mask-squircle w-16 h-16 border-4 border-primary shadow-lg shadow-primary/30">
+            <div className="skeleton w-16 h-16 rounded" />
+          </div>
+          <span className="absolute -bottom-2 -right-2 skeleton badge badge-primary badge-xs shadow w-6 h-6" />
+        </div>
+        <div className="flex flex-col gap-1 ml-2">
+          <div className="flex gap-1">
+            <div className="skeleton w-7 h-7 rounded" />
+            <div className="skeleton w-7 h-7 rounded" />
+          </div>
+          <div className="flex gap-1 mt-1">
+            <div className="skeleton w-7 h-7 rounded-full" />
+            <div className="skeleton w-7 h-7 rounded-full" />
+          </div>
+          <div className="flex gap-1 mt-1">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="skeleton w-7 h-7 rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Bloc droit */}
+      <div className="flex flex-col items-center justify-center flex-1 px-2">
+        <div className="flex items-end gap-2 text-xl font-extrabold tracking-tight">
+          <div className="skeleton h-6 w-8" />
+          <div className="skeleton h-6 w-2" />
+          <div className="skeleton h-6 w-8" />
+          <div className="skeleton h-6 w-2" />
+          <div className="skeleton h-6 w-8" />
+        </div>
+        <div className="skeleton h-4 w-16 mt-2" />
+        <div className="skeleton h-3 w-12 mt-2" />
+        <div className="flex gap-2 mt-2 flex-wrap justify-center">
+          <div className="skeleton h-6 w-20 rounded" />
+          <div className="skeleton h-6 w-20 rounded" />
+        </div>
+      </div>
+    </div>
+  </div>
+);

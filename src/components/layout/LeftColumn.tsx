@@ -9,11 +9,11 @@ import RankBadge from "./RankBadge";
 const LeftColumn: React.FC = () => {
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
-  const { leagues, aramScore = 0 } = useAccountSummoner(
-    effectiveRegion,
-    effectiveName,
-    effectiveTagline
-  );
+  const {
+    leagues,
+    aramScore = 0,
+    loading: loadingSummoner,
+  } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const userAramScore = aramScore;
   const aramRank = getAramRank(userAramScore, "fr"); // 'fr' or 'en' for language
 
@@ -21,15 +21,16 @@ const LeftColumn: React.FC = () => {
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
     setFetchError(null);
-    // Fetch recently played with
     fetch(
       `/api/summoner/recently-played?name=${encodeURIComponent(
         effectiveName
       )}&region=${encodeURIComponent(
         effectiveRegion
-      )}&tagline=${encodeURIComponent(effectiveTagline)}&limit=5`
+      )}&tagline=${encodeURIComponent(effectiveTagline)}&limit=5`,
+      { signal: controller.signal }
     )
       .then((res) => {
         if (!res.ok)
@@ -39,8 +40,33 @@ const LeftColumn: React.FC = () => {
         return res.json();
       })
       .then((data) => setRecentlyPlayed(data.data || []))
-      .catch((e) => setFetchError(e.message));
+      .catch((e) => {
+        if (e.name === "AbortError") return;
+        setFetchError(e.message);
+      });
+    return () => controller.abort();
   }, [effectiveName, effectiveRegion, effectiveTagline]);
+
+  const isLoading = loadingSummoner || recentlyPlayed.length === 0;
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4 animate-pulse">
+        <div className="card bg-base-100 rounded-xl shadow-xl p-4 w-full flex flex-col items-center border border-primary/20">
+          <div className="skeleton h-6 w-32 mb-2" />
+          <div className="skeleton h-10 w-24 rounded-full mb-2" />
+          <div className="skeleton h-4 w-24 mb-1" />
+        </div>
+        <div className="card bg-base-100 rounded-xl shadow-xl p-4 w-full flex flex-col items-center border border-primary/20">
+          <div className="skeleton h-6 w-32 mb-2" />
+          <div className="flex flex-col gap-2 w-full">
+            <div className="skeleton h-4 w-full mb-1" />
+            <div className="skeleton h-4 w-full mb-1" />
+            <div className="skeleton h-4 w-full mb-1" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
