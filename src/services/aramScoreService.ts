@@ -5,6 +5,22 @@ import type { Participant } from "@/types/api/match";
 /**
  * Calcule un score ARAM unique pour un joueur sur une partie.
  */
+/**
+ * Calcule un score personnalisé pour un participant en ARAM, basé sur ses performances individuelles
+ * et la moyenne de son équipe. Le score prend en compte la victoire/défaite, le KDA, les dégâts infligés,
+ * la participation aux kills, ainsi que le rôle de support ou tank (soins ou dégâts subis).
+ *
+ * - Victoire : base de +20 points, plafonné à 40.
+ * - Défaite : base de -15 points, jamais positif, minimum -15.
+ * - KDA pondéré : (kills + assists) / deaths, multiplié par 2, max 10 points.
+ * - Dégâts infligés : comparé à la moyenne de l'équipe, max 10 points.
+ * - Participation aux kills : killParticipation * 8, arrondi, max 8 points.
+ * - Support/Tank : prend le meilleur score entre soins (comparé à la moyenne) et tanking (dégâts subis), max 5 points.
+ *
+ * @param participant Le participant dont on veut calculer le score.
+ * @param teamParticipants Les membres de l'équipe du participant (pour calculer les moyennes).
+ * @returns Le score ARAM calculé, arrondi à l'entier le plus proche.
+ */
 export function computeAramScore(
   participant: Participant,
   teamParticipants: Participant[]
