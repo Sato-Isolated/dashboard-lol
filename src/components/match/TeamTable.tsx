@@ -8,26 +8,28 @@ const TeamTable: React.FC<{
   players: UIPlayer[];
   team: string;
   teamColor: string;
-}> = ({
-  players,
-  team,
-  teamColor,
-}) => (
+}> = ({ players, team, teamColor }) => (
   <div
-    className={`rounded-xl mb-2 border ${
+    className={`card rounded-xl mb-4 border shadow bg-base-200 ${
       teamColor === "red" ? "border-red-400" : "border-blue-400"
     }`}
   >
     <div
-      className={`px-2 py-1 font-bold text-${teamColor}-700 flex items-center gap-2`}
+      className={`px-4 py-2 font-bold flex items-center gap-2 text-lg rounded-t-xl ${
+        teamColor === "red"
+          ? "text-red-400 bg-base-100"
+          : "text-blue-400 bg-base-100"
+      }`}
     >
       {team} Team
     </div>
-    <div className="overflow-x-auto">
-      <table className="table">
+    <div className="overflow-x-auto p-2">
+      <table className="table table-zebra rounded-xl">
         <thead>
           <tr className="text-base-content/70">
-            <th className="p-1">Summoner</th>
+            <th className="p-1 ">
+              Summoner
+            </th>
             <th>KDA</th>
             <th>CS</th>
             <th>Damage</th>
@@ -37,8 +39,11 @@ const TeamTable: React.FC<{
         </thead>
         <tbody>
           {players.map((p) => (
-            <tr key={p.name} className="border-b border-base-200 last:border-b-0">
-              <td className="p-1 font-semibold text-base-content flex items-center gap-1">
+            <tr
+              key={p.name}
+              className="hover:bg-base-300 border-b border-base-200 last:border-b-0"
+            >
+              <td className="p-1 font-semibold text-base-content flex items-center gap-1 w-[180px] min-w-[140px] max-w-[200px]">
                 <div className="avatar">
                   <div className="mask mask-squircle h-12 w-12">
                     <Image
@@ -54,6 +59,7 @@ const TeamTable: React.FC<{
                     p.name
                   )}/${encodeURIComponent(p.tagline || "EUW")}`}
                   className="hover:underline text-primary"
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
                   onClick={(e) => e.stopPropagation()}
                   prefetch={false}
                 >
@@ -61,14 +67,26 @@ const TeamTable: React.FC<{
                 </Link>
                 {p.mvp && <span className="badge badge-warning ml-1">MVP</span>}
               </td>
-              <td>{p.kda}</td>
+              <td>
+                <span className="badge badge-info badge-outline font-mono">
+                  {p.kda}
+                </span>
+              </td>
               <td>{p.cs}</td>
-              <td>{p.damage}</td>
-              <td>{p.gold}</td>
+              <td>
+                <span className="badge badge-error badge-outline">
+                  {p.damage}
+                </span>
+              </td>
+              <td>
+                <span className="badge badge-success badge-outline">
+                  {p.gold}
+                </span>
+              </td>
               <td>
                 <div className="flex items-center gap-1">
-                  {p.items.map((item) => (
-                    <div key={item} className="avatar">
+                  {p.items.map((item, idx) => (
+                    <div key={item + "-" + idx} className="avatar">
                       <div className="mask mask-squircle h-8 w-8">
                         <Image
                           src={`/assets/item/${item}.png`}
@@ -88,4 +106,4 @@ const TeamTable: React.FC<{
     </div>
   </div>
 );
-export default TeamTable; 
+export default TeamTable;

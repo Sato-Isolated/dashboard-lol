@@ -6,30 +6,45 @@ import { useMatchHistory } from "@/hooks/useMatchHistory";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import type { UIMatch } from "@/types/ui-match";
 
-function computeStats(matches: UIMatch[]): { kda: string; winrate: string; championPool: string[] } {
+function computeStats(matches: UIMatch[]): {
+  kda: string;
+  winrate: string;
+  championPool: string[];
+} {
   if (!matches || matches.length === 0) {
     return {
-      kda: '-',
-      winrate: '-',
+      kda: "-",
+      winrate: "-",
       championPool: [],
     };
   }
-  let kills = 0, deaths = 0, assists = 0, wins = 0;
-  const championSet = new Set<string>();
+  let kills = 0,
+    deaths = 0,
+    assists = 0,
+    wins = 0;
+  const championCount: Record<string, number> = {};
   matches.forEach((m) => {
-    const [k, d, a] = m.kda.split('/').map(Number);
+    const [k, d, a] = m.kda.split("/").map(Number);
     kills += k || 0;
     deaths += d || 0;
     assists += a || 0;
-    if (m.result === 'Win') wins++;
-    championSet.add(m.champion);
+    if (m.result === "Win") wins++;
+    championCount[m.champion] = (championCount[m.champion] || 0) + 1;
   });
-  const kda = deaths === 0 ? (kills + assists).toFixed(2) : ((kills + assists) / deaths).toFixed(2);
-  const winrate = ((wins / matches.length) * 100).toFixed(1) + '%';
+  const kda =
+    deaths === 0
+      ? (kills + assists).toFixed(2)
+      : ((kills + assists) / deaths).toFixed(2);
+  const winrate = ((wins / matches.length) * 100).toFixed(1) + "%";
+  // Prendre les 3 champions les plus joués sur les dernières parties
+  const championPool = Object.entries(championCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([champion]) => champion);
   return {
     kda,
     winrate,
-    championPool: Array.from(championSet),
+    championPool,
   };
 }
 
@@ -58,19 +73,28 @@ const CenterColumn: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-base-100 rounded-xl shadow p-4 min-h-[120px] flex flex-col items-center justify-center w-full">
+      <div className="card bg-base-100 rounded-xl shadow p-4 min-h-[120px] flex flex-col items-center justify-center w-full border border-primary/10">
         <span className="font-semibold text-base-content mb-2">
           Main Stats & Graphs
         </span>
         <div className="flex flex-col items-center gap-1">
           <div className="text-base-content/80">
-            KDA: <b>{stats.kda}</b>
+            KDA:{" "}
+            <span className="badge badge-info badge-outline font-bold">
+              {stats.kda}
+            </span>
           </div>
           <div className="text-base-content/80">
-            Winrate: <b>{stats.winrate}</b>
+            Winrate:{" "}
+            <span className="badge badge-success badge-outline font-bold">
+              {stats.winrate}
+            </span>
           </div>
           <div className="text-base-content/80">
-            Champion Pool: {stats.championPool.join(", ")}
+            Champion Pool:{" "}
+            <span className="badge badge-outline">
+              {stats.championPool.join(", ")}
+            </span>
           </div>
         </div>
       </div>
@@ -105,10 +129,7 @@ const CenterColumn: React.FC = () => {
             <span className="text-base-content/50 text-xs">No data</span>
           ) : (
             matches.map((match, idx) => (
-              <MatchCard
-                key={match.gameId || idx}
-                match={match}
-              />
+              <MatchCard key={match.gameId || idx} match={match} />
             ))
           )}
           {hasMore && (

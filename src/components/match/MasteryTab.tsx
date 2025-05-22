@@ -11,7 +11,8 @@ interface Mastery {
 }
 
 const MasteryTab: React.FC = () => {
-  const { effectiveRegion, effectiveTagline, effectiveName } = useEffectiveUser();
+  const { effectiveRegion, effectiveTagline, effectiveName } =
+    useEffectiveUser();
   const [masteries, setMasteries] = useState<Mastery[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +21,13 @@ const MasteryTab: React.FC = () => {
     if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
     setLoading(true);
     setError(null);
-    fetch(`/api/summoner/masteries?name=${encodeURIComponent(effectiveName)}&region=${encodeURIComponent(effectiveRegion)}&tagline=${encodeURIComponent(effectiveTagline)}`)
+    fetch(
+      `/api/summoner/masteries?name=${encodeURIComponent(
+        effectiveName
+      )}&region=${encodeURIComponent(
+        effectiveRegion
+      )}&tagline=${encodeURIComponent(effectiveTagline)}`
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Erreur lors du chargement des masteries");
         return res.json();
@@ -35,18 +42,23 @@ const MasteryTab: React.FC = () => {
       });
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div className="text-error">Erreur : {error}</div>;
-  if (masteries.length === 0) return <div>Aucune maîtrise trouvée.</div>;
+  if (loading)
+    return <div className="loading loading-spinner loading-lg mx-auto my-8" />;
+  if (error) return <div className="alert alert-error">Erreur : {error}</div>;
+  if (masteries.length === 0)
+    return <div className="alert alert-info">Aucune maîtrise trouvée.</div>;
 
   // Calcul des totaux
   const totalPoints = masteries.reduce((acc, m) => acc + m.championPoints, 0);
   const totalChampions = masteries.length;
-  const avgLevel = totalChampions > 0 ? (masteries.reduce((acc, m) => acc + m.championLevel, 0) / totalChampions) : 0;
+  const avgLevel =
+    totalChampions > 0
+      ? masteries.reduce((acc, m) => acc + m.championLevel, 0) / totalChampions
+      : 0;
 
   return (
     <div className="overflow-x-auto">
-      <table className="table table-zebra">
+      <table className="table table-zebra rounded-xl bg-base-100 shadow">
         <thead>
           <tr>
             <th>Champion</th>
@@ -56,15 +68,31 @@ const MasteryTab: React.FC = () => {
         </thead>
         <tbody>
           {masteries.map((m) => {
-            const champ = Object.values(championData.data).find((c) => parseInt(c.key) === m.championId);
+            const champ = Object.values(championData.data).find(
+              (c) => parseInt(c.key) === m.championId
+            );
             return (
-              <tr key={m.championId}>
+              <tr key={m.championId} className="hover:bg-base-200">
                 <td className="flex items-center gap-2">
-                  <img src={getChampionIcon(champ ? champ.id : String(m.championId))} alt={champ ? champ.name : String(m.championId)} className="w-8 h-8 rounded" />
+                  <img
+                    src={getChampionIcon(
+                      champ ? champ.id : String(m.championId)
+                    )}
+                    alt={champ ? champ.name : String(m.championId)}
+                    className="w-8 h-8 rounded"
+                  />
                   <span>{champ ? champ.name : m.championId}</span>
                 </td>
-                <td>{m.championLevel}</td>
-                <td>{m.championPoints.toLocaleString()}</td>
+                <td>
+                  <span className="badge badge-info badge-outline">
+                    {m.championLevel}
+                  </span>
+                </td>
+                <td>
+                  <span className="badge badge-success badge-outline">
+                    {m.championPoints.toLocaleString()}
+                  </span>
+                </td>
               </tr>
             );
           })}
@@ -72,8 +100,16 @@ const MasteryTab: React.FC = () => {
         <tfoot>
           <tr className="font-bold">
             <td>Total</td>
-            <td>{avgLevel.toFixed(2)}</td>
-            <td>{totalPoints.toLocaleString()}</td>
+            <td>
+              <span className="badge badge-info badge-outline">
+                {avgLevel.toFixed(2)}
+              </span>
+            </td>
+            <td>
+              <span className="badge badge-success badge-outline">
+                {totalPoints.toLocaleString()}
+              </span>
+            </td>
           </tr>
         </tfoot>
       </table>
@@ -81,4 +117,4 @@ const MasteryTab: React.FC = () => {
   );
 };
 
-export default MasteryTab; 
+export default MasteryTab;

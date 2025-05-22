@@ -26,7 +26,8 @@ const sortOptions = [
 ];
 
 const ChampionsTab: React.FC = () => {
-  const { effectiveRegion, effectiveTagline, effectiveName } = useEffectiveUser();
+  const { effectiveRegion, effectiveTagline, effectiveName } =
+    useEffectiveUser();
   const [stats, setStats] = useState<ChampionStats[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +38,13 @@ const ChampionsTab: React.FC = () => {
     if (!effectiveName || !effectiveRegion || !effectiveTagline) return;
     setLoading(true);
     setError(null);
-    fetch(`/api/stats/champions?name=${encodeURIComponent(effectiveName)}&region=${encodeURIComponent(effectiveRegion)}&tagline=${encodeURIComponent(effectiveTagline)}`)
+    fetch(
+      `/api/stats/champions?name=${encodeURIComponent(
+        effectiveName
+      )}&region=${encodeURIComponent(
+        effectiveRegion
+      )}&tagline=${encodeURIComponent(effectiveTagline)}`
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Erreur lors du chargement des stats");
         return res.json();
@@ -52,7 +59,8 @@ const ChampionsTab: React.FC = () => {
       });
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
-  const getWinrate = (champ: ChampionStats) => champ.games > 0 ? (champ.wins / champ.games) * 100 : 0;
+  const getWinrate = (champ: ChampionStats) =>
+    champ.games > 0 ? (champ.wins / champ.games) * 100 : 0;
 
   const sortedStats = [...stats].sort((a, b) => {
     let aValue = a[sortKey as keyof ChampionStats] ?? 0;
@@ -80,15 +88,21 @@ const ChampionsTab: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div className="text-error">Erreur : {error}</div>;
-  if (!stats || stats.length === 0) return <div>Aucun champion joué.</div>;
+  if (loading)
+    return <div className="loading loading-spinner loading-lg mx-auto my-8" />;
+  if (error) return <div className="alert alert-error">Erreur : {error}</div>;
+  if (!stats || stats.length === 0)
+    return <div className="alert alert-info">Aucun champion joué.</div>;
 
   // Calcul des totaux
   const totalGames = stats.reduce((acc, champ) => acc + champ.games, 0);
   const totalWins = stats.reduce((acc, champ) => acc + champ.wins, 0);
   const globalWinrate = totalGames > 0 ? (totalWins / totalGames) * 100 : 0;
-  const globalKda = stats.length > 0 ? (stats.reduce((acc, champ) => acc + champ.kda * champ.games, 0) / totalGames) : 0;
+  const globalKda =
+    stats.length > 0
+      ? stats.reduce((acc, champ) => acc + champ.kda * champ.games, 0) /
+        totalGames
+      : 0;
 
   const sortIcon = (key: string) => {
     if (sortKey !== key) return <span className="opacity-30">⇅</span>;
@@ -97,32 +111,87 @@ const ChampionsTab: React.FC = () => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="table table-zebra">
+      <table className="table table-zebra rounded-xl bg-base-100 shadow">
         <thead>
           <tr>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("champion")}>Champion {sortIcon("champion")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("games")}>Parties {sortIcon("games")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("wins")}>Victoires {sortIcon("wins")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("winrate")}>Winrate {sortIcon("winrate")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("kda")}>KDA {sortIcon("kda")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("kills")}>Kills {sortIcon("kills")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("deaths")}>Deaths {sortIcon("deaths")}</th>
-            <th className="cursor-pointer select-none" onClick={() => handleSort("assists")}>Assists {sortIcon("assists")}</th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("champion")}
+            >
+              Champion {sortIcon("champion")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("games")}
+            >
+              Parties {sortIcon("games")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("wins")}
+            >
+              Victoires {sortIcon("wins")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("winrate")}
+            >
+              Winrate {sortIcon("winrate")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("kda")}
+            >
+              KDA {sortIcon("kda")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("kills")}
+            >
+              Kills {sortIcon("kills")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("deaths")}
+            >
+              Deaths {sortIcon("deaths")}
+            </th>
+            <th
+              className="cursor-pointer select-none"
+              onClick={() => handleSort("assists")}
+            >
+              Assists {sortIcon("assists")}
+            </th>
           </tr>
         </thead>
         <tbody>
           {sortedStats.map((champ) => {
-            const champInfo = championData.data[champ.champion as keyof typeof championData.data];
+            const champInfo =
+              championData.data[
+                champ.champion as keyof typeof championData.data
+              ];
             return (
-              <tr key={champ.champion}>
+              <tr key={champ.champion} className="hover:bg-base-200">
                 <td className="flex items-center gap-2">
-                  <img src={getChampionIcon(champ.champion)} alt={champ.champion} className="w-8 h-8 rounded" />
+                  <img
+                    src={getChampionIcon(champ.champion)}
+                    alt={champ.champion}
+                    className="w-8 h-8 rounded"
+                  />
                   <span>{champInfo ? champInfo.name : champ.champion}</span>
                 </td>
                 <td>{champ.games}</td>
                 <td>{champ.wins}</td>
-                <td>{getWinrate(champ).toFixed(1)}%</td>
-                <td>{champ.kda.toFixed(2)}</td>
+                <td>
+                  <span className="badge badge-success badge-outline">
+                    {getWinrate(champ).toFixed(1)}%
+                  </span>
+                </td>
+                <td>
+                  <span className="badge badge-info badge-outline">
+                    {champ.kda.toFixed(2)}
+                  </span>
+                </td>
                 <td>{champ.kills}</td>
                 <td>{champ.deaths}</td>
                 <td>{champ.assists}</td>
@@ -135,8 +204,16 @@ const ChampionsTab: React.FC = () => {
             <td>Total</td>
             <td>{totalGames}</td>
             <td>{totalWins}</td>
-            <td>{globalWinrate.toFixed(1)}%</td>
-            <td>{globalKda.toFixed(2)}</td>
+            <td>
+              <span className="badge badge-success badge-outline">
+                {globalWinrate.toFixed(1)}%
+              </span>
+            </td>
+            <td>
+              <span className="badge badge-info badge-outline">
+                {globalKda.toFixed(2)}
+              </span>
+            </td>
             <td>{stats.reduce((acc, champ) => acc + champ.kills, 0)}</td>
             <td>{stats.reduce((acc, champ) => acc + champ.deaths, 0)}</td>
             <td>{stats.reduce((acc, champ) => acc + champ.assists, 0)}</td>
@@ -147,4 +224,4 @@ const ChampionsTab: React.FC = () => {
   );
 };
 
-export default ChampionsTab; 
+export default ChampionsTab;

@@ -40,8 +40,6 @@ const HeaderSection: React.FC = () => {
     error: errorSummoner
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const setUser = useUserStore((s) => s.setUser);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
   const [favorites, setFavorites] = React.useState<Favorite[]>([]);
   const [isFav, setIsFav] = React.useState(false);
   const [shareMsg, setShareMsg] = React.useState("");
@@ -110,8 +108,8 @@ const HeaderSection: React.FC = () => {
         />
         <div className="flex flex-col">
           <span className="text-2xl font-bold text-base-content">
-            {effectiveName}
-            <span className="text-base-content/60">#{effectiveTagline}</span>
+            {account.gameName}
+            <span className="text-base-content/60">#{account.tagLine}</span>
           </span>
           <span className="text-base-content/70 text-sm mt-1">
             {effectiveRegion.toUpperCase()}

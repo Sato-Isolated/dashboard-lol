@@ -2,6 +2,7 @@
 
 export interface UIRecentlyPlayed {
   name: string;
+  tagline?: string;
   games: number;
   winrate: number;
   wins: number;
