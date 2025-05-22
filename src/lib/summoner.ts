@@ -18,14 +18,20 @@ export async function fetchSummonerFull(
   const account = await accountApi.getAccountByRiotId(name, tagline);
 
   if (!account) {
-    console.error("[fetchSummonerFull] Account not found for:", { name, tagline });
+    console.error("[fetchSummonerFull] Account not found for:", {
+      name,
+      tagline,
+    });
     return null;
   }
 
   const summonerApi = createSummonerService(platformRegion);
   const summonerDto = await summonerApi.getSummonerByPuuid(account.puuid);
   if (!summonerDto) {
-    console.error("[fetchSummonerFull] Summoner not found for puuid:", account.puuid);
+    console.error(
+      "[fetchSummonerFull] Summoner not found for puuid:",
+      account.puuid
+    );
     return null;
   }
 

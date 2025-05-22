@@ -1,8 +1,7 @@
 import { ChampionData } from "@/types/data/champion";
 
-
-export const getSummonerIcon = (iconId: number) => 
-  '/assets/profileicon/' + iconId + '.png';
+export const getSummonerIcon = (iconId: number) =>
+  "/assets/profileicon/" + iconId + ".png";
 
 export const getChampionIcon = (champion: string) =>
   `/assets/champion/${champion}.png`;
@@ -11,17 +10,26 @@ export const getChampionNameFromId = (
   key: number,
   champions: Record<string, ChampionData>
 ) => {
-  const champion = Object.values(champions).find(c => parseInt(c.key) === key);
+  const champion = Object.values(champions).find(
+    (c) => parseInt(c.key) === key
+  );
   return champion ? champion.name : "Unknown Champion";
 };
 
-export const getChampionIdFromName = (name: string, champions: Record<string, ChampionData>) => {
-  const champion = Object.values(champions).find(champ => champ.name === name);
+export const getChampionIdFromName = (
+  name: string,
+  champions: Record<string, ChampionData>
+) => {
+  const champion = Object.values(champions).find(
+    (champ) => champ.name === name
+  );
   return champion ? parseInt(champion.key) : null;
-}
+};
 
 export const getChampionTags = (champion: ChampionData) => {
-  return champion.tags.map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1)).join(", ");
+  return champion.tags
+    .map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1))
+    .join(", ");
 };
 
 export const getRegion = () => {
@@ -60,6 +68,10 @@ export function mapRiotMatchToUIMatch(
     team: p.teamId === 200 ? "Red" : "Blue",
     win: p.win,
     mvp: false,
+    spell1: p.summoner1Id,
+    spell2: p.summoner2Id,
+    rune1: p.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
+    rune2: p.perks?.styles?.[1]?.style ?? 0,
   }));
   const result = win ? "Win" : "Loss";
   const date = riotMatch.info.gameEndTimestamp
@@ -90,6 +102,7 @@ export function mapRiotMatchToUIMatch(
     };
   }
   return {
+    gameId: riotMatch.metadata.matchId,
     champion: participant?.championName || "?",
     result,
     kda,
@@ -112,3 +125,53 @@ export function mapRiotMatchToUIMatch(
   };
 }
 
+// Utilitaire pour obtenir le nom de l'image d'un spell à partir de son ID
+import summonerData from "../../public/assets/data/en_US/summoner.json";
+
+const spellIdToImg: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  const data = (summonerData as any).data;
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      const spell = data[key];
+      if (spell.key && spell.image && spell.image.full) {
+        map[spell.key] = spell.image.full;
+      }
+    }
+  }
+  return map;
+})();
+
+export function getSummonerSpellImage(id: number | string): string | undefined {
+  return spellIdToImg[String(id)];
+}
+
+import runesData from "../../public/assets/data/en_US/runesReforged.json";
+
+const runeIdToIcon: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  const data = runesData as any[];
+  for (const style of data) {
+    // Style principale (arbre)
+    if (style.id && style.icon) {
+      map[String(style.id)] = style.icon;
+    }
+    // Runes dans les slots
+    if (style.slots && Array.isArray(style.slots)) {
+      for (const slot of style.slots) {
+        if (slot.runes && Array.isArray(slot.runes)) {
+          for (const rune of slot.runes) {
+            if (rune.id && rune.icon) {
+              map[String(rune.id)] = rune.icon;
+            }
+          }
+        }
+      }
+    }
+  }
+  return map;
+})();
+
+export function getRuneIcon(id: number | string): string | undefined {
+  return runeIdToIcon[String(id)];
+}

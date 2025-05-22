@@ -1,8 +1,16 @@
 import { UIMatch } from "@/types/ui-match";
-import { getChampionIcon } from "@/utils/helper";
+import {
+  getChampionIcon,
+  getRegion,
+  getSummonerSpellImage,
+  getRuneIcon,
+} from "@/utils/helper";
 import Image from "next/image";
 import React, { useState } from "react";
 import TeamTable from "./TeamTable";
+import Link from "next/link";
+
+// TODO: Props pour spells, runes, items, badges spéciaux, ranks, etc.
 
 export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const [open, setOpen] = useState(false);
@@ -10,66 +18,227 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const redTeam = match.players.filter((p) => p.team === "Red");
   const blueTeam = match.players.filter((p) => p.team === "Blue");
 
+  // TODO: Remplacer par les vraies données
+  const spells = [];
+  const runes = [];
+  const specialBadges = [
+    { label: "Quadra Kill", color: "from-pink-500 to-red-500", icon: "🔥" },
+    { label: "MVP", color: "from-yellow-400 to-orange-400", icon: "⭐" },
+    {
+      label: "Unstoppable",
+      color: "from-green-400 to-emerald-600",
+      icon: "💪",
+    },
+  ];
+  const playerList = match.players.map((p) => ({
+    name: p.name,
+    champion: p.champion,
+  }));
+
+  // KDA split robuste (supporte "/" ou ":")
+  const kdaParts = match.kda.includes("/")
+    ? match.kda.split("/")
+    : match.kda.split(":");
+
+  // Calcul du vrai KDA (K+A)/D
+  const kills = Number(kdaParts[0]);
+  const deaths = Number(kdaParts[1]);
+  const assists = Number(kdaParts[2]);
+  const kdaValue =
+    deaths === 0 ? kills + assists : ((kills + assists) / deaths).toFixed(2);
+
+  // Calcul du vrai P/Kill%
+  let pKill = "--";
+  if (match.teamKills && match.teamKills > 0) {
+    pKill = Math.round(((kills + assists) / match.teamKills) * 100).toString();
+  }
+
+  // Trouver le joueur principal (celui qui a joué le champion affiché)
+  const mainPlayer = match.players.find((p) => p.champion === match.champion);
+
   return (
     <div
-      className={`card bg-base-100 border border-base-200 rounded-2xl shadow-lg mb-4 transition-all duration-200 ${
-        open ? "ring-2 ring-primary/30" : "hover:shadow-xl"
+      className={`bg-gradient-to-br from-base-200 to-base-100 border-2 border-primary/30 shadow-xl rounded-3xl mb-6 transition-all duration-300 pb-4 ${
+        open
+          ? "ring-4 ring-primary/20 scale-[1.01]"
+          : "hover:scale-[1.01] hover:ring-2 hover:ring-primary/10"
       }`}
     >
-      {/* Header clickable */}
-      <button
-        className="flex flex-col md:flex-row md:justify-between md:items-center w-full gap-2 px-4 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-2xl bg-gradient-to-r from-base-100 to-base-200"
-        aria-expanded={open}
+      {/* HEADER réorganisé sur une seule ligne principale */}
+      <div
+        className="relative flex flex-row items-stretch gap-0 w-full px-2 pt-2 pb-1 group cursor-pointer hover:bg-primary/5 transition"
         onClick={() => setOpen((o) => !o)}
       >
-        <div className="flex items-center gap-4 min-w-0">
-          <div className="avatar">
-            <div className="mask mask-squircle h-14 w-14 border-2 border-primary">
+        {/* Bloc gauche : infos principales */}
+        <div className="flex flex-col justify-center min-w-[120px] max-w-[160px] bg-base-200/80 rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none border-b sm:border-b-0 sm:border-r border-primary/10 px-2">
+          <span className="font-bold text-primary text-xs uppercase tracking-wider">
+            {match.mode}
+          </span>
+          <span className="text-xs text-base-content/60 mt-1">
+            {match.date}
+          </span>
+          <span
+            className={`mt-2 text-sm font-bold ${
+              match.result === "Win" ? "text-success" : "text-error"
+            }`}
+          >
+            {match.result === "Win" ? "Victory" : "Defeat"}
+          </span>
+          <span className="text-xs text-base-content/70 mt-1">
+            {match.duration}
+          </span>
+        </div>
+        {/* Bloc centre : champion + spells/runes/items */}
+        <div className="flex flex-row items-center gap-3 px-4">
+          <div className="avatar relative">
+            <div className="mask mask-squircle w-16 h-16 border-4 border-primary shadow-lg shadow-primary/30 animate-pulse">
               <Image
                 src={getChampionIcon(match.champion)}
                 alt={match.champion}
-                width={56}
-                height={56}
+                width={64}
+                height={64}
                 className="object-cover"
               />
             </div>
-          </div>
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-lg font-bold text-base-content truncate max-w-[120px]">
-                {match.champion}
-              </span>
-              <span
-                className={`badge badge-lg font-bold ${
-                  match.result === "Win" ? "badge-success" : "badge-error"
-                }`}
-              >
-                {match.result}
-              </span>
-              <span className="badge badge-outline font-mono">{match.kda}</span>
-            </div>
-            <span className="text-xs text-base-content/60 mt-1 truncate max-w-[180px]">
-              {match.date} • {match.mode} • {match.duration}
+            {/* Level badge (optionnel) */}
+            <span className="absolute -bottom-2 -right-2 badge badge-primary badge-xs shadow">
+              18
             </span>
           </div>
+          <div className="flex flex-col gap-1 ml-2">
+            <div className="flex gap-1">
+              {/* spells.map ... */}
+              {mainPlayer ? (
+                <>
+                  <Image
+                    src={`/assets/spell/${getSummonerSpellImage(
+                      mainPlayer.spell1
+                    )}`}
+                    alt={`Spell 1`}
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 rounded shadow"
+                  />
+                  <Image
+                    src={`/assets/spell/${getSummonerSpellImage(
+                      mainPlayer.spell2
+                    )}`}
+                    alt={`Spell 2`}
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 rounded shadow"
+                  />
+                </>
+              ) : (
+                <>
+                  <span className="w-7 h-7 bg-base-300 rounded shadow-inner" />
+                  <span className="w-7 h-7 bg-base-300 rounded shadow-inner" />
+                </>
+              )}
+            </div>
+            <div className="flex gap-1 mt-1">
+              {/* runes.map ... */}
+              {mainPlayer && mainPlayer.rune1 && mainPlayer.rune2 ? (
+                <>
+                  <Image
+                    src={`/assets/${getRuneIcon(mainPlayer.rune1)}`}
+                    alt={`Rune 1`}
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 rounded-full shadow"
+                  />
+                  <Image
+                    src={`/assets/${getRuneIcon(mainPlayer.rune2)}`}
+                    alt={`Rune 2`}
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 rounded-full shadow"
+                  />
+                </>
+              ) : (
+                <>
+                  <span className="w-7 h-7 bg-base-300 rounded-full shadow-inner" />
+                  <span className="w-7 h-7 bg-base-300 rounded-full shadow-inner" />
+                </>
+              )}
+            </div>
+            <div className="flex gap-1 mt-1">
+              {mainPlayer && mainPlayer.items && mainPlayer.items.length > 0
+                ? mainPlayer.items.map((itemId, i) =>
+                    itemId > 0 ? (
+                      <Image
+                        key={itemId + "-" + i}
+                        src={`/assets/item/${itemId}.png`}
+                        alt={`Item ${itemId}`}
+                        width={28}
+                        height={28}
+                        className="w-7 h-7 rounded shadow"
+                      />
+                    ) : (
+                      <span
+                        key={i}
+                        className="w-7 h-7 bg-base-300 rounded shadow-inner"
+                      />
+                    )
+                  )
+                : [...Array(6)].map((_, i) => (
+                    <span
+                      key={i}
+                      className="w-7 h-7 bg-base-300 rounded shadow-inner"
+                    />
+                  ))}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2 items-center justify-end text-xs">
-          <span className="badge badge-info badge-outline">
-            {match.teamKills} Kills
+        {/* Bloc droit : KDA, badges, etc. */}
+        <div className="flex flex-col items-center justify-center flex-1 px-2">
+          {/* Score principal */}
+          <div className="flex items-end gap-2 text-xl font-extrabold tracking-tight">
+            <span className="text-base-content drop-shadow">{kdaParts[0]}</span>
+            <span className="text-error">/</span>
+            <span className="text-base-content drop-shadow">{kdaParts[1]}</span>
+            <span className="text-error">/</span>
+            <span className="text-base-content drop-shadow">{kdaParts[2]}</span>
+          </div>
+          {/* KDA détaillé */}
+          <span className="text-xs font-bold text-primary/80 mt-1">
+            KDA: {kdaValue}
           </span>
-          <span className="badge badge-success badge-outline">
-            {match.teamGold} Gold
+          {/* P/Kill réel */}
+          <span className="text-xs text-error font-bold mt-1">
+            P/Kill {pKill}%
           </span>
-          <span className="badge badge-error badge-outline">
-            {match.enemyKills} Kills
-          </span>
-          <span className="badge badge-warning badge-outline">
-            {match.enemyGold} Gold
-          </span>
-          <span className="ml-2 text-base-content/40">{open ? "▲" : "▼"}</span>
+          {/* Badges spéciaux */}
+          <div className="flex gap-2 mt-2 flex-wrap justify-center">
+            {specialBadges.map((b) => (
+              <span
+                key={b.label}
+                className={`badge badge-lg text-white font-bold shadow-md bg-gradient-to-r ${b.color} border-0 flex items-center gap-1`}
+              >
+                <span>{b.icon}</span> {b.label}
+              </span>
+            ))}
+          </div>
         </div>
-      </button>
-      {/* Collapse content */}
+        {/* Flèche collapse stylisée, positionnée en bas à droite de la card */}
+        <button
+          className="absolute right-3 bottom-3 bg-base-100/80 rounded-full shadow p-1 border border-primary/20 hover:bg-primary/10 transition z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen((o) => !o);
+          }}
+          aria-label="Toggle details"
+          tabIndex={0}
+        >
+          <span
+            className="text-xl text-primary transition-transform duration-200"
+            style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
+          >
+            {open ? "▲" : "▼"}
+          </span>
+        </button>
+      </div>
+      {/* CONTENU COLLAPSABLE */}
       <div
         className={`overflow-hidden transition-all duration-300 ${
           open
@@ -79,40 +248,65 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
         aria-hidden={!open}
       >
         <div className="w-full">
-          <div className="tabs tabs-bordered mb-4 flex-wrap">
+          {/* Tabs modernisés DaisyUI v5 */}
+          <div role="tablist" className="tabs tabs-lift mb-4 flex-wrap">
             <button
-              className={`tab${tab === "overview" ? " tab-active" : ""}`}
+              role="tab"
+              className={`tab tab-lg font-semibold ${
+                tab === "overview" ? "tab-active" : ""
+              }`}
               onClick={() => setTab("overview")}
+              aria-selected={tab === "overview"}
+              tabIndex={0}
               type="button"
             >
-              <span className="font-semibold">Overview</span>
+              Overview
             </button>
             <button
-              className={`tab${tab === "team" ? " tab-active" : ""}`}
+              role="tab"
+              className={`tab tab-lg font-semibold ${
+                tab === "team" ? "tab-active" : ""
+              }`}
               onClick={() => setTab("team")}
+              aria-selected={tab === "team"}
+              tabIndex={0}
               type="button"
             >
-              <span className="font-semibold">Team analysis</span>
+              Team analysis
             </button>
             <button
-              className={`tab${tab === "build" ? " tab-active" : ""}`}
+              role="tab"
+              className={`tab tab-lg font-semibold ${
+                tab === "build" ? "tab-active" : ""
+              }`}
               onClick={() => setTab("build")}
+              aria-selected={tab === "build"}
+              tabIndex={0}
               type="button"
             >
-              <span className="font-semibold">Build</span>
+              Build
             </button>
           </div>
+          {/* Contenu des tabs */}
           {tab === "overview" && (
             <div className="flex flex-col gap-4">
               <TeamTable
                 players={redTeam}
                 team="Victory (Red)"
                 teamColor="red"
+                teamStats={{
+                  kills: match.details.kills.red,
+                  gold: match.details.gold.red,
+                }}
               />
               <TeamTable
                 players={blueTeam}
                 team="Defeat (Blue)"
                 teamColor="blue"
+                teamStats={{
+                  kills: match.details.kills.blue,
+                  gold: match.details.gold.blue,
+                }}
               />
             </div>
           )}

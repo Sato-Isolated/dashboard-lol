@@ -47,4 +47,8 @@ export interface UIPlayer {
   team: "Red" | "Blue";
   win: boolean;
   mvp: boolean;
+  spell1: number;
+  spell2: number;
+  rune1: number;
+  rune2: number;
 }

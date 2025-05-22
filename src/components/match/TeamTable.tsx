@@ -8,7 +8,8 @@ const TeamTable: React.FC<{
   players: UIPlayer[];
   team: string;
   teamColor: string;
-}> = ({ players, team, teamColor }) => (
+  teamStats?: { kills: number; gold: number };
+}> = ({ players, team, teamColor, teamStats }) => (
   <div
     className={`card rounded-xl mb-4 border shadow bg-base-200 ${
       teamColor === "red" ? "border-red-400" : "border-blue-400"
@@ -21,7 +22,13 @@ const TeamTable: React.FC<{
           : "text-blue-400 bg-base-100"
       }`}
     >
-      {team} Team
+      <span>{team} Team</span>
+      {teamStats && (
+        <>
+          <span className="badge badge-info badge-outline ml-2">{teamStats.kills} Kills</span>
+          <span className="badge badge-success badge-outline ml-1">{teamStats.gold} Gold</span>
+        </>
+      )}
     </div>
     <div className="overflow-x-auto p-2">
       <table className="table table-zebra rounded-xl">
