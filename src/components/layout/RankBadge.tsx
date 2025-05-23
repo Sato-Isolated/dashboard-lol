@@ -11,11 +11,10 @@ interface RankBadgeProps {
     wins: number;
     losses: number;
   }>;
-  lang?: "fr" | "en";
 }
 
-const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues, lang = "fr" }) => {
-  const aramRank = getAramRank(aramScore, lang);
+const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues}) => {
+  const aramRank = getAramRank(aramScore);
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -31,7 +30,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues, lang = "fr" }
             <span className="text-xs text-base-content/60">ARAM Score: <span className="font-semibold text-base-content/80">{aramScore}</span></span>
           </div>
         </div>
-        <div className="divider text-xs text-base-content/40">Rang Riot</div>
+        <div className="divider text-xs text-base-content/40">League Rank</div>
         <div className="flex flex-col gap-2 w-full">
           {leagues.length === 0 ? (
             <span className="badge badge-outline text-base-content/50 text-xs py-2 px-4">Unranked</span>

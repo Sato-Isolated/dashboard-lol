@@ -40,16 +40,14 @@ export function useUpdateUserData() {
       if (res.ok) {
         const data = await res.json();
         if (data.calculated) {
-          // Optionnel: afficher une notification "Score ARAM recalculé"
-          // alert("Score ARAM recalculé: " + data.aramScore);
+          // Optional: show notification "ARAM score recalculated"
+          // alert("ARAM score recalculated: " + data.aramScore);
         } else {
-          // Optionnel: afficher une notification "Score ARAM déjà calculé"
+          // Optional: show notification "ARAM score already calculated"
         }
       }
     } catch (e: unknown) {
-      setError(
-        e instanceof Error ? e.message : "Erreur lors de la mise à jour."
-      );
+      setError(e instanceof Error ? e.message : "Error while updating.");
     }
     setLoading(false);
   }, [effectiveRegion, effectiveName, effectiveTagline]);

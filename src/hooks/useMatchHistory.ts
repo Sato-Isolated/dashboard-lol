@@ -27,7 +27,7 @@ export function useMatchHistory(): {
       previousPageData.data &&
       previousPageData.data.length === 0
     )
-      return null; // plus de pages
+      return null; // no more pages
     return [
       `/api/summoner/matches?name=${encodeURIComponent(
         effectiveName
@@ -45,15 +45,14 @@ export function useMatchHistory(): {
   const fetcher = async (url: string) => {
     const res = await fetch(url);
     const json = await res.json();
-    if (!res.ok)
-      throw new Error(json?.error || "Erreur lors du chargement des données");
+    if (!res.ok) throw new Error(json?.error || "Error loading data");
     return json;
   };
 
   const { data, error, isLoading, setSize, size, mutate, isValidating } =
     useSWRInfinite<{ data: Match[] }>(getKey, ([url]) => fetcher(url));
 
-  // Concatène toutes les pages de matchs
+  // Concatenate all match pages
   const matches: UIMatch[] =
     data?.flatMap((page) =>
       (page.data || []).map((m) => mapRiotMatchToUIMatch(m, effectiveName))
@@ -63,7 +62,7 @@ export function useMatchHistory(): {
     ? data[data.length - 1]?.data.length === PAGE_SIZE
     : true;
 
-  // fetchMatches: reset = true => reset la pagination, sinon charge la page suivante
+  // fetchMatches: reset = true => reset pagination, otherwise load next page
   const fetchMatches = useCallback(
     (reset = false) => {
       if (reset) {

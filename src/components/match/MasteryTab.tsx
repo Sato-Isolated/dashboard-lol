@@ -32,7 +32,7 @@ const MasteryTab: React.FC = () => {
       { signal: controller.signal }
     )
       .then((res) => {
-        if (!res.ok) throw new Error("Erreur lors du chargement des masteries");
+        if (!res.ok) throw new Error("Error while loading masteries");
         return res.json();
       })
       .then((data) => {
@@ -49,11 +49,11 @@ const MasteryTab: React.FC = () => {
 
   if (loading)
     return <div className="loading loading-spinner loading-lg mx-auto my-8" />;
-  if (error) return <div className="alert alert-error">Erreur : {error}</div>;
+  if (error) return <div className="alert alert-error">Error: {error}</div>;
   if (masteries.length === 0)
-    return <div className="alert alert-info">Aucune maîtrise trouvée.</div>;
+    return <div className="alert alert-info">No mastery found.</div>;
 
-  // Calcul des totaux
+  // Calculate totals
   const totalPoints = masteries.reduce((acc, m) => acc + m.championPoints, 0);
   const totalChampions = masteries.length;
   const avgLevel =

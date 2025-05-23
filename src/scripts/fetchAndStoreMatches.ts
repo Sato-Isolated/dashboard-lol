@@ -39,19 +39,19 @@ export async function fetchAndStoreMatches(
     account.puuid
   );
 
-  // Définir la période : du 9 janvier 2025 à maintenant, ou juste les nouvelles games si fetchOldGames est true
-  const now = Math.floor(Date.now() / 1000); // en secondes
+  // Set the period: from January 9, 2025 to now, or just new games if fetchOldGames is true
+  const now = Math.floor(Date.now() / 1000); // in seconds
   let fromTimestamp: number;
   const toTimestamp: number = now;
   if (!summonerDoc.fetchOldGames) {
-    // On fetch tout l'historique jusqu'à janvier 2025
+    // Fetch all history up to January 2025
     fromTimestamp = Math.floor(
       new Date("2025-01-09T00:00:00Z").getTime() / 1000
     );
   } else {
-    // On fetch uniquement les games récentes
+    // Only fetch recent games
     fromTimestamp =
-      summonerDoc.lastFetchedGameEndTimestamp || now - 60 * 60 * 24 * 7; // fallback: 1 semaine
+      summonerDoc.lastFetchedGameEndTimestamp || now - 60 * 60 * 24 * 7; // fallback: 1 week
   }
   const options = {
     startTime: fromTimestamp,
@@ -118,11 +118,11 @@ export async function fetchAndStoreMatches(
     }
   }
 
-  // Si on a fetch tout l'historique, on passe fetchOldGames à true
+  // If we fetched all history, set fetchOldGames to true
   if (!summonerDoc.fetchOldGames) {
     await setFetchOldGames(platformRegion, name, tagline, true);
   }
-  // On met à jour la date du match le plus récent
+  // Update the date of the most recent match
   if (mostRecentGameEnd) {
     await setLastFetchedGameEndTimestamp(
       platformRegion,
@@ -132,7 +132,7 @@ export async function fetchAndStoreMatches(
     );
   }
 
-  // Retourne le nombre total de matchs stockés
+  // Return the total number of stored matches
   return { totalFetched: allMatchIds.length };
 }
 

@@ -3,7 +3,7 @@ import { apiErrorHandler } from "@/utils/apiErrorHandler";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
 import { MongoService } from "@/lib/MongoService";
 
-// Fonction utilitaire pour récupérer les joueurs récemment joués
+// Utility function to get recently played players
 async function getRecentlyPlayed({
   region,
   name,
@@ -29,7 +29,7 @@ async function getRecentlyPlayed({
   const pipeline = [
     { $match: { "info.participants.puuid": puuid } },
     { $sort: { "info.gameEndTimestamp": -1 } },
-    { $limit: 100 }, // recent 100 games for performance
+    { $limit: 100 }, // last 100 games for performance
     { $unwind: "$info.participants" },
     { $match: { "info.participants.puuid": { $ne: puuid } } },
     {
@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/summoner/recently-played (déclenche une mise à jour réelle)
+// POST /api/summoner/recently-played (triggers a real update)
 export async function POST(req: NextRequest) {
   try {
     const { region, name, tagline } = await req.json();
@@ -94,11 +94,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    // On fetch et stocke les matchs récents (ceci met à jour la DB)
+    // Fetch and store recent matches (this updates the DB)
     const { totalFetched } = await fetchAndStoreMatches(region, name, tagline);
     return NextResponse.json({
       success: true,
-      message: `Mise à jour effectuée (${totalFetched} matchs fetch)`,
+      message: `Update successful (${totalFetched} matches fetched)`,
       totalFetched,
     });
   } catch (e: unknown) {

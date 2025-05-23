@@ -3,7 +3,7 @@ import { fetchAndStoreMasteries } from "@/scripts/fetchAndStoreMasteries";
 import { apiErrorHandler } from "@/utils/apiErrorHandler";
 import { MongoService } from "@/lib/MongoService";
 
-// POST /api/summoner/masteries : refresh les masteries depuis Riot et stocke en DB
+// POST /api/summoner/masteries: refresh masteries from Riot and store in DB
 export async function POST(req: NextRequest) {
   try {
     const { region, name, tagline } = await req.json();
@@ -13,18 +13,18 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    // Correction de l'ordre des paramètres : name, tagline, region
+    // Fix parameter order: name, tagline, region
     await fetchAndStoreMasteries(name, tagline, region);
     return NextResponse.json({
       success: true,
-      message: "Masteries mises à jour",
+      message: "Masteries updated",
     });
   } catch (e: unknown) {
     return apiErrorHandler(e);
   }
 }
 
-// GET /api/summoner/masteries : lecture des masteries stockées
+// GET /api/summoner/masteries: read stored masteries
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url!);

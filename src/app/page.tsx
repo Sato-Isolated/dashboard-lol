@@ -7,9 +7,8 @@ export default function Home() {
           League of Legends ARAM Dashboard
         </h1>
         <p className="text-lg text-base-content/80 text-center max-w-xl">
-          Visualisez l&apos;historique de vos matchs ARAM, vos statistiques et
-          vos champions favoris. Mettez à jour vos données en temps réel et
-          explorez vos performances !
+          View your ARAM match history, stats, and favorite champions. Update
+          your data in real time and explore your performance!
         </p>
         <div className="mt-4">
           <span className="badge badge-primary badge-lg">Work in progress</span>

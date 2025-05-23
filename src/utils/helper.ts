@@ -125,7 +125,7 @@ export function mapRiotMatchToUIMatch(
   };
 }
 
-// Utilitaire pour obtenir le nom de l'image d'un spell à partir de son ID
+// Utility to get the spell image name from its ID
 import summonerData from "../../public/assets/data/en_US/summoner.json";
 
 const spellIdToImg: Record<string, string> = (() => {
@@ -152,11 +152,11 @@ const runeIdToIcon: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   const data = runesData as any[];
   for (const style of data) {
-    // Style principale (arbre)
+    // Main style (tree)
     if (style.id && style.icon) {
       map[String(style.id)] = style.icon;
     }
-    // Runes dans les slots
+    // Runes in slots
     if (style.slots && Array.isArray(style.slots)) {
       for (const slot of style.slots) {
         if (slot.runes && Array.isArray(slot.runes)) {

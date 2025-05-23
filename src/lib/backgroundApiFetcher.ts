@@ -1,10 +1,6 @@
-// src/lib/backgroundMatchFetcher.ts
-// Ce fichier ne doit contenir que du code utilisable côté client !
-// PAS d'import Node/Mongo ici !
-
 /**
- * Appelle l'API route Next.js pour lancer la mise à jour des matchs côté serveur.
- * À utiliser côté client (ex: bouton Update)
+ * Calls the Next.js API route to trigger match updates on the server side.
+ * To be used on the client side (e.g., Update button)
  */
 export async function handleUserUpdate(
   region: string,
@@ -16,7 +12,7 @@ export async function handleUserUpdate(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),
   });
-  if (!res.ok) throw new Error("Erreur lors de la mise à jour des matchs");
+  if (!res.ok) throw new Error("Error while updating matches");
 }
 
 export async function handleUserChampionMastery(
@@ -29,7 +25,7 @@ export async function handleUserChampionMastery(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),
   });
-  if (!res.ok) throw new Error("Erreur lors de la mise à jour des champions");
+  if (!res.ok) throw new Error("Error while updating champion masteries");
 }
 
 export async function handleUserRecentlyPlayedUpdate(
@@ -42,8 +38,5 @@ export async function handleUserRecentlyPlayedUpdate(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ region, name, tagline }),
   });
-  if (!res.ok)
-    throw new Error(
-      "Erreur lors de la mise à jour des joueurs récemment joués"
-    );
+  if (!res.ok) throw new Error("Error while updating recently played players");
 }

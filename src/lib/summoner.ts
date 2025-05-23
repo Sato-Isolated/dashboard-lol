@@ -13,23 +13,23 @@ export async function fetchSummonerFull(
 ) {
   const accountApi = createAccountService(platformRegion);
 
-  // DEBUG: log les paramètres envoyés à l'API Riot
-  // SUPPRIMER: console.log("[fetchSummonerFull] getAccountByRiotId:", { name, tagline });
+  // DEBUG: log parameters sent to Riot API
+  // REMOVE: console.log("[fetchSummonerFull] getAccountByRiotId:", { name, tagline });
   const account = await accountApi.getAccountByRiotId(name, tagline);
 
   if (!account) {
-    // SUPPRIMER: console.error("[fetchSummonerFull] Account not found for:", { name, tagline });
+    // REMOVE: console.error("[fetchSummonerFull] Account not found for:", { name, tagline });
     return null;
   }
 
   const summonerApi = createSummonerService(platformRegion);
   const summonerDto = await summonerApi.getSummonerByPuuid(account.puuid);
   if (!summonerDto) {
-    // SUPPRIMER: console.error("[fetchSummonerFull] Summoner not found for puuid:", account.puuid);
+    // REMOVE: console.error("[fetchSummonerFull] Summoner not found for puuid:", account.puuid);
     return null;
   }
 
-  // Récupération des leagues/rangs
+  // Retrieve leagues/ranks
   let leagues: LeagueEntry[] = [];
   if (summonerDto && summonerDto.id) {
     try {
@@ -39,7 +39,7 @@ export async function fetchSummonerFull(
     }
   }
 
-  // Ajout récupération du score ARAM depuis la base
+  // Add ARAM score retrieval from the database
   const dbSummoner = await getSummoner(
     platformRegion,
     account.gameName,
@@ -47,7 +47,7 @@ export async function fetchSummonerFull(
   );
   const aramScore = dbSummoner?.aramScore ?? 0;
 
-  // Récupération sécurisée de la version du jeu
+  // Securely retrieve the game version
   let version = "latest";
   try {
     const res = await fetch(

@@ -36,7 +36,7 @@ function computeStats(matches: UIMatch[]): {
       ? (kills + assists).toFixed(2)
       : ((kills + assists) / deaths).toFixed(2);
   const winrate = ((wins / matches.length) * 100).toFixed(1) + "%";
-  // Prendre les 3 champions les plus joués sur les dernières parties
+  // Take the 3 most played champions from the last games
   const championPool = Object.entries(championCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
@@ -64,7 +64,7 @@ const CenterColumn: React.FC = () => {
 
   useEffect(() => {
     if (!effectiveName || !effectiveRegion || !effectiveTagline) {
-      // Afficher un message d'erreur si les paramètres sont manquants
+      // Show an error message if parameters are missing
       return;
     }
     fetchMatches(true);

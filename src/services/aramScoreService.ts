@@ -4,33 +4,33 @@ import type { Participant } from "@/types/api/match";
 import type { SummonerCollection } from "@/types/schema/SummonerCollection";
 
 /**
- * Calcule un score ARAM unique pour un joueur sur une partie.
+ * Calculates a unique ARAM score for a player in a match.
  */
 /**
- * Calcule un score personnalisé pour un participant en ARAM, basé sur ses performances individuelles
- * et la moyenne de son équipe. Le score prend en compte la victoire/défaite, le KDA, les dégâts infligés,
- * la participation aux kills, ainsi que le rôle de support ou tank (soins ou dégâts subis).
+ * Calculates a custom score for an ARAM participant, based on individual performance
+ * and team averages. The score considers win/loss, KDA, damage dealt,
+ * kill participation, and support/tank role (healing or damage taken).
  *
- * - Victoire : base de +20 points, plafonné à 40.
- * - Défaite : base de -20 points, jamais positif, minimum -40.
- * - KDA pondéré : (kills + assists) / deaths, multiplié par 2, max 10 points.
- * - Dégâts infligés : comparé à la moyenne de l'équipe, max 10 points.
- * - Participation aux kills : killParticipation * 8, arrondi, max 8 points.
- * - Support/Tank : prend le meilleur score entre soins (comparé à la moyenne) et tanking (dégâts subis), max 5 points.
+ * - Win: base of +20 points, capped at 40.
+ * - Loss: base of -20 points, never positive, minimum -40.
+ * - Weighted KDA: (kills + assists) / deaths, multiplied by 2, max 10 points.
+ * - Damage dealt: compared to team average, max 10 points.
+ * - Kill participation: killParticipation * 8, rounded, max 8 points.
+ * - Support/Tank: takes the higher score between healing (compared to average) and tanking (damage taken), max 5 points.
  *
- * @param participant Le participant dont on veut calculer le score.
- * @param teamParticipants Les membres de l'équipe du participant (pour calculer les moyennes).
- * @returns Le score ARAM calculé, arrondi à l'entier le plus proche.
+ * @param participant The participant whose score is being calculated.
+ * @param teamParticipants The participant's team members (for calculating averages).
+ * @returns The calculated ARAM score, rounded to the nearest integer.
  */
 export function computeAramScore(
   participant: Participant,
   teamParticipants: Participant[]
 ): number {
-  // Points de base plus stricts
+  // Stricter base points
   const BASE_WIN = 15;
   const BASE_LOSS = -25;
 
-  // Moyennes d'équipe
+  // Team averages
   const avgDamage =
     teamParticipants.reduce((a, p) => a + p.totalDamageDealtToChampions, 0) /
     teamParticipants.length;
@@ -43,22 +43,22 @@ export function computeAramScore(
     teamParticipants.reduce((a, p) => a + p.totalDamageTaken, 0) /
     teamParticipants.length;
 
-  // KDA pondéré (plus strict)
+  // Weighted KDA (stricter)
   const kda =
     (participant.kills + participant.assists) / Math.max(1, participant.deaths);
   const kdaScore = Math.min(7, kda * 1.5);
 
-  // Dégâts infligés (plus strict)
+  // Damage dealt (stricter)
   const damageScore = Math.min(
     7,
     (participant.totalDamageDealtToChampions / (avgDamage || 1)) * 3
   );
 
-  // Participation aux kills (plus strict)
+  // Kill participation (stricter)
   const killParticipation = participant.challenges?.killParticipation ?? 0;
   const kpScore = Math.round(killParticipation * 6);
 
-  // Soins ou tanking (plus strict)
+  // Healing or tanking (stricter)
   const healScore =
     avgHeal > 0
       ? Math.min(
@@ -74,12 +74,12 @@ export function computeAramScore(
       : 0;
   const supportTankScore = Math.max(healScore, tankScore);
 
-  // Score total
+  // Total score
   let points = participant.win
     ? BASE_WIN + kdaScore + damageScore + kpScore + supportTankScore
     : BASE_LOSS + kdaScore + damageScore + kpScore + supportTankScore;
 
-  // Clamp : jamais positif en défaite, jamais plus de 30 en win
+  // Clamp: never positive on loss, never more than 30 on win
   if (participant.win) points = Math.min(points, 30);
   else points = Math.max(Math.min(points, -1), -50);
 
@@ -116,7 +116,7 @@ export class AramScoreService {
         (p: any) => p.puuid === puuid
       );
       if (!participant) continue;
-      // Trouver l'équipe du participant
+      // Find the participant's team
       const teamId = participant.teamId;
       const teamParticipants = match.info.participants.filter(
         (p: any) => p.teamId === teamId

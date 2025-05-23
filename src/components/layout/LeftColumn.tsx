@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import type { UIRecentlyPlayed } from "@/types/ui-leftcolumn";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { useAccountSummoner } from "@/hooks/useAccountSummoner";
-import { getAramRank } from "@/utils/aramRankSystem";
 import RankBadge from "./RankBadge";
 
 const LeftColumn: React.FC = () => {
@@ -14,8 +13,6 @@ const LeftColumn: React.FC = () => {
     aramScore = 0,
     loading: loadingSummoner,
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
-  const userAramScore = aramScore;
-  const aramRank = getAramRank(userAramScore, "fr"); // 'fr' or 'en' for language
 
   const [recentlyPlayed, setRecentlyPlayed] = useState<UIRecentlyPlayed[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -34,9 +31,7 @@ const LeftColumn: React.FC = () => {
     )
       .then((res) => {
         if (!res.ok)
-          throw new Error(
-            "Erreur lors du chargement des joueurs récemment joués"
-          );
+          throw new Error("Error while loading recently played players");
         return res.json();
       })
       .then((data) => setRecentlyPlayed(data.data || []))
@@ -82,7 +77,7 @@ const LeftColumn: React.FC = () => {
         </span>
         <div className="flex flex-col gap-2 w-full">
           {/* ARAM Rank Display */}
-          <RankBadge aramScore={aramScore} leagues={leagues} lang="fr" />
+          <RankBadge aramScore={aramScore} leagues={leagues} />
         </div>
       </div>
       <div className="card bg-base-100 rounded-xl shadow-xl p-4 w-full flex flex-col items-center border border-primary/20">

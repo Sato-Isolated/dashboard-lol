@@ -38,7 +38,7 @@ const ChampionsTab: React.FC = () => {
       { signal: controller.signal }
     )
       .then((res) => {
-        if (!res.ok) throw new Error("Erreur lors du chargement des stats");
+        if (!res.ok) throw new Error("Error while loading stats");
         return res.json();
       })
       .then((data) => {
@@ -84,11 +84,11 @@ const ChampionsTab: React.FC = () => {
 
   if (loading)
     return <div className="loading loading-spinner loading-lg mx-auto my-8" />;
-  if (error) return <div className="alert alert-error">Erreur : {error}</div>;
+  if (error) return <div className="alert alert-error">Error: {error}</div>;
   if (!stats || stats.length === 0)
-    return <div className="alert alert-info">Aucun champion joué.</div>;
+    return <div className="alert alert-info">No champion played.</div>;
 
-  // Calcul des totaux
+  // Calculate totals
   const totalGames = stats.reduce((acc, champ) => acc + champ.games, 0);
   const totalWins = stats.reduce((acc, champ) => acc + champ.wins, 0);
   const globalWinrate = totalGames > 0 ? (totalWins / totalGames) * 100 : 0;

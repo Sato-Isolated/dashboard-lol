@@ -3,7 +3,7 @@ import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
 import { apiErrorHandler } from "@/utils/apiErrorHandler";
 import { MongoService } from "@/lib/MongoService";
 
-// POST /api/summoner/matches : refresh les matches depuis Riot et stocke en DB
+// POST /api/summoner/matches: refresh matches from Riot and store in DB
 export async function POST(req: NextRequest) {
   try {
     const { region, name, tagline } = await req.json();
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/summoner/matches : lecture des matches stockés
+// GET /api/summoner/matches: read stored matches
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url!);

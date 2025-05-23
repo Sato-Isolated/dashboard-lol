@@ -8,9 +8,9 @@ import { PlatformRegion } from "@/types/api/platformregion";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { mapLangToRegion } from "@/utils/langToRegion";
 
-// Typage explicite des props pour SearchBar
+// Explicit typing for SearchBar props
 const SearchBar: React.FC = () => {
-  // Utilisation d'un état local pour le formulaire, synchronisé avec le store seulement au submit
+  // Use local state for the form, sync with store only on submit
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
   const { setUser } = useUserStore();
@@ -29,7 +29,7 @@ const SearchBar: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
-  // Préselectionne la région selon la langue/navigateur ou localStorage si aucune région n'est déjà définie
+  // Preselect region based on browser language or localStorage if none is set
   useEffect(() => {
     const savedRegion =
       typeof window !== "undefined"
@@ -49,14 +49,14 @@ const SearchBar: React.FC = () => {
     }
   }, [region]);
 
-  // Mémorise le choix de région à chaque changement
+  // Remember region choice on each change
   useEffect(() => {
     if (region && typeof window !== "undefined") {
       localStorage.setItem("preferredRegion", region);
     }
   }, [region]);
 
-  // Synchronise l'état local avec les valeurs effectives (ex: navigation directe)
+  // Sync local state with effective values (e.g., direct navigation)
   useEffect(() => {
     setRegion((effectiveRegion as PlatformRegion) || "");
     setTagline(effectiveTagline || "");
@@ -71,16 +71,13 @@ const SearchBar: React.FC = () => {
         signal: controller.signal,
       })
         .then((res) => {
-          if (!res.ok)
-            throw new Error("Erreur lors de la recherche de joueurs.");
+          if (!res.ok) throw new Error("Error while searching for players.");
           return res.json();
         })
         .then((data) => setSuggestions(data))
         .catch((e) => {
           if (e.name === "AbortError") return;
-          setSuggestionError(
-            e.message || "Erreur lors de la recherche de joueurs."
-          );
+          setSuggestionError(e.message || "Error while searching for players.");
           setSuggestions([]);
         });
     } else {
@@ -90,7 +87,7 @@ const SearchBar: React.FC = () => {
     return () => controller.abort();
   }, [summonerName]);
 
-  // Fermer suggestions si clic en dehors
+  // Close suggestions if click outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (!inputRef.current?.parentElement?.contains(e.target as Node)) {
@@ -103,7 +100,7 @@ const SearchBar: React.FC = () => {
     }
   }, [showSuggestions]);
 
-  // Réinitialise l'index surligné lors du changement de suggestions ou de l'affichage/masquage de la liste
+  // Reset highlighted index when suggestions or list visibility changes
   useEffect(() => {
     setHighlightedIndex(-1);
   }, [suggestions, showSuggestions]);
@@ -120,7 +117,7 @@ const SearchBar: React.FC = () => {
     router.push(`/${region}/summoner/${summonerName}/${tagline}`);
   };
 
-  // Ajout du sous-composant SuggestionList
+  // Add SuggestionList subcomponent
   interface Suggestion {
     name: string;
     tagline: string;

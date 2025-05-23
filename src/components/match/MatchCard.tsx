@@ -8,7 +8,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import TeamTable from "./TeamTable";
 
-// TODO: Props pour spells, runes, items, badges spéciaux, ranks, etc.
+// TODO: Props for spells, runes, items, special badges, ranks, etc.
 
 export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const [open, setOpen] = useState(false);
@@ -16,7 +16,7 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const redTeam = match.players.filter((p) => p.team === "Red");
   const blueTeam = match.players.filter((p) => p.team === "Blue");
 
-  // TODO: Remplacer par les vraies données
+  // TODO: Replace with real data
   const specialBadges = [
     { label: "Quadra Kill", color: "from-pink-500 to-red-500", icon: "🔥" },
     { label: "MVP", color: "from-yellow-400 to-orange-400", icon: "⭐" },
@@ -31,25 +31,25 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
     champion: p.champion,
   }));
 
-  // KDA split robuste (supporte "/" ou ":")
+  // Robust KDA split (supports "/" or ":")
   const kdaParts = match.kda.includes("/")
     ? match.kda.split("/")
     : match.kda.split(":");
 
-  // Calcul du vrai KDA (K+A)/D
+  // Calculate real KDA (K+A)/D
   const kills = Number(kdaParts[0]);
   const deaths = Number(kdaParts[1]);
   const assists = Number(kdaParts[2]);
   const kdaValue =
     deaths === 0 ? kills + assists : ((kills + assists) / deaths).toFixed(2);
 
-  // Calcul du vrai P/Kill%
+  // Calculate real P/Kill%
   let pKill = "--";
   if (match.teamKills && match.teamKills > 0) {
     pKill = Math.round(((kills + assists) / match.teamKills) * 100).toString();
   }
 
-  // Trouver le joueur principal (celui qui a joué le champion affiché)
+  // Find the main player (the one who played the displayed champion)
   const mainPlayer = match.players.find((p) => p.champion === match.champion);
 
   return (

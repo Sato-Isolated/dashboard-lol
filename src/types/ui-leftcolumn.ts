@@ -1,4 +1,4 @@
-// Types pour LeftColumn (recentlyPlayed et mastery)
+// Types for LeftColumn (recentlyPlayed and mastery)
 
 export interface UIRecentlyPlayed {
   name: string;

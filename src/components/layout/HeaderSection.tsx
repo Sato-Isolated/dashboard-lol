@@ -103,7 +103,7 @@ const HeaderSection: React.FC = () => {
         effectiveName
       )}/${encodeURIComponent(effectiveTagline)}`;
       navigator.clipboard.writeText(url);
-      setShareMsg("Lien copié !");
+      setShareMsg("Link copied!");
       setTimeout(() => setShareMsg(""), 1500);
     }
   };
@@ -123,7 +123,7 @@ const HeaderSection: React.FC = () => {
     const now = Date.now();
     if (now - lastUpdate < 10000) {
       // 10s anti-spam
-      setGlobalError("Veuillez patienter avant de relancer une mise à jour.");
+      setGlobalError("Please wait before triggering another update.");
       return;
     }
     setGlobalLoading(true);
@@ -133,9 +133,9 @@ const HeaderSection: React.FC = () => {
     setTimeout(() => {
       if (summoner) {
         const aramScore = (summoner as any).aramScore ?? 0;
-        const aramRank = getAramRank(aramScore, "fr");
+        const aramRank = getAramRank(aramScore);
         setRankMsg(
-          `Nouveau rang ARAM : ${aramRank.displayName} (score ${aramScore})`
+          `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`
         );
         setTimeout(() => setRankMsg(""), 2500);
       }
@@ -143,11 +143,11 @@ const HeaderSection: React.FC = () => {
     }, 300);
   };
 
-  if (loadingSummoner) return <div>Chargement...</div>;
+  if (loadingSummoner) return <div>Loading...</div>;
   if (errorSummoner || !account || !summoner)
-    return <div className="text-error">Erreur de chargement du joueur.</div>;
+    return <div className="text-error">Player loading error.</div>;
   if (updateUserDataLoading) {
-    // Skeleton DaisyUI v5 pour header
+    // DaisyUI v5 skeleton for header
     return (
       <div className="flex flex-col md:flex-row items-center gap-4 w-full bg-base-200 rounded-xl p-6 shadow animate-pulse">
         <div className="flex items-center gap-4 w-full md:w-auto">
@@ -210,13 +210,13 @@ const HeaderSection: React.FC = () => {
             onClick={handleToggleFavorite}
           >
             <span>⭐</span>{" "}
-            {isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
+            {isFav ? "Remove from favorites" : "Add to favorites"}
           </button>
           <button
             className="btn btn-sm btn-outline flex items-center gap-2 w-full justify-center"
             onClick={handleShare}
           >
-            <span>🔗</span> Partager le profil
+            <span>🔗</span> Share profile
           </button>
           {shareMsg && <span className="text-success text-xs">{shareMsg}</span>}
         </div>
@@ -225,14 +225,14 @@ const HeaderSection: React.FC = () => {
           onClick={handleUpdateAndRank}
           disabled={updateUserDataLoading}
         >
-          {updateUserDataLoading ? "Mise à jour..." : "Update"}
+          {updateUserDataLoading ? "Updating..." : "Update"}
         </button>
       </div>
       <div className="flex flex-col items-center w-full md:w-auto">
-        <span className="font-semibold text-base-content mb-2">Favoris</span>
+        <span className="font-semibold text-base-content mb-2">Favorites</span>
         <div className="flex flex-col gap-1 w-full">
           {favorites.length === 0 ? (
-            <span className="text-base-content/50 text-xs">Aucun favori</span>
+            <span className="text-base-content/50 text-xs">No favorite</span>
           ) : (
             favorites.map((fav, i) => (
               <button
