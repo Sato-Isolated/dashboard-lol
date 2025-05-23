@@ -1,10 +1,10 @@
 import { fetchSummonerFull } from "@/lib/summoner";
-import PageWithTabs from "@/components/match/PageWithTabs";
+import PageWithTabs from "@/components/tabs/PageWithTabs";
 import HeaderSection from "@/components/layout/HeaderSection";
 import LeftColumn from "@/components/layout/LeftColumn";
 import CenterColumn from "@/components/layout/CenterColumn";
-import ChampionsTab from "@/components/match/ChampionsTab";
-import MasteryTab from "@/components/match/MasteryTab";
+import ChampionsTab from "@/components/tabs/ChampionsTab";
+import MasteryTab from "@/components/tabs/MasteryTab";
 
 interface PageParams {
   region: string;

@@ -131,7 +131,11 @@ import summonerData from "../../public/assets/data/en_US/summoner.json";
 const spellIdToImg: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   // Use an explicit type for summonerData.data
-  const data: Record<string, { key: string; image: { full: string } }> = (summonerData as { data: Record<string, { key: string; image: { full: string } }> }).data;
+  const data: Record<string, { key: string; image: { full: string } }> = (
+    summonerData as {
+      data: Record<string, { key: string; image: { full: string } }>;
+    }
+  ).data;
   for (const key in data) {
     if (Object.prototype.hasOwnProperty.call(data, key)) {
       const spell = data[key];
@@ -152,7 +156,15 @@ import runesData from "../../public/assets/data/en_US/runesReforged.json";
 const runeIdToIcon: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   // Use an explicit type for runesData
-  const data: Array<{ id: number; icon: string; slots?: Array<{ runes?: Array<{ id: number; icon: string }> }> }> = runesData as Array<{ id: number; icon: string; slots?: Array<{ runes?: Array<{ id: number; icon: string }> }> }>;
+  const data: Array<{
+    id: number;
+    icon: string;
+    slots?: Array<{ runes?: Array<{ id: number; icon: string }> }>;
+  }> = runesData as Array<{
+    id: number;
+    icon: string;
+    slots?: Array<{ runes?: Array<{ id: number; icon: string }> }>;
+  }>;
   for (const style of data) {
     // Main style (tree)
     if (style.id && style.icon) {

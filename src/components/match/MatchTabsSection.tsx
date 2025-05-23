@@ -16,7 +16,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ tabs, activeTab, onTabChange 
     {tabs.map((tab) => (
       <button
         key={tab.key}
-        className={`tab${activeTab === tab.key ? " tab-active" : ""}`}
+        className={`tabs${activeTab === tab.key ? " tabs-active" : ""}`}
         onClick={() => onTabChange(tab.key)}
         type="button"
       >
