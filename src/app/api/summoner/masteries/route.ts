@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAndStoreMasteries } from "@/scripts/fetchAndStoreMasteries";
 import { apiErrorHandler } from "@/utils/apiErrorHandler";
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 
 // POST /api/summoner/masteries : refresh les masteries depuis Riot et stocke en DB
 export async function POST(req: NextRequest) {
@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
     }
     // Correction de l'ordre des paramètres : name, tagline, region
     await fetchAndStoreMasteries(name, tagline, region);
-    return NextResponse.json({ success: true, message: "Masteries mises à jour" });
+    return NextResponse.json({
+      success: true,
+      message: "Masteries mises à jour",
+    });
   } catch (e: unknown) {
     return apiErrorHandler(e);
   }
@@ -34,10 +37,9 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
-    const db = await connectToDatabase();
-    const summoner = await db
-      .collection("summoners")
-      .findOne({ region, name, tagline });
+    const mongo = MongoService.getInstance();
+    const collection = await mongo.getCollection<any>("summoners");
+    const summoner = await collection.findOne({ region, name, tagline });
     if (!summoner || !summoner.championMastery) {
       return NextResponse.json({ success: true, data: [] });
     }
@@ -56,4 +58,4 @@ export async function GET(req: NextRequest) {
   } catch (e: unknown) {
     return apiErrorHandler(e);
   }
-} 
+}

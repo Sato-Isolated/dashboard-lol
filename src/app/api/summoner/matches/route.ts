@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
 import { apiErrorHandler } from "@/utils/apiErrorHandler";
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 
 // POST /api/summoner/matches : refresh les matches depuis Riot et stocke en DB
 export async function POST(req: NextRequest) {
@@ -37,10 +37,15 @@ export async function GET(req: NextRequest) {
       : undefined;
 
     if (!name || !region || !tagline) {
-      return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing parameters" },
+        { status: 400 }
+      );
     }
 
-    const db = await connectToDatabase();
+    const mongo = MongoService.getInstance();
+    const collection = await mongo.getCollection("matches");
+
     const query: Record<string, unknown> = {
       "info.participants": { $elemMatch: { riotIdGameName: name } },
     };
@@ -51,8 +56,7 @@ export async function GET(req: NextRequest) {
       query["info.gameEndTimestamp"] = ts;
     }
 
-    const matches = await db
-      .collection("matches")
+    const matches = await collection
       .find(query)
       .sort({ "info.gameEndTimestamp": -1 })
       .skip(start)
@@ -63,4 +67,4 @@ export async function GET(req: NextRequest) {
   } catch (e) {
     return apiErrorHandler(e);
   }
-} 
+}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
   if (!q || q.length < 2) {
     return NextResponse.json([]);
   }
-  const db = await connectToDatabase();
-  const collection = db.collection("summoners");
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection("summoners");
   // Search by name (case-insensitive, starts with)
   const users = await collection
     .find({ name: { $regex: `^${q}`, $options: "i" } })

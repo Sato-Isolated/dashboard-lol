@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiErrorHandler } from "@/utils/apiErrorHandler";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 
 // Fonction utilitaire pour récupérer les joueurs récemment joués
-async function getRecentlyPlayed({ region, name, tagline, limit }: { region: string, name: string, tagline: string, limit: number }) {
-  const db = await connectToDatabase();
+async function getRecentlyPlayed({
+  region,
+  name,
+  tagline,
+  limit,
+}: {
+  region: string;
+  name: string;
+  tagline: string;
+  limit: number;
+}) {
+  const mongo = MongoService.getInstance();
+  const db = await mongo.connect();
   // Find summoner's puuid
   const summoner = await db
     .collection("summoners")
@@ -85,8 +96,12 @@ export async function POST(req: NextRequest) {
     }
     // On fetch et stocke les matchs récents (ceci met à jour la DB)
     const { totalFetched } = await fetchAndStoreMatches(region, name, tagline);
-    return NextResponse.json({ success: true, message: `Mise à jour effectuée (${totalFetched} matchs fetch)`, totalFetched });
+    return NextResponse.json({
+      success: true,
+      message: `Mise à jour effectuée (${totalFetched} matchs fetch)`,
+      totalFetched,
+    });
   } catch (e: unknown) {
     return apiErrorHandler(e);
   }
-} 
+}

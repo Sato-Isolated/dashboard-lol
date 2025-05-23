@@ -1,6 +1,6 @@
 // src/db/init.ts
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 
 export async function initDb() {
-  await connectToDatabase();
+  await MongoService.getInstance().connect();
 }

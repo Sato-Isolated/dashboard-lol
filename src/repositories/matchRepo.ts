@@ -1,11 +1,11 @@
 // src/repositories/matchRepo.ts
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 import { MatchCollection } from "@/types/schema/MatchCollection";
 import { Match } from "@/types/api/match";
 
 export async function insertMatch(match: Match) {
-  const db = await connectToDatabase();
-  const collection = db.collection<MatchCollection>("matches");
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<MatchCollection>("matches");
 
   const matchDoc: MatchCollection = {
     ...match,
@@ -26,6 +26,7 @@ export async function insertMatch(match: Match) {
 export async function getMatchById(
   matchId: string
 ): Promise<MatchCollection | null> {
-  const db = await connectToDatabase();
-  return db.collection<MatchCollection>("matches").findOne({ _id: matchId });
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<MatchCollection>("matches");
+  return collection.findOne({ _id: matchId });
 }

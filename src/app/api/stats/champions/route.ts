@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 
 // GET /api/stats/champions?name=...&region=...&tagline=...
 export async function GET(req: NextRequest) {
@@ -9,24 +9,27 @@ export async function GET(req: NextRequest) {
     const region = url.searchParams.get("region");
     const tagline = url.searchParams.get("tagline");
     if (!name || !region || !tagline) {
-      return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing parameters" },
+        { status: 400 }
+      );
     }
-    const db = await connectToDatabase();
+    const mongo = MongoService.getInstance();
+    const collection = await mongo.getCollection<any>("summoners");
     // Find summoner's puuid
-    const summoner = await db
-      .collection("summoners")
-      .findOne({ region, name, tagline });
+    const summoner = await collection.findOne({ region, name, tagline });
     if (!summoner || !summoner.puuid) {
       return NextResponse.json([], { status: 404 });
     }
     const puuid = summoner.puuid;
     // Aggregate stats by champion
     const pipeline = [
-      { $match: {
+      {
+        $match: {
           "info.participants.puuid": puuid,
           "info.gameDuration": { $gte: 300 },
-          "info.gameEndedInEarlySurrender": { $ne: true }
-        }
+          "info.gameEndedInEarlySurrender": { $ne: true },
+        },
       },
       { $unwind: "$info.participants" },
       { $match: { "info.participants.puuid": puuid } },
@@ -46,7 +49,8 @@ export async function GET(req: NextRequest) {
       },
       { $sort: { games: -1 } },
     ];
-    const stats = await db.collection("matches").aggregate(pipeline).toArray();
+    const matchesCol = await mongo.getCollection<any>("matches");
+    const stats = await matchesCol.aggregate(pipeline).toArray();
     // Format output
     const result = stats.map((s) => ({
       champion: s._id,
@@ -55,10 +59,14 @@ export async function GET(req: NextRequest) {
       kills: s.kills,
       deaths: s.deaths,
       assists: s.assists,
-      kda: s.deaths === 0 ? s.kills + s.assists : (s.kills + s.assists) / s.deaths,
+      kda:
+        s.deaths === 0 ? s.kills + s.assists : (s.kills + s.assists) / s.deaths,
     }));
     return NextResponse.json(result);
   } catch (e) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : "Unknown error" }, { status: 500 });
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Unknown error" },
+      { status: 500 }
+    );
   }
-} 
+}

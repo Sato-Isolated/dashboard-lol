@@ -7,6 +7,8 @@ import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { useUserStore } from "@/store/userStore";
 import { useUpdateUserData } from "@/hooks/useUpdateUserData";
 import { getAramRank } from "@/utils/aramRankSystem";
+import { useGlobalError } from "@/hooks/useGlobalError";
+import { useGlobalLoading } from "@/hooks/useGlobalLoading";
 
 interface Favorite {
   region: string;
@@ -50,6 +52,9 @@ const HeaderSection: React.FC = () => {
     error: updateUserDataError,
     updateUserData,
   } = useUpdateUserData();
+  const { setError: setGlobalError } = useGlobalError();
+  const { setLoading: setGlobalLoading } = useGlobalLoading();
+  const [lastUpdate, setLastUpdate] = React.useState<number>(0);
 
   React.useEffect(() => {
     const favs = getFavorites();
@@ -63,6 +68,10 @@ const HeaderSection: React.FC = () => {
       )
     );
   }, [effectiveRegion, effectiveTagline, effectiveName]);
+
+  React.useEffect(() => {
+    if (updateUserDataError) setGlobalError(updateUserDataError);
+  }, [updateUserDataError, setGlobalError]);
 
   const handleToggleFavorite = () => {
     const favs = getFavorites();
@@ -111,6 +120,14 @@ const HeaderSection: React.FC = () => {
   };
 
   const handleUpdateAndRank = async () => {
+    const now = Date.now();
+    if (now - lastUpdate < 10000) {
+      // 10s anti-spam
+      setGlobalError("Veuillez patienter avant de relancer une mise à jour.");
+      return;
+    }
+    setGlobalLoading(true);
+    setLastUpdate(now);
     await updateUserData();
     await refetchSummoner();
     setTimeout(() => {
@@ -122,6 +139,7 @@ const HeaderSection: React.FC = () => {
         );
         setTimeout(() => setRankMsg(""), 2500);
       }
+      setGlobalLoading(false);
     }, 300);
   };
 
@@ -240,11 +258,6 @@ const HeaderSection: React.FC = () => {
           )}
         </div>
       </div>
-      {updateUserDataError && (
-        <div className="text-error text-xs text-center w-full mt-2">
-          {updateUserDataError}
-        </div>
-      )}
       {rankMsg && (
         <span className="text-info text-xs animate-fade-in mt-1">
           {rankMsg}

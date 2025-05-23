@@ -1,4 +1,4 @@
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 import { SummonerCollection } from "@/types/schema/SummonerCollection";
 
 export async function getOrCreateSummoner(
@@ -7,8 +7,8 @@ export async function getOrCreateSummoner(
   tagline: string,
   puuid: string
 ) {
-  const db = await connectToDatabase();
-  const collection = db.collection<SummonerCollection>("summoners");
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<SummonerCollection>("summoners");
   let summoner = await collection.findOne({ region, name, tagline });
   if (!summoner) {
     const doc: SummonerCollection = {
@@ -34,8 +34,8 @@ export async function insertOrUpdateChampionMastery(
   championLevel: number,
   championPoints: number
 ) {
-  const db = await connectToDatabase();
-  const collection = db.collection<SummonerCollection>("summoners");
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<SummonerCollection>("summoners");
   await collection.updateOne(
     { region, name, tagline },
     {
@@ -55,10 +55,12 @@ export async function setFetchOldGames(
   tagline: string,
   value: boolean
 ) {
-  const db = await connectToDatabase();
-  await db
-    .collection<SummonerCollection>("summoners")
-    .updateOne({ region, name, tagline }, { $set: { fetchOldGames: value } });
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<SummonerCollection>("summoners");
+  await collection.updateOne(
+    { region, name, tagline },
+    { $set: { fetchOldGames: value } }
+  );
 }
 
 export async function setLastFetchedGameEndTimestamp(
@@ -67,13 +69,12 @@ export async function setLastFetchedGameEndTimestamp(
   tagline: string,
   timestamp: number
 ) {
-  const db = await connectToDatabase();
-  await db
-    .collection<SummonerCollection>("summoners")
-    .updateOne(
-      { region, name, tagline },
-      { $set: { lastFetchedGameEndTimestamp: timestamp } }
-    );
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<SummonerCollection>("summoners");
+  await collection.updateOne(
+    { region, name, tagline },
+    { $set: { lastFetchedGameEndTimestamp: timestamp } }
+  );
 }
 
 export async function getSummoner(
@@ -81,10 +82,9 @@ export async function getSummoner(
   name: string,
   tagline: string
 ) {
-  const db = await connectToDatabase();
-  return db
-    .collection<SummonerCollection>("summoners")
-    .findOne({ region, name, tagline });
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<SummonerCollection>("summoners");
+  return collection.findOne({ region, name, tagline });
 }
 
 export async function setAramScore(
@@ -93,11 +93,10 @@ export async function setAramScore(
   tagline: string,
   aramScore: number
 ) {
-  const db = await connectToDatabase();
-  await db
-    .collection<SummonerCollection>("summoners")
-    .updateOne(
-      { region, name, tagline },
-      { $set: { aramScore } }
-    );
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<SummonerCollection>("summoners");
+  await collection.updateOne(
+    { region, name, tagline },
+    { $set: { aramScore } }
+  );
 }

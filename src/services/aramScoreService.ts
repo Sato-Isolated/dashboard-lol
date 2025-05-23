@@ -1,4 +1,4 @@
-import { connectToDatabase } from "@/lib/mongo";
+import { MongoService } from "@/lib/MongoService";
 import { getSummoner } from "@/repositories/summonerRepo";
 import type { Participant } from "@/types/api/match";
 import type { SummonerCollection } from "@/types/schema/SummonerCollection";
@@ -87,7 +87,9 @@ export function computeAramScore(
 }
 
 export class AramScoreService {
-  static async shouldCalculateAramScore(summoner: SummonerCollection): Promise<boolean> {
+  static async shouldCalculateAramScore(
+    summoner: SummonerCollection
+  ): Promise<boolean> {
     return !summoner.aramScoreFirstCalculated;
   }
 
@@ -100,9 +102,9 @@ export class AramScoreService {
     if (!summoner || !summoner.puuid)
       throw new Error("Summoner or puuid not found");
     const puuid = summoner.puuid;
-    const db = await connectToDatabase();
-    const matches = await db
-      .collection("matches")
+    const mongo = MongoService.getInstance();
+    const collection = await mongo.getCollection<any>("matches");
+    const matches = await collection
       .find({
         "info.gameMode": "ARAM",
         "info.participants.puuid": puuid,
@@ -131,8 +133,9 @@ export class AramScoreService {
     tagline: string,
     score: number
   ): Promise<void> {
-    const db = await connectToDatabase();
-    await db.collection("summoners").updateOne(
+    const mongo = MongoService.getInstance();
+    const collection = await mongo.getCollection<any>("summoners");
+    await collection.updateOne(
       { region, name, tagline },
       {
         $set: {
@@ -145,7 +148,11 @@ export class AramScoreService {
   }
 
   static async syncAramScore(region: string, name: string, tagline: string) {
-    const summoner = await getSummoner(region, name, tagline) as SummonerCollection | null;
+    const summoner = (await getSummoner(
+      region,
+      name,
+      tagline
+    )) as SummonerCollection | null;
     if (!summoner) throw new Error("Summoner not found");
 
     const aramScoreFirstCalculated = summoner.aramScoreFirstCalculated;
