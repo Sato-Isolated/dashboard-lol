@@ -118,13 +118,13 @@ const ChampionsTab: React.FC = () => {
               className="cursor-pointer select-none"
               onClick={() => handleSort("games")}
             >
-              Parties {sortIcon("games")}
+              Games {sortIcon("games")}
             </th>
             <th
               className="cursor-pointer select-none"
               onClick={() => handleSort("wins")}
             >
-              Victoires {sortIcon("wins")}
+              Wins {sortIcon("wins")}
             </th>
             <th
               className="cursor-pointer select-none"

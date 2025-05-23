@@ -67,7 +67,7 @@ const MasteryTab: React.FC = () => {
         <thead>
           <tr>
             <th>Champion</th>
-            <th>Niveau</th>
+            <th>Level</th>
             <th>Points</th>
           </tr>
         </thead>
