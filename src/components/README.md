@@ -1,4 +1,3 @@
 # components
 
-Composants UI réutilisables (Cards, Stats, etc.)
-
+Reusable UI components (Cards, Stats, etc.)

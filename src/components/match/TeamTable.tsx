@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { getRegion } from "@/utils/helper";
 
-export const TeamTable: React.FC<{
+const TeamTableComponent: React.FC<{
   players: UIPlayer[];
   team: string;
   teamColor: string;
   teamStats?: { kills: number; gold: number };
-}> = React.memo(({ players, team, teamColor, teamStats }) => (
+}> = ({ players, team, teamColor, teamStats }) => (
   <div
     className={`card rounded-xl mb-4 border shadow bg-base-200 ${
       teamColor === "red" ? "border-red-400" : "border-blue-400"
@@ -114,6 +114,9 @@ export const TeamTable: React.FC<{
       </table>
     </div>
   </div>
-));
+);
+
+export const TeamTable = React.memo(TeamTableComponent);
+TeamTable.displayName = "TeamTable";
 
 export default TeamTable;

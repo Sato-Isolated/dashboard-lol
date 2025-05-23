@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MongoService } from "@/lib/MongoService";
+import type { Match } from "@/types/api/match";
 
 // GET /api/stats/champions?name=...&region=...&tagline=...
 export async function GET(req: NextRequest) {
@@ -15,7 +16,9 @@ export async function GET(req: NextRequest) {
       );
     }
     const mongo = MongoService.getInstance();
-    const collection = await mongo.getCollection<any>("summoners");
+    const collection = await mongo.getCollection<{ puuid: string }>(
+      "summoners"
+    );
     // Find summoner's puuid
     const summoner = await collection.findOne({ region, name, tagline });
     if (!summoner || !summoner.puuid) {
@@ -49,7 +52,7 @@ export async function GET(req: NextRequest) {
       },
       { $sort: { games: -1 } },
     ];
-    const matchesCol = await mongo.getCollection<any>("matches");
+    const matchesCol = await mongo.getCollection<Match>("matches");
     const stats = await matchesCol.aggregate(pipeline).toArray();
     // Format output
     const result = stats.map((s) => ({

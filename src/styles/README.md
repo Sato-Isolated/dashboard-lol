@@ -1,4 +1,3 @@
 # styles
 
-Fichiers CSS/Tailwind ou autre style global
-
+CSS/Tailwind or other global style files

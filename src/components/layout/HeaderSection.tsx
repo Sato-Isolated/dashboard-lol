@@ -41,6 +41,7 @@ const HeaderSection: React.FC = () => {
     loading: loadingSummoner,
     error: errorSummoner,
     refetch: refetchSummoner,
+    aramScore,
   } = useAccountSummoner(effectiveRegion, effectiveName, effectiveTagline);
   const setUser = useUserStore((s) => s.setUser);
   const [favorites, setFavorites] = React.useState<Favorite[]>([]);
@@ -132,10 +133,9 @@ const HeaderSection: React.FC = () => {
     await refetchSummoner();
     setTimeout(() => {
       if (summoner) {
-        const aramScore = (summoner as any).aramScore ?? 0;
-        const aramRank = getAramRank(aramScore);
+        const aramRank = getAramRank(aramScore ?? 0);
         setRankMsg(
-          `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`
+          `New ARAM rank: ${aramRank.displayName} (score ${aramScore ?? 0})`
         );
         setTimeout(() => setRankMsg(""), 2500);
       }

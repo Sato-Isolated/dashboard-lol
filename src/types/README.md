@@ -1,4 +1,3 @@
 # types
 
-Interfaces et types TypeScript globaux
-
+Global TypeScript interfaces and types

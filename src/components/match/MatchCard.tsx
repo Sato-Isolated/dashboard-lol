@@ -8,8 +8,6 @@ import Image from "next/image";
 import React, { useState } from "react";
 import TeamTable from "./TeamTable";
 
-// TODO: Props for spells, runes, items, special badges, ranks, etc.
-
 export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("overview");
@@ -26,10 +24,6 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
       icon: "💪",
     },
   ];
-  const playerList = match.players.map((p) => ({
-    name: p.name,
-    champion: p.champion,
-  }));
 
   // Robust KDA split (supports "/" or ":")
   const kdaParts = match.kda.includes("/")

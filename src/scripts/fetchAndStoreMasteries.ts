@@ -48,8 +48,8 @@ export async function fetchAndStoreMasteries(
           mastery.championLevel,
           mastery.championPoints
         );
-      } catch (err) {
-        // console.error(`Error storing mastery for championId ${mastery.championId}:`, err);
+      } catch (error) {
+           throw error;
       }
     }
   } catch (error) {

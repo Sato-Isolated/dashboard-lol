@@ -64,8 +64,8 @@ export abstract class RiotApiClient {
     const text = await response.text();
     if (!text) {
       // Optionally: throw new Error('Empty response body');
-      return null as any;
+      return null as unknown as T;
     }
-    return JSON.parse(text);
+    return JSON.parse(text) as T;
   }
 }

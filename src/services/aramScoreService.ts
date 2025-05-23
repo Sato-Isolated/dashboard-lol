@@ -2,6 +2,7 @@ import { MongoService } from "@/lib/MongoService";
 import { getSummoner } from "@/repositories/summonerRepo";
 import type { Participant } from "@/types/api/match";
 import type { SummonerCollection } from "@/types/schema/SummonerCollection";
+import type { MatchCollection } from "@/types/schema/MatchCollection";
 
 /**
  * Calculates a unique ARAM score for a player in a match.
@@ -103,7 +104,7 @@ export class AramScoreService {
       throw new Error("Summoner or puuid not found");
     const puuid = summoner.puuid;
     const mongo = MongoService.getInstance();
-    const collection = await mongo.getCollection<any>("matches");
+    const collection = await mongo.getCollection<MatchCollection>("matches");
     const matches = await collection
       .find({
         "info.gameMode": "ARAM",
@@ -113,13 +114,13 @@ export class AramScoreService {
     let totalScore = 0;
     for (const match of matches) {
       const participant = match.info.participants.find(
-        (p: any) => p.puuid === puuid
+        (p: Participant) => p.puuid === puuid
       );
       if (!participant) continue;
       // Find the participant's team
       const teamId = participant.teamId;
       const teamParticipants = match.info.participants.filter(
-        (p: any) => p.teamId === teamId
+        (p: Participant) => p.teamId === teamId
       );
       const score = computeAramScore(participant, teamParticipants);
       totalScore += score;
@@ -134,7 +135,9 @@ export class AramScoreService {
     score: number
   ): Promise<void> {
     const mongo = MongoService.getInstance();
-    const collection = await mongo.getCollection<any>("summoners");
+    const collection = await mongo.getCollection<SummonerCollection>(
+      "summoners"
+    );
     await collection.updateOne(
       { region, name, tagline },
       {

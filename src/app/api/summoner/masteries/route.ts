@@ -38,7 +38,12 @@ export async function GET(req: NextRequest) {
       );
     }
     const mongo = MongoService.getInstance();
-    const collection = await mongo.getCollection<any>("summoners");
+    const collection = await mongo.getCollection<{
+      championMastery?: Record<
+        string,
+        { championLevel: number; championPoints: number }
+      >;
+    }>("summoners");
     const summoner = await collection.findOne({ region, name, tagline });
     if (!summoner || !summoner.championMastery) {
       return NextResponse.json({ success: true, data: [] });

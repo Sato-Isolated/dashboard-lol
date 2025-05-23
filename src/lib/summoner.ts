@@ -59,7 +59,7 @@ export async function fetchSummonerFull(
         version = versions[0];
       }
     }
-  } catch (e) {
+  } catch {
     version = "latest";
   }
 

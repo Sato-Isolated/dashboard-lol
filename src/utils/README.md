@@ -1,4 +1,3 @@
 # utils
 
-Utilitaires (formatage, fonctions helpers)
-
+Utilities (formatting, helper functions)
