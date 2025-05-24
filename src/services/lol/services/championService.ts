@@ -1,5 +1,5 @@
 import { ChampionInfoDto } from "@/types/api/champion";
-import { RiotApiClient } from "./RiotApiClient";
+import { RiotApiClient } from "../api/RiotApiClient";
 
 export class ChampionService extends RiotApiClient {
    constructor(region: string) {

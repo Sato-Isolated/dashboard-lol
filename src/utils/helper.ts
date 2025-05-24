@@ -72,6 +72,11 @@ export function mapRiotMatchToUIMatch(
     spell2: p.summoner2Id,
     rune1: p.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
     rune2: p.perks?.styles?.[1]?.style ?? 0,
+    doubleKills: p.doubleKills,
+    tripleKills: p.tripleKills,
+    quadraKills: p.quadraKills,
+    pentaKills: p.pentaKills,
+    killingSprees: p.killingSprees,
   }));
   const result = win ? "Win" : "Loss";
   const date = riotMatch.info.gameEndTimestamp

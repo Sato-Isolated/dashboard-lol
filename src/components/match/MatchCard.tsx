@@ -11,17 +11,6 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
   const redTeam = match.players.filter((p) => p.team === "Red");
   const blueTeam = match.players.filter((p) => p.team === "Blue");
 
-  // TODO: Replace with real data
-  const specialBadges = [
-    { label: "Quadra Kill", color: "from-pink-500 to-red-500", icon: "🔥" },
-    { label: "MVP", color: "from-yellow-400 to-orange-400", icon: "⭐" },
-    {
-      label: "Unstoppable",
-      color: "from-green-400 to-emerald-600",
-      icon: "💪",
-    },
-  ];
-
   // Robust KDA split (supports "/" or ":")
   const kdaParts = match.kda.includes("/")
     ? match.kda.split("/")
@@ -42,6 +31,48 @@ export const MatchCard: React.FC<{ match: UIMatch }> = ({ match }) => {
 
   // Find the main player (the one who played the displayed champion)
   const mainPlayer = match.players.find((p) => p.champion === match.champion);
+
+  // Génération dynamique du plus grand badge spécial selon les stats du joueur principal
+  let specialBadges: { label: string; color: string; icon: string }[] = [];
+  if (mainPlayer) {
+    if (mainPlayer.pentaKills && mainPlayer.pentaKills > 0) {
+      specialBadges = [{
+        label: "Penta Kill",
+        color: "from-fuchsia-600 to-pink-600",
+        icon: "👑",
+      }];
+    } else if (mainPlayer.quadraKills && mainPlayer.quadraKills > 0) {
+      specialBadges = [{
+        label: "Quadra Kill",
+        color: "from-pink-500 to-red-500",
+        icon: "🔥",
+      }];
+    } else if (mainPlayer.tripleKills && mainPlayer.tripleKills > 0) {
+      specialBadges = [{
+        label: "Triple Kill",
+        color: "from-cyan-500 to-blue-500",
+        icon: "💥",
+      }];
+    } else if (mainPlayer.doubleKills && mainPlayer.doubleKills > 0) {
+      specialBadges = [{
+        label: "Double Kill",
+        color: "from-sky-400 to-blue-400",
+        icon: "⚡",
+      }];
+    } else if (mainPlayer.mvp) {
+      specialBadges = [{
+        label: "MVP",
+        color: "from-yellow-400 to-orange-400",
+        icon: "⭐",
+      }];
+    } else if (mainPlayer.killingSprees && mainPlayer.killingSprees >= 8) {
+      specialBadges = [{
+        label: "Unstoppable",
+        color: "from-green-400 to-emerald-600",
+        icon: "💪",
+      }];
+    }
+  }
 
   return (
     <div

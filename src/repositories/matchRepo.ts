@@ -30,3 +30,21 @@ export async function getMatchById(
   const collection = await mongo.getCollection<MatchCollection>("matches");
   return collection.findOne({ _id: matchId });
 }
+
+/**
+ * Récupère tous les matchs où au moins un participant a fait un double, triple, quadra ou pentakill.
+ */
+export async function getMultiKillMatches(): Promise<MatchCollection[]> {
+  const mongo = MongoService.getInstance();
+  const collection = await mongo.getCollection<MatchCollection>("matches");
+  return collection
+    .find({
+      $or: [
+        { "info.participants.doubleKills": { $gte: 1 } },
+        { "info.participants.tripleKills": { $gte: 1 } },
+        { "info.participants.quadraKills": { $gte: 1 } },
+        { "info.participants.pentaKills": { $gte: 1 } },
+      ],
+    })
+    .toArray();
+}

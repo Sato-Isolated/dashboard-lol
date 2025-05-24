@@ -1,5 +1,5 @@
 import { SummonerDto } from "@/types/api/summoners";
-import { RiotApiClient } from "./RiotApiClient";
+import { RiotApiClient } from "../api/RiotApiClient";
 
 export class SummonerService extends RiotApiClient {
   constructor(region: string) {

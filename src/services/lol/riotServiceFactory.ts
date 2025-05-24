@@ -1,9 +1,9 @@
 import { RegionalRegionMap } from "@/types/api/regions";
-import { AccountService } from "./accountService";
-import { ChampionService } from "./championService";
-import { SummonerService } from "./summonerService";
-import { ChampionMasteryService } from "./champion-masteryService";
-import { MatchService } from "./matchService";
+import { AccountService } from "./services/accountService";
+import { ChampionService } from "./services/championService";
+import { SummonerService } from "./services/summonerService";
+import { ChampionMasteryService } from "./services/champion-masteryService";
+import { MatchService } from "./services/matchService";
 
 export function createAccountService(platformRegion: string) {
   const regionalRegion =
@@ -24,7 +24,5 @@ export function createChampionMasteryService(platformRegion: string) {
 }
 
 export function createMatchService(platformRegion: string) {
-  const regionalRegion =
-    RegionalRegionMap[platformRegion as keyof typeof RegionalRegionMap];
-  return new MatchService(regionalRegion);
+  return new MatchService(platformRegion);
 }

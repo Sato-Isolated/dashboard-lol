@@ -1,5 +1,5 @@
 import { Match } from "@/types/api/match";
-import { RiotApiClient } from "./RiotApiClient";
+import { RiotApiClient } from "../api/RiotApiClient";
 
 export class MatchService extends RiotApiClient {
    constructor(region: string) {
