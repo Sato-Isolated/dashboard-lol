@@ -77,7 +77,15 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
-    const result = await getRecentlyPlayed({ region, name, tagline, limit });
+    // Décodage des paramètres pour supporter les espaces et caractères spéciaux
+    const decodedName = decodeURIComponent(name);
+    const decodedTagline = decodeURIComponent(tagline);
+    const result = await getRecentlyPlayed({
+      region,
+      name: decodedName,
+      tagline: decodedTagline,
+      limit,
+    });
     return NextResponse.json({ success: true, data: result });
   } catch (e: unknown) {
     return apiErrorHandler(e);

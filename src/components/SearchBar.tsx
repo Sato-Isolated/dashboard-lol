@@ -114,7 +114,11 @@ const SearchBar: React.FC = () => {
     }
     setHasError(false);
     setUser({ region, tagline, summonerName });
-    router.push(`/${region}/summoner/${summonerName}/${tagline}`);
+    router.push(
+      `/${region}/summoner/${encodeURIComponent(
+        summonerName
+      )}/${encodeURIComponent(tagline)}`
+    );
   };
 
   // Add SuggestionList subcomponent

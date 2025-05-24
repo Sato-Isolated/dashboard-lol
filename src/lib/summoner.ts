@@ -13,19 +13,15 @@ export async function fetchSummonerFull(
 ) {
   const accountApi = createAccountService(platformRegion);
 
-  // DEBUG: log parameters sent to Riot API
-  // REMOVE: console.log("[fetchSummonerFull] getAccountByRiotId:", { name, tagline });
   const account = await accountApi.getAccountByRiotId(name, tagline);
 
   if (!account) {
-    // REMOVE: console.error("[fetchSummonerFull] Account not found for:", { name, tagline });
     return null;
   }
 
   const summonerApi = createSummonerService(platformRegion);
   const summonerDto = await summonerApi.getSummonerByPuuid(account.puuid);
   if (!summonerDto) {
-    // REMOVE: console.error("[fetchSummonerFull] Summoner not found for puuid:", account.puuid);
     return null;
   }
 
@@ -46,6 +42,22 @@ export async function fetchSummonerFull(
     tagline
   );
   const aramScore = dbSummoner?.aramScore ?? 0;
+
+  // Ajout : update le profileIconId en base si différent ou manquant
+  if (
+    dbSummoner &&
+    (typeof (dbSummoner as any).profileIconId === "undefined" ||
+      (dbSummoner as any).profileIconId !== summonerDto.profileIconId)
+  ) {
+    const mongo = (
+      await import("@/lib/MongoService")
+    ).MongoService.getInstance();
+    const collection = await mongo.getCollection("summoners");
+    await collection.updateOne(
+      { region: platformRegion, name: account.gameName, tagline },
+      { $set: { profileIconId: summonerDto.profileIconId } }
+    );
+  }
 
   // Securely retrieve the game version
   let version = "latest";
