@@ -4,11 +4,12 @@ import {
   createSummonerService,
   createMatchService,
 } from "@/services/lol/riotServiceFactory";
-import { insertMatch } from "@/repositories/matchRepo";
+import { insertMatch, getMatchById } from "@/repositories/matchRepo";
 import {
   getOrCreateSummoner,
   setFetchOldGames,
   setLastFetchedGameEndTimestamp,
+  setLastUpdateTimestamp,
 } from "@/repositories/summonerRepo";
 
 /**
@@ -30,7 +31,6 @@ export async function fetchAndStoreMatches(
   const summonerApi = createSummonerService(platformRegion);
   const summoner = await summonerApi.getSummonerByPuuid(account.puuid);
   if (!summoner) throw new Error("Summoner not found");
-
   // Get or create summoner doc in DB
   const summonerDoc = await getOrCreateSummoner(
     platformRegion,
@@ -38,6 +38,10 @@ export async function fetchAndStoreMatches(
     tagline,
     account.puuid
   );
+
+  // Record the timestamp of this update
+  const updateTimestamp = Math.floor(Date.now() / 1000);
+  await setLastUpdateTimestamp(platformRegion, name, tagline, updateTimestamp);
 
   // Set the period: from January 9, 2025 to now, or just new games if fetchOldGames is true
   const now = Math.floor(Date.now() / 1000); // in seconds
@@ -48,10 +52,34 @@ export async function fetchAndStoreMatches(
     fromTimestamp = Math.floor(
       new Date("2025-01-09T00:00:00Z").getTime() / 1000
     );
+    console.log(
+      `[fetchAndStoreMatches] First time fetch - fetching from ${new Date(
+        fromTimestamp * 1000
+      ).toISOString()} to now`
+    );
   } else {
-    // Only fetch recent games
-    fromTimestamp =
-      summonerDoc.lastFetchedGameEndTimestamp || now - 60 * 60 * 24 * 7; // fallback: 1 week
+    // Fetch recent games starting from the exact timestamp of the last game
+    const lastGameTimestamp = summonerDoc.lastFetchedGameEndTimestamp;
+
+    if (lastGameTimestamp) {
+      // Start from the exact timestamp of the last game (+ 1 second to avoid duplicates)
+      fromTimestamp = lastGameTimestamp + 1;
+      console.log(
+        `[fetchAndStoreMatches] Update fetch - last game was at ${new Date(
+          lastGameTimestamp * 1000
+        ).toISOString()}, fetching from ${new Date(
+          fromTimestamp * 1000
+        ).toISOString()} to now`
+      );
+    } else {
+      // No previous games found, fallback to 1 week
+      fromTimestamp = now - 60 * 60 * 24 * 7;
+      console.log(
+        `[fetchAndStoreMatches] Update fetch - no previous games found, fetching from ${new Date(
+          fromTimestamp * 1000
+        ).toISOString()} to now`
+      );
+    }
   }
   const options = {
     startTime: fromTimestamp,
@@ -91,18 +119,26 @@ export async function fetchAndStoreMatches(
       keepFetching = false;
     } else {
       start += batchSize;
-    }
-    // Respect Riot rate limit
+    } // Respect Riot rate limit
     await new Promise((res) => setTimeout(res, 1200));
   }
 
+  console.log(
+    `[fetchAndStoreMatches] Found ${allMatchIds.length} match IDs to process`
+  );
   let mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
 
   // Fetch and store each match
   for (const matchId of allMatchIds) {
     try {
       const match = await matchApi.getMatchById(matchId);
-      await insertMatch(match);
+
+      // Check if match already exists to avoid duplicates
+      const existing = await getMatchById(match.metadata.matchId);
+      if (!existing) {
+        await insertMatch(match);
+      }
+
       if (
         match.info?.gameEndTimestamp &&
         match.info.gameEndTimestamp > mostRecentGameEnd

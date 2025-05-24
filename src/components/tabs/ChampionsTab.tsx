@@ -42,7 +42,7 @@ const ChampionsTab: React.FC = () => {
         return res.json();
       })
       .then((data) => {
-        setStats(data);
+        setStats(data.data || []);
         setLoading(false);
       })
       .catch((e) => {

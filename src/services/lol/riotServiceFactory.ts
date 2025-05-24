@@ -24,5 +24,7 @@ export function createChampionMasteryService(platformRegion: string) {
 }
 
 export function createMatchService(platformRegion: string) {
-  return new MatchService(platformRegion);
+  const regionalRegion =
+    RegionalRegionMap[platformRegion as keyof typeof RegionalRegionMap];
+  return new MatchService(regionalRegion);
 }

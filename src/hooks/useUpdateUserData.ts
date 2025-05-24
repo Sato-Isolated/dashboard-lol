@@ -11,7 +11,6 @@ export function useUpdateUserData() {
     useEffectiveUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const updateUserData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -47,7 +46,19 @@ export function useUpdateUserData() {
         }
       }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Error while updating.");
+      // Check if it's an API permission error
+      const errorMessage =
+        e instanceof Error ? e.message : "Error while updating.";
+      if (
+        errorMessage.includes("Forbidden") ||
+        errorMessage.includes("API key lacks required permissions")
+      ) {
+        setError(
+          "API permissions insuffisantes. Veuillez vérifier votre clé API Riot Games."
+        );
+      } else {
+        setError(errorMessage);
+      }
     }
     setLoading(false);
   }, [effectiveRegion, effectiveName, effectiveTagline]);

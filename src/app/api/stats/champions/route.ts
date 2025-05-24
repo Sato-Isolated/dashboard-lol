@@ -1,30 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { MongoService } from "@/lib/MongoService";
 import type { Match } from "@/types/api/match";
+import { z } from "zod";
+import { withValidation } from "@/lib/middleware";
+import { NotFoundError } from "@/lib/errorHandler";
 
-// GET /api/stats/champions?name=...&region=...&tagline=...
-export async function GET(req: NextRequest) {
-  try {
-    const url = new URL(req.url!);
-    const name = url.searchParams.get("name");
-    const region = url.searchParams.get("region");
-    const tagline = url.searchParams.get("tagline");
-    if (!name || !region || !tagline) {
-      return NextResponse.json(
-        { error: "Missing parameters" },
-        { status: 400 }
-      );
-    }
+// Validation schema
+const championsStatsSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  region: z.string().min(1, "Region is required"),
+  tagline: z.string().min(1, "Tagline is required"),
+  minGames: z.coerce.number().min(1).default(1).optional(),
+});
+
+// GET /api/stats/champions?name=...&region=...&tagline=...&minGames=...
+export const GET = withValidation(
+  championsStatsSchema,
+  async (req, validatedData, _context) => {
+    const { name, region, tagline, minGames = 1 } = validatedData;
+
     const mongo = MongoService.getInstance();
     const collection = await mongo.getCollection<{ puuid: string }>(
       "summoners"
     );
+
     // Find summoner's puuid
     const summoner = await collection.findOne({ region, name, tagline });
     if (!summoner || !summoner.puuid) {
-      return NextResponse.json([], { status: 404 });
+      throw new NotFoundError("Summoner", `${name}#${tagline} in ${region}`);
     }
+
     const puuid = summoner.puuid;
+
     // Aggregate stats by champion
     const pipeline = [
       {
@@ -48,28 +55,51 @@ export async function GET(req: NextRequest) {
           kills: { $sum: "$info.participants.kills" },
           deaths: { $sum: "$info.participants.deaths" },
           assists: { $sum: "$info.participants.assists" },
+          totalDamageDealtToChampions: {
+            $sum: "$info.participants.totalDamageDealtToChampions",
+          },
+          goldEarned: { $sum: "$info.participants.goldEarned" },
+        },
+      },
+      {
+        $match: {
+          games: { $gte: minGames },
         },
       },
       { $sort: { games: -1 } },
     ];
+
     const matchesCol = await mongo.getCollection<Match>("matches");
     const stats = await matchesCol.aggregate(pipeline).toArray();
+
     // Format output
     const result = stats.map((s) => ({
       champion: s._id,
       games: s.games,
       wins: s.wins,
+      losses: s.games - s.wins,
+      winRate: ((s.wins / s.games) * 100).toFixed(1),
       kills: s.kills,
       deaths: s.deaths,
       assists: s.assists,
       kda:
-        s.deaths === 0 ? s.kills + s.assists : (s.kills + s.assists) / s.deaths,
+        s.deaths === 0
+          ? s.kills + s.assists
+          : Number(((s.kills + s.assists) / s.deaths).toFixed(2)),
+      avgKills: Number((s.kills / s.games).toFixed(1)),
+      avgDeaths: Number((s.deaths / s.games).toFixed(1)),
+      avgAssists: Number((s.assists / s.games).toFixed(1)),
+      avgDamage: s.totalDamageDealtToChampions
+        ? Number((s.totalDamageDealtToChampions / s.games).toFixed(0))
+        : 0,
+      avgGold: s.goldEarned ? Number((s.goldEarned / s.games).toFixed(0)) : 0,
     }));
-    return NextResponse.json(result);
-  } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Unknown error" },
-      { status: 500 }
-    );
+
+    return NextResponse.json({
+      success: true,
+      data: result,
+      totalChampions: result.length,
+      totalGames: result.reduce((sum, champion) => sum + champion.games, 0),
+    });
   }
-}
+);

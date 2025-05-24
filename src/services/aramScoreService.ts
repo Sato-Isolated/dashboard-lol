@@ -149,7 +149,6 @@ export class AramScoreService {
       }
     );
   }
-
   static async syncAramScore(region: string, name: string, tagline: string) {
     const summoner = (await getSummoner(
       region,
@@ -159,25 +158,19 @@ export class AramScoreService {
     if (!summoner) throw new Error("Summoner not found");
 
     const aramScoreFirstCalculated = summoner.aramScoreFirstCalculated;
-    const aramScoreLastCheck = summoner.aramScoreLastCheck;
     const aramScore = summoner.aramScore;
 
-    if (!aramScoreFirstCalculated) {
-      const score = await this.calculateAramScore(region, name, tagline);
-      await this.updateAramScore(region, name, tagline, score);
-      return {
-        aramScore: score,
-        aramScoreFirstCalculated: true,
-        aramScoreLastCheck: Date.now(),
-        calculated: true,
-      };
-    } else {
-      return {
-        aramScore: aramScore ?? 0,
-        aramScoreFirstCalculated: true,
-        aramScoreLastCheck: aramScoreLastCheck ?? null,
-        calculated: false,
-      };
-    }
+    // Always recalculate the score to include new matches
+    const score = await this.calculateAramScore(region, name, tagline);
+    await this.updateAramScore(region, name, tagline, score);
+
+    return {
+      aramScore: score,
+      aramScoreFirstCalculated: true,
+      aramScoreLastCheck: Date.now(),
+      calculated: true,
+      wasFirstCalculation: !aramScoreFirstCalculated,
+      previousScore: aramScore ?? 0,
+    };
   }
 }

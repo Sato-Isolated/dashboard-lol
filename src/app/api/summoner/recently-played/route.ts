@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { apiErrorHandler } from "@/utils/apiErrorHandler";
+import { NextResponse } from "next/server";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
 import { MongoService } from "@/lib/MongoService";
+import { withValidation } from "@/lib/middleware";
+import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 // Utility function to get recently played players
 async function getRecentlyPlayed({
@@ -65,52 +67,61 @@ async function getRecentlyPlayed({
 }
 
 // GET /api/summoner/recently-played?name=...&region=...&tagline=...&limit=5
-export async function GET(req: NextRequest) {
-  try {
-    const url = new URL(req.url!);
-    const name = url.searchParams.get("name");
-    const region = url.searchParams.get("region");
-    const tagline = url.searchParams.get("tagline");
-    const limit = parseInt(url.searchParams.get("limit") || "5", 10);
-    if (!name || !region || !tagline) {
-      return NextResponse.json(
-        { error: "Missing parameters" },
-        { status: 400 }
-      );
-    }
-    // Décodage des paramètres pour supporter les espaces et caractères spéciaux
-    const decodedName = decodeURIComponent(name);
-    const decodedTagline = decodeURIComponent(tagline);
-    const result = await getRecentlyPlayed({
+const getRecentlyPlayedSchema = z.object({
+  name: z.string().min(1),
+  region: z.string().min(1),
+  tagline: z.string().min(1),
+  limit: z.coerce.number().min(1).max(20).default(5).optional(),
+});
+
+export const GET = withValidation(
+  getRecentlyPlayedSchema,
+  async (req, validatedData, _context) => {
+    const { name, region, tagline, limit = 5 } = validatedData;
+
+    logger.info("Fetching recently played", {
       region,
-      name: decodedName,
-      tagline: decodedTagline,
+      name,
+      tagline,
       limit,
     });
+
+    const result = await getRecentlyPlayed({
+      region,
+      name,
+      tagline,
+      limit,
+    });
+
     return NextResponse.json({ success: true, data: result });
-  } catch (e: unknown) {
-    return apiErrorHandler(e);
   }
-}
+);
 
 // POST /api/summoner/recently-played (triggers a real update)
-export async function POST(req: NextRequest) {
-  try {
-    const { region, name, tagline } = await req.json();
-    if (!region || !name || !tagline) {
-      return NextResponse.json(
-        { error: "Missing parameters" },
-        { status: 400 }
-      );
-    }
+const postRecentlyPlayedSchema = z.object({
+  name: z.string().min(1),
+  region: z.string().min(1),
+  tagline: z.string().min(1),
+});
+
+export const POST = withValidation(
+  postRecentlyPlayedSchema,
+  async (req, validatedData, _context) => {
+    const { region, name, tagline } = validatedData;
+
+    logger.info("Updating recently played matches", {
+      region,
+      name,
+      tagline,
+    });
+
     // Fetch and store recent matches (this updates the DB)
     const { totalFetched } = await fetchAndStoreMatches(region, name, tagline);
+
     return NextResponse.json({
       success: true,
       message: `Update successful (${totalFetched} matches fetched)`,
       totalFetched,
     });
-  } catch (e: unknown) {
-    return apiErrorHandler(e);
   }
-}
+);

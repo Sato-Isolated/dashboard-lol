@@ -4,7 +4,19 @@ import {
   Collection,
   MongoClientOptions,
   Document,
+  CreateIndexesOptions,
+  IndexSpecification,
 } from "mongodb";
+import { config } from "../config";
+import { logger } from "./logger";
+
+interface IndexDefinition {
+  collection: string;
+  indexes: {
+    spec: IndexSpecification;
+    options?: CreateIndexesOptions;
+  }[];
+}
 
 export class MongoService {
   private static instance: MongoService;
@@ -12,6 +24,7 @@ export class MongoService {
   private db: Db | null = null;
   private uri: string;
   private dbName: string;
+  private isIndexesCreated = false;
 
   private constructor(uri: string, dbName: string) {
     this.uri = uri;
@@ -20,47 +33,274 @@ export class MongoService {
 
   public static getInstance(): MongoService {
     if (!MongoService.instance) {
-      const uri = process.env.DB_CONN_STRING!;
-      const dbName = process.env.DB_NAME!;
-      if (!uri || !dbName) throw new Error("DB_CONN_STRING or DB_NAME missing");
+      const uri = config.get("DB_CONN_STRING");
+      const dbName = config.get("DB_NAME");
       MongoService.instance = new MongoService(uri, dbName);
     }
     return MongoService.instance;
   }
 
   public async connect(options?: MongoClientOptions): Promise<Db> {
-    if (this.db) return this.db;
-    this.client = new MongoClient(this.uri, options);
-    await this.client.connect();
-    this.db = this.client.db(this.dbName);
-    return this.db;
-  }
+    const timerId = logger.startTimer("mongodb_connect", {
+      method: "connect",
+      class: "MongoService",
+    });
 
+    try {
+      if (this.db) {
+        logger.endTimer(timerId);
+        return this.db;
+      }
+
+      const connectionOptions: MongoClientOptions = {
+        // Connection pooling settings
+        maxPoolSize: 10,
+        minPoolSize: 2,
+        maxIdleTimeMS: 30000,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+
+        // Monitoring
+        monitorCommands: config.isDevelopment(),
+
+        // Retry settings
+        retryWrites: true,
+        retryReads: true,
+
+        ...options,
+      };
+
+      logger.info("Connecting to MongoDB", {
+        dbName: this.dbName,
+        poolSize: connectionOptions.maxPoolSize,
+      });
+
+      this.client = new MongoClient(this.uri, connectionOptions);
+      await this.client.connect();
+      this.db = this.client.db(this.dbName); // Set up monitoring
+      this.setupMonitoring();
+
+      // Create indexes on first connection
+      if (!this.isIndexesCreated) {
+        await this.createIndexes();
+        this.isIndexesCreated = true;
+      }
+
+      logger.info("MongoDB connected successfully");
+      logger.endTimer(timerId);
+      return this.db;
+    } catch (error) {
+      logger.endTimer(timerId);
+      logger.error("Failed to connect to MongoDB", error);
+      throw error;
+    }
+  }
   public async getCollection<T extends Document = Document>(
     name: string
   ): Promise<Collection<T>> {
     const db = await this.connect();
     return db.collection<T>(name);
   }
-
   public async withCollection<T extends Document, R>(
     name: string,
     fn: (col: Collection<T>) => Promise<R>
   ): Promise<R> {
+    const timerId = logger.startTimer("mongodb_operation", {
+      method: "withCollection",
+      class: "MongoService",
+      collection: name,
+    });
+
     const col = await this.getCollection<T>(name);
+    const startTime = Date.now();
+
     try {
-      return await fn(col);
-    } catch (e) {
-      // Log or handle error here
-      throw e;
+      const result = await fn(col);
+
+      logger.logDatabaseOperation(
+        "withCollection",
+        name,
+        undefined,
+        Date.now() - startTime
+      );
+
+      logger.endTimer(timerId);
+      return result;
+    } catch (error) {
+      logger.endTimer(timerId);
+      logger.error(`Database operation failed on collection ${name}`, error, {
+        collection: name,
+        duration_ms: Date.now() - startTime,
+      });
+      throw error;
     }
   }
 
   public async close(): Promise<void> {
     if (this.client) {
+      logger.info("Closing MongoDB connection");
       await this.client.close();
       this.client = null;
       this.db = null;
+    }
+  }
+
+  // Database health check
+  public async ping(): Promise<boolean> {
+    try {
+      const db = await this.connect();
+      await db.admin().ping();
+      return true;
+    } catch (error) {
+      logger.error("MongoDB ping failed", error);
+      return false;
+    }
+  }
+  // Get connection statistics
+  public getConnectionStats(): { isConnected: boolean } | null {
+    if (!this.client) return null;
+
+    return {
+      isConnected: !!this.db,
+      // Note: More detailed stats would require monitoring events
+    };
+  }
+
+  private setupMonitoring(): void {
+    if (!this.client || !config.isDevelopment()) return; // Monitor connection pool events
+    this.client.on("connectionPoolCreated", (event) => {
+      logger.debug("Connection pool created", {
+        address: event.address,
+        options: event.options,
+      });
+    });
+
+    this.client.on("connectionCreated", (event) => {
+      logger.debug("Connection created", {
+        connectionId: event.connectionId,
+        address: event.address,
+      });
+    });
+
+    this.client.on("connectionClosed", (event) => {
+      logger.debug("Connection closed", {
+        connectionId: event.connectionId,
+        reason: event.reason,
+      });
+    });
+
+    // Monitor command events in development
+    this.client.on("commandStarted", (event) => {
+      logger.debug("MongoDB command started", {
+        command: event.commandName,
+        collection: event.command?.collection || event.command?.$db,
+      });
+    });
+
+    this.client.on("commandSucceeded", (event) => {
+      logger.debug("MongoDB command succeeded", {
+        command: event.commandName,
+        duration: event.duration,
+      });
+    });
+
+    this.client.on("commandFailed", (event) => {
+      logger.warn("MongoDB command failed", {
+        command: event.commandName,
+        error: event.failure,
+        duration: event.duration,
+      });
+    });
+  }
+
+  private async createIndexes(): Promise<void> {
+    try {
+      logger.info("Creating database indexes");
+
+      const indexDefinitions: IndexDefinition[] = [
+        {
+          collection: "summoners",
+          indexes: [
+            {
+              spec: { name: 1, region: 1 },
+              options: { name: "summoner_name_region", unique: true },
+            },
+            {
+              spec: { puuid: 1 },
+              options: { name: "summoner_puuid", unique: true },
+            },
+            {
+              spec: { updatedAt: 1 },
+              options: {
+                name: "summoner_updated_at",
+                expireAfterSeconds: 86400,
+              }, // 24 hours
+            },
+            {
+              spec: { name: "text" },
+              options: { name: "summoner_name_text" },
+            },
+          ],
+        },
+        {
+          collection: "matches",
+          indexes: [
+            {
+              spec: { "metadata.matchId": 1 },
+              options: { name: "match_id", unique: true },
+            },
+            {
+              spec: { "metadata.participants": 1 },
+              options: { name: "match_participants" },
+            },
+            {
+              spec: { "info.gameCreation": -1 },
+              options: { name: "match_game_creation_desc" },
+            },
+            {
+              spec: { "info.gameCreation": -1, "metadata.participants": 1 },
+              options: { name: "match_creation_participants" },
+            },
+          ],
+        },
+      ];
+
+      for (const indexDef of indexDefinitions) {
+        const collection = await this.getCollection(indexDef.collection);
+
+        for (const { spec, options } of indexDef.indexes) {
+          try {
+            await collection.createIndex(spec, options);
+            logger.info("Index created successfully", {
+              collection: indexDef.collection,
+              index: options?.name || "unnamed",
+              spec,
+            });
+          } catch (error: unknown) {
+            const mongoError = error as { code?: number; message?: string };
+            // Index might already exist, log but don't fail
+            if (mongoError.code === 85) {
+              // IndexOptionsConflict
+              logger.warn("Index already exists with different options", {
+                collection: indexDef.collection,
+                index: options?.name,
+                error: mongoError.message,
+              });
+            } else {
+              logger.error("Failed to create index", error, {
+                collection: indexDef.collection,
+                index: options?.name,
+                spec,
+              });
+            }
+          }
+        }
+      }
+
+      logger.info("Database indexes creation completed");
+    } catch (error) {
+      logger.error("Failed to create database indexes", error);
+      // Don't throw - app should still work without indexes, just slower
     }
   }
 }
