@@ -34,7 +34,7 @@ async function getLeaderboard(platform: string): Promise<LeaderboardEntry[]> {
     .project({ _id: 0, name: 1, aramScore: 1, profileIconId: 1, tagline: 1 })
     .toArray()) as Document[];
   // Cast/Map pour garantir le typage
-  return leaderboard.map((entry: any) => ({
+  return leaderboard.map((entry: Document) => ({
     name: entry.name ?? "",
     aramScore: entry.aramScore ?? 0,
     profileIconId: entry.profileIconId ?? 29, // fallback icon
@@ -42,11 +42,9 @@ async function getLeaderboard(platform: string): Promise<LeaderboardEntry[]> {
   }));
 }
 
-export default async function AramScoreRankPage(
-  props: {
-    searchParams?: Promise<{ platform?: string }>;
-  }
-) {
+export default async function AramScoreRankPage(props: {
+  searchParams?: Promise<{ platform?: string }>;
+}) {
   const searchParams = await props.searchParams;
   const platform = searchParams?.platform || "euw1";
   const leaderboard = await getLeaderboard(platform);

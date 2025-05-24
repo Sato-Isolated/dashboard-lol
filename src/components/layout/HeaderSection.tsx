@@ -132,7 +132,9 @@ const HeaderSection: React.FC = () => {
     await refetchSummoner();
     setTimeout(() => {
       if (summoner) {
-        const aramScore = (summoner as any).aramScore ?? 0;
+        // summoner is likely SummonerDto, but may be extended with aramScore
+        // Use type assertion for aramScore property
+        const aramScore = (summoner as { aramScore?: number }).aramScore ?? 0;
         const aramRank = getAramRank(aramScore);
         setRankMsg(
           `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`
