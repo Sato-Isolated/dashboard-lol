@@ -42,11 +42,12 @@ async function getLeaderboard(platform: string): Promise<LeaderboardEntry[]> {
   }));
 }
 
-export default async function AramScoreRankPage({
-  searchParams,
-}: {
-  searchParams?: { platform?: string };
-}) {
+export default async function AramScoreRankPage(
+  props: {
+    searchParams?: Promise<{ platform?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const platform = searchParams?.platform || "euw1";
   const leaderboard = await getLeaderboard(platform);
 
