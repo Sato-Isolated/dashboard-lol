@@ -46,8 +46,10 @@ export async function fetchSummonerFull(
   // Ajout : update le profileIconId en base si différent ou manquant
   if (
     dbSummoner &&
-    (typeof (dbSummoner as Record<string, unknown>)["profileIconId"] === "undefined" ||
-      (dbSummoner as Record<string, unknown>)["profileIconId"] !== summonerDto.profileIconId)
+    (typeof (dbSummoner as Record<string, unknown>)["profileIconId"] ===
+      "undefined" ||
+      (dbSummoner as Record<string, unknown>)["profileIconId"] !==
+        summonerDto.profileIconId)
   ) {
     const mongo = (
       await import("@/lib/MongoService")
