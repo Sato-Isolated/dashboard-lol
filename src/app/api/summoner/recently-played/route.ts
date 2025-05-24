@@ -32,12 +32,12 @@ async function getRecentlyPlayed({
     { $limit: 100 }, // last 100 games for performance
     { $unwind: "$info.participants" },
     { $match: { "info.participants.puuid": { $ne: puuid } } },
+    { $sort: { "info.participants.puuid": 1, "info.gameEndTimestamp": -1 } },
     {
       $group: {
-        _id: {
-          name: "$info.participants.riotIdGameName",
-          tagline: "$info.participants.riotIdTagline",
-        },
+        _id: "$info.participants.puuid",
+        name: { $first: "$info.participants.riotIdGameName" },
+        tagline: { $first: "$info.participants.riotIdTagline" },
         games: { $sum: 1 },
         wins: {
           $sum: {
@@ -55,8 +55,9 @@ async function getRecentlyPlayed({
     .toArray();
   // Format output
   return teammates.map((t) => ({
-    name: t._id.name,
-    tagline: t._id.tagline,
+    puuid: t._id,
+    name: t.name,
+    tagline: t.tagline,
     games: t.games,
     wins: t.wins,
     winrate: t.games > 0 ? Math.round((t.wins / t.games) * 100) : 0,
