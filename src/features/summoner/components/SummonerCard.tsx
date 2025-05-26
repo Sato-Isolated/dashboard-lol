@@ -45,6 +45,7 @@ export const SummonerCard: React.FC<SummonerCardProps> = React.memo(
     if (loading) {
       return (
         <div
+          data-testid="summoner-card"
           className={`bg-base-200 rounded-xl p-4 shadow animate-pulse ${className}`}
         >
           <div className="flex items-center gap-3">
@@ -69,6 +70,7 @@ export const SummonerCard: React.FC<SummonerCardProps> = React.memo(
     if (error) {
       return (
         <div
+          data-testid="summoner-card"
           className={`bg-base-200 rounded-xl p-4 shadow border border-error/20 ${className}`}
         >
           <div className="flex items-center gap-2 text-error">
@@ -83,6 +85,7 @@ export const SummonerCard: React.FC<SummonerCardProps> = React.memo(
     if (variant === "compact") {
       return (
         <div
+          data-testid="summoner-card"
           className={`bg-base-200 rounded-lg p-3 shadow hover:shadow-md transition-shadow cursor-pointer ${className}`}
           onClick={onViewProfile}
         >
@@ -112,6 +115,7 @@ export const SummonerCard: React.FC<SummonerCardProps> = React.memo(
     // Default and detailed variants
     return (
       <div
+        data-testid="summoner-card"
         className={`bg-base-200 rounded-xl p-4 shadow hover:shadow-lg transition-shadow ${className}`}
       >
         <div className="flex items-center gap-3">

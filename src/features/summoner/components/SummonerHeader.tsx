@@ -137,9 +137,17 @@ const HeaderSection: React.FC = () => {
       }/${effectiveRegion}/summoner/${encodeURIComponent(
         effectiveName
       )}/${encodeURIComponent(effectiveTagline)}`;
-      navigator.clipboard.writeText(url);
-      setShareMsg("Link copied!");
-      setTimeout(() => setShareMsg(""), 1500);
+      if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        navigator.clipboard.writeText(url);
+        setShareMsg("Link copied!");
+        setTimeout(() => setShareMsg(""), 1500);
+      } else {
+        setShareMsg("Clipboard not available");
+        setTimeout(() => setShareMsg(""), 1500);
+      }
     }
   };
   const handleSelectFavorite = useCallback(

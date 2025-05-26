@@ -5,7 +5,11 @@ import SearchBar from "@/shared/components/common/SearchBar";
 const ReturnHomeButton = () => {
   const router = useRouter();
   const handleClick = () => {
-    router.push("/");
+    try {
+      router.push("/");
+    } catch (error) {
+      console.error("Navigation failed:", error);
+    }
   };
 
   return (
@@ -21,7 +25,11 @@ const ReturnHomeButton = () => {
 const LeaderboardButton = () => {
   const router = useRouter();
   const handleClick = () => {
-    router.push("/leaderboard");
+    try {
+      router.push("/leaderboard");
+    } catch (error) {
+      console.error("Navigation failed:", error);
+    }
   };
   return (
     <button

@@ -25,9 +25,8 @@ const MatchCardChampionBlockComponent: React.FC<
       spell2: getSummonerSpellImage(mainPlayer.spell2),
     };
   }, [mainPlayer]);
-
   const runeData = useMemo(() => {
-    if (!mainPlayer?.rune1 || !mainPlayer?.rune2) return null;
+    if (!mainPlayer || !mainPlayer.rune1 || !mainPlayer.rune2) return null;
     return {
       rune1: getRuneIcon(mainPlayer.rune1),
       rune2: getRuneIcon(mainPlayer.rune2),
@@ -61,18 +60,19 @@ const MatchCardChampionBlockComponent: React.FC<
         </span>
       </div>
       <div className="flex flex-col gap-1 ml-2">
+        {" "}
         <div className="flex gap-1">
-          {spellData ? (
+          {spellData && spellData.spell1 && spellData.spell2 ? (
             <>
               <Image
-                src={`/assets/spell/${spellData.spell1}`}
+                src={spellData.spell1}
                 alt="Spell 1"
                 width={32}
                 height={32}
                 className="w-8 h-8 rounded shadow border border-primary/30 bg-base-200"
               />
               <Image
-                src={`/assets/spell/${spellData.spell2}`}
+                src={spellData.spell2}
                 alt="Spell 2"
                 width={32}
                 height={32}
@@ -85,19 +85,19 @@ const MatchCardChampionBlockComponent: React.FC<
               <span className="w-8 h-8 bg-base-300 rounded shadow-inner" />
             </>
           )}
-        </div>
+        </div>{" "}
         <div className="flex gap-1 mt-1">
-          {runeData ? (
+          {runeData && runeData.rune1 && runeData.rune2 ? (
             <>
               <Image
-                src={`/assets/${runeData.rune1}`}
+                src={runeData.rune1}
                 alt="Rune 1"
                 width={32}
                 height={32}
                 className="w-8 h-8 rounded-full shadow border border-primary/20 bg-base-200"
               />
               <Image
-                src={`/assets/${runeData.rune2}`}
+                src={runeData.rune2}
                 alt="Rune 2"
                 width={32}
                 height={32}

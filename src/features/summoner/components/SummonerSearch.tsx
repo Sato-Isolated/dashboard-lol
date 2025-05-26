@@ -23,6 +23,7 @@ interface SummonerSearchProps {
   placeholder?: string;
   compact?: boolean;
   showRegionSelect?: boolean;
+  disableClickOutside?: boolean;
 }
 
 interface SuggestionListProps {
@@ -65,6 +66,7 @@ export const SummonerSearch: React.FC<SummonerSearchProps> = ({
   placeholder = "Summoner Name",
   compact = false,
   showRegionSelect = true,
+  disableClickOutside = false,
 }) => {
   const [summonerName, setSummonerName] = useState(initialSummonerName);
   const [tagline, setTagline] = useState(initialTagline);
@@ -81,30 +83,40 @@ export const SummonerSearch: React.FC<SummonerSearchProps> = ({
   // Fetch suggestions when summoner name changes
   useEffect(() => {
     const controller = new AbortController();
+    let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
     if (summonerName.length >= 2) {
       setSuggestionError(null);
-      fetch(`/api/summoner/search?q=${encodeURIComponent(summonerName)}`, {
-        signal: controller.signal,
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Error while searching for players.");
-          return res.json();
+      debounceTimeout = setTimeout(() => {
+        console.log("FETCH CALLED", summonerName);
+        fetch(`/api/summoner/search?q=${encodeURIComponent(summonerName)}`, {
+          signal: controller.signal,
         })
-        .then((data) => setSuggestions(data))
-        .catch((e) => {
-          if (e.name === "AbortError") return;
-          setSuggestionError(e.message || "Error while searching for players.");
-          setSuggestions([]);
-        });
+          .then((res) => {
+            if (!res.ok) throw new Error("Error while searching for players.");
+            return res.json();
+          })
+          .then((data) => setSuggestions(data))
+          .catch((e) => {
+            if (e.name === "AbortError") return;
+            setSuggestionError(
+              e.message || "Error while searching for players."
+            );
+            setSuggestions([]);
+          });
+      }, 300);
     } else {
       setSuggestions([]);
       setSuggestionError(null);
     }
-    return () => controller.abort();
+    return () => {
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+      controller.abort();
+    };
   }, [summonerName]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
+    if (disableClickOutside) return;
     function handleClick(e: MouseEvent) {
       if (!inputRef.current?.parentElement?.contains(e.target as Node)) {
         setShowSuggestions(false);
@@ -114,7 +126,7 @@ export const SummonerSearch: React.FC<SummonerSearchProps> = ({
       document.addEventListener("mousedown", handleClick);
       return () => document.removeEventListener("mousedown", handleClick);
     }
-  }, [showSuggestions]);
+  }, [showSuggestions, disableClickOutside]);
 
   // Reset highlighted index when suggestions change
   useEffect(() => {
@@ -166,7 +178,11 @@ export const SummonerSearch: React.FC<SummonerSearchProps> = ({
 
   return (
     <div className={`w-full ${compact ? "max-w-md" : "max-w-2xl"}`}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form
+        onSubmit={handleSubmit}
+        className={`flex flex-col gap-3${compact ? " compact" : ""}`}
+        data-testid="summoner-search-form"
+      >
         <div
           className={`flex items-center bg-base-100 border rounded-2xl px-4 py-3 ${
             hasError ? "border-error" : "border-base-300"
@@ -276,12 +292,14 @@ export const SummonerSearch: React.FC<SummonerSearchProps> = ({
 
         {/* Error Messages */}
         {hasError && (
-          <p className="text-error text-sm">
+          <p className="text-error text-sm" role="alert">
             Please fill in both summoner name and tagline.
           </p>
         )}
         {suggestionError && (
-          <p className="text-warning text-sm">{suggestionError}</p>
+          <p className="text-warning text-sm" role="alert">
+            {suggestionError}
+          </p>
         )}
       </form>
     </div>

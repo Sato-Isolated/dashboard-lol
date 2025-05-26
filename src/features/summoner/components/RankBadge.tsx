@@ -28,7 +28,10 @@ interface RankItemProps {
 const RankItemComponent: React.FC<RankItemProps> = ({ rank }) => (
   <div className="flex justify-between items-center w-full bg-base-200 rounded-lg px-3 py-2 border border-base-300 hover:shadow-md transition">
     <span className="font-semibold text-base-content/90">
-      {rank.queueType.replace("RANKED_", "")}
+      {rank.queueType
+        .replace("RANKED_", "")
+        .replace("_5x5", "")
+        .replace("_SR", "")}
     </span>
     <span className="text-primary font-bold">
       {rank.tier} {rank.rank}
@@ -46,9 +49,8 @@ RankItem.displayName = "RankItem";
 
 const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues }) => {
   const aramRank = useMemo(() => getAramRank(aramScore), [aramScore]);
-
   const rankedLeagues = useMemo(() => {
-    if (leagues.length === 0) {
+    if (!leagues || leagues.length === 0) {
       return (
         <span className="badge badge-outline text-base-content/50 text-xs py-2 px-4">
           Unranked

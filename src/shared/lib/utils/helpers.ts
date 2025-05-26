@@ -156,7 +156,8 @@ const spellIdToImg: Record<string, string> = (() => {
 })();
 
 export function getSummonerSpellImage(id: number | string): string | undefined {
-  return spellIdToImg[String(id)];
+  const fileName = spellIdToImg[String(id)];
+  return fileName ? `/assets/spell/${fileName}` : undefined;
 }
 
 import runesData from "../../../../public/assets/data/en_US/runesReforged.json";
@@ -195,5 +196,6 @@ const runeIdToIcon: Record<string, string> = (() => {
 })();
 
 export function getRuneIcon(id: number | string): string | undefined {
-  return runeIdToIcon[String(id)];
+  const iconPath = runeIdToIcon[String(id)];
+  return iconPath ? `/assets/${iconPath}` : undefined;
 }

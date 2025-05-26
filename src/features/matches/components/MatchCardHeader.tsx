@@ -14,7 +14,7 @@ const MatchCardHeaderComponent: React.FC<MatchCardHeaderProps> = ({
   duration,
 }) => {
   // Memoize computed values to avoid recalculations
-  const isWin = result === "Win";
+  const isWin = result.toLowerCase() === "win";
   const displayResult = useMemo(() => (isWin ? "Victory" : "Defeat"), [isWin]);
   const resultClass = useMemo(
     () => (isWin ? "text-success" : "text-error"),
