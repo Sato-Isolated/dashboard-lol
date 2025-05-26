@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { MongoService } from "@/lib/MongoService";
+import { MongoService } from "@/shared/services/database/MongoService";
 import { z } from "zod";
-import { withValidation } from "@/lib/middleware";
+import { withValidation } from "@/shared/lib/validation/middleware";
 
 // Validation schema for leaderboard query
 const leaderboardSchema = z.object({

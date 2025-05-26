@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { fetchAndStoreMasteries } from "@/scripts/fetchAndStoreMasteries";
-import { MongoService } from "@/lib/MongoService";
+import { MongoService } from "@/shared/services/database/MongoService";
 import { z } from "zod";
-import { withValidation, withMiddleware } from "@/lib/middleware";
+import { withValidation, withMiddleware } from "@/shared/lib/validation/middleware";
 
 // Validation schemas
 const masteriesBodySchema = z.object({

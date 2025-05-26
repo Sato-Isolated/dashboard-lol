@@ -1,8 +1,6 @@
-import { MongoService } from "@/lib/MongoService";
-import { getSummonerIcon } from "@/utils/helper";
+import { MongoService } from "@/shared/services/database/MongoService";
 import type { Document } from "mongodb";
-import Image from "next/image";
-import Link from "next/link";
+import LeaderboardTable from "./components/LeaderboardTable";
 
 const PLATFORMS = [
   { label: "EUW", value: "euw1" },
@@ -74,43 +72,7 @@ export default async function AramScoreRankPage(props: {
           </button>
         </form>
       </div>
-      <table className="table table-zebra table-lg w-full flex-grow">
-        <thead>
-          <tr>
-            <th className="text-lg">#</th>
-            <th className="text-lg">Summoner</th>
-            <th className="text-lg">ARAM Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaderboard.map((entry, i) => (
-            <tr key={entry.name} className="h-20">
-              <td className="text-xl font-bold">{i + 1}</td>
-              <td className="flex items-center gap-4">
-                <div className="relative w-16 h-16">
-                  <Image
-                    src={getSummonerIcon(entry.profileIconId)}
-                    alt="icon"
-                    fill
-                    className="rounded-full border border-base-300 object-cover"
-                    sizes="64px"
-                    priority={i < 10}
-                  />
-                </div>
-                <Link
-                  href={`/${platform}/summoner/${encodeURIComponent(
-                    entry.name
-                  )}/${encodeURIComponent(entry.tagline)}`}
-                  className="text-lg font-semibold hover:underline"
-                >
-                  {entry.name.replace(/ /g, "\u00A0")}
-                </Link>
-              </td>
-              <td className="text-lg">{entry.aramScore}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <LeaderboardTable leaderboard={leaderboard} platform={platform} />
     </div>
   );
 }

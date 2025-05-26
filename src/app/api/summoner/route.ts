@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { fetchSummonerFull } from "@/lib/summoner";
+import { fetchSummonerFull } from "@/features/summoner/services/summoner";
 import { z } from "zod";
-import { withMiddleware } from "@/lib/middleware";
-import { NotFoundError } from "@/lib/errorHandler";
+import { withMiddleware } from "@/shared/lib/validation/middleware";
+import { NotFoundError } from "@/shared/lib/errorHandler";
 
 // Validation schema for summoner query
 const summonerSchema = z.object({

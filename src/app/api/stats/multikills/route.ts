@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getMultiKillMatches } from "@/repositories/matchRepo";
+import { getMultiKillMatches } from "@/features/matches/services/matchRepository";
 import { z } from "zod";
-import { withValidation } from "@/lib/middleware";
+import { withValidation } from "@/shared/lib/validation/middleware";
 
 // Empty schema since no parameters are needed
 const multikillsSchema = z.object({});

@@ -2,13 +2,13 @@ import {
   createAccountService,
   createSummonerService,
   createChampionMasteryService,
-} from "@/services/lol/riotServiceFactory";
+} from "@/shared/services/api/riot/riotServiceFactory";
 // src/scripts/fetchAndStoreMatches.ts
 
 import {
   getOrCreateSummoner,
   insertOrUpdateChampionMastery,
-} from "@/repositories/summonerRepo";
+} from "@/features/summoner/services/summonerRepository";
 
 export async function fetchAndStoreMasteries(
   name: string,

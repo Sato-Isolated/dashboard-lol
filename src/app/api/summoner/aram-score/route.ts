@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getSummoner } from "@/repositories/summonerRepo";
-import { AramScoreService } from "@/services/aramScoreService";
-import type { SummonerCollection } from "@/types/schema/SummonerCollection";
-import { withValidation } from "@/lib/middleware";
-import { logger } from "@/lib/logger";
+import { getSummoner } from "@/features/summoner/services/summonerRepository";
+import { AramScoreService } from "@/features/aram/services/aramScoreService";
+import type { SummonerCollection } from "@/features/summoner/types/summoner.types";
+import { withValidation } from "@/shared/lib/validation/middleware";
+import { logger } from "@/shared/lib/logger/logger";
 import { z } from "zod";
 
 // GET /api/summoner/aram-score?region=...&name=...&tagline=...

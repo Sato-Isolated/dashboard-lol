@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { MongoService } from "@/lib/MongoService";
+import { MongoService } from "@/shared/services/database/MongoService";
 import { z } from "zod";
-import { withValidation } from "@/lib/middleware";
-import { logger } from "@/lib/logger";
+import { withValidation } from "@/shared/lib/validation/middleware";
+import { logger } from "@/shared/lib/logger/logger";
 
 // Validation schema for search query
 const searchSchema = z.object({

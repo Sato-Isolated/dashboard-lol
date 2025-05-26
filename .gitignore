@@ -42,3 +42,8 @@ next-env.d.ts
 /src/assets/
 public/assets
 todolist.md
+/logs
+*.md
+scripts
+scripts/migration
+src/scripts/testPhase1.ts

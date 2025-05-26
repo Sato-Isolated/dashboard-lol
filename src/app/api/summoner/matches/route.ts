@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
-import { MongoService } from "@/lib/MongoService";
+import { MongoService } from "@/shared/services/database/MongoService";
 import { z } from "zod";
-import { withValidation, withMiddleware } from "@/lib/middleware";
+import { withValidation, withMiddleware } from "@/shared/lib/validation/middleware";
 
 // Validation schemas
 const postMatchesSchema = z.object({

@@ -1,5 +1,5 @@
-import { MongoService } from "../lib/MongoService";
-import { logger } from "../lib/logger";
+import { MongoService } from  "@/shared/services/database/MongoService";
+import { logger } from   "@/shared/lib/logger/logger";
 import { IndexSpecification } from "mongodb";
 
 interface IndexDefinition {

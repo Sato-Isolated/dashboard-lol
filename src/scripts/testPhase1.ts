@@ -1,8 +1,8 @@
 // Test script to validate Phase 1 improvements
-import { config } from "../config";
-import { logger } from "../lib/logger";
-import { MongoService } from "../lib/MongoService";
-import { getSummonerRequestSchema } from "../lib/validation/schemas";
+import { config } from  "@/shared/lib/config";
+import { logger } from  "@/shared/lib/logger/logger";
+import { MongoService } from  "@/shared/services/database/MongoService";
+import { getSummonerRequestSchema } from '../shared/lib/validation/schemas';
 
 async function testPhase1Improvements() {
   logger.info("Starting Phase 1 improvements test");

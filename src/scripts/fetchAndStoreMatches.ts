@@ -3,14 +3,14 @@ import {
   createAccountService,
   createSummonerService,
   createMatchService,
-} from "@/services/lol/riotServiceFactory";
-import { insertMatch, getMatchById } from "@/repositories/matchRepo";
+} from "@/shared/services/api/riot/riotServiceFactory";
+import { insertMatch, getMatchById } from "@/features/matches/services/matchRepository";
 import {
   getOrCreateSummoner,
   setFetchOldGames,
   setLastFetchedGameEndTimestamp,
   setLastUpdateTimestamp,
-} from "@/repositories/summonerRepo";
+} from "@/features/summoner/services/summonerRepository";
 
 /**
  * Fetches matches from Riot API for a given summoner and stores them in MongoDB.

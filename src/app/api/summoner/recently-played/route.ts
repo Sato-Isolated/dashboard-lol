@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
-import { MongoService } from "@/lib/MongoService";
-import { withValidation } from "@/lib/middleware";
-import { logger } from "@/lib/logger";
+import { MongoService } from "@/shared/services/database/MongoService";
+import { withValidation } from "@/shared/lib/validation/middleware";
+import { logger } from "@/shared/lib/logger/logger";
 import { z } from "zod";
 
 // Utility function to get recently played players

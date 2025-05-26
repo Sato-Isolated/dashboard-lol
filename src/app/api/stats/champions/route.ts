@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { MongoService } from "@/lib/MongoService";
-import type { Match } from "@/types/api/match";
+import { MongoService } from "@/shared/services/database/MongoService";
+import type { Match } from "@/shared/types/api/match.types";
 import { z } from "zod";
-import { withValidation } from "@/lib/middleware";
-import { NotFoundError } from "@/lib/errorHandler";
+import { withValidation } from "@/shared/lib/validation/middleware";
+import { NotFoundError } from "@/shared/lib/errorHandler";
 
 // Validation schema
 const championsStatsSchema = z.object({
