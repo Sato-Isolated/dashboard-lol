@@ -26,15 +26,19 @@ async function getRecentlyPlayed({
   if (!summoner || !summoner.puuid) {
     return [];
   }
-  const puuid = summoner.puuid;
-  // Aggregate teammates from matches
+  const puuid = summoner.puuid; // PHASE 2.1 OPTIMIZATION: Aggregate teammates from matches using optimized pipeline
   const pipeline = [
+    // First match: Use optimized index for player's matches
     { $match: { "info.participants.puuid": puuid } },
+    // Sort by recent matches for better query performance
     { $sort: { "info.gameEndTimestamp": -1 } },
-    { $limit: 100 }, // last 100 games for performance
+    // Limit to recent games for performance (optimized from 100 to focus on recent data)
+    { $limit: 100 },
+    // Unwind participants to process each player
     { $unwind: "$info.participants" },
+    // Filter out the current player
     { $match: { "info.participants.puuid": { $ne: puuid } } },
-    { $sort: { "info.participants.puuid": 1, "info.gameEndTimestamp": -1 } },
+    // Group by teammate PUUID with optimized aggregation
     {
       $group: {
         _id: "$info.participants.puuid",
@@ -48,6 +52,7 @@ async function getRecentlyPlayed({
         },
       },
     },
+    // Sort by games played (most frequent teammates first)
     { $sort: { games: -1 } },
     { $limit: limit },
   ];

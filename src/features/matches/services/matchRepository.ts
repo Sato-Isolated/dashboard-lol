@@ -199,9 +199,8 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       return matches;
     }, "getMultiKillMatches");
   }
-
   /**
-   * Get matches for a specific participant (by PUUID)
+   * Get matches for a specific participant (by PUUID) - OPTIMIZED for Phase 2.1
    */
   async getMatchesByPuuid(
     puuid: string,
@@ -222,14 +221,19 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           );
         }
 
-        logger.info("Fetching matches by PUUID", { puuid, limit });
+        logger.info("Fetching matches by PUUID (optimized)", { puuid, limit });
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
           this.collectionName
         );
 
-        let query = collection.find({ "metadata.participants": puuid });
+        // PHASE 2.1 OPTIMIZATION: Use optimized query pattern that leverages indexes
+        // Query structure: { "info.participants.puuid": puuid } instead of metadata.participants
+        // This allows MongoDB to use our optimized compound indexes
+        let query = collection
+          .find({ "info.participants.puuid": puuid })
+          .sort({ "info.gameEndTimestamp": -1 }); // Sort by most recent first
 
         if (limit) {
           query = query.limit(limit);
@@ -237,15 +241,156 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const matches = await query.toArray();
 
-        logger.info("Matches fetched by PUUID", {
+        logger.info("Matches fetched by PUUID (optimized)", {
           puuid,
           count: matches.length,
           limit,
+          optimization: "Phase2.1_IndexOptimized",
         });
 
         return matches;
       },
       { collection: this.collectionName, operation: "getMatchesByPuuid" }
+    );
+  }
+
+  /**
+   * Get matches for a specific participant with queue filter (ARAM, Ranked, etc.) - OPTIMIZED
+   */
+  async getMatchesByPuuidAndQueue(
+    puuid: string,
+    queueId: number,
+    limit?: number
+  ): Promise<MatchCollection[]> {
+    return this.errorHandler.repository(
+      async () => {
+        // Validate PUUID
+        const puuidValidation = ValidationHelper.validateString(
+          puuid,
+          "puuid",
+          78,
+          78
+        );
+        if (!puuidValidation.isValid) {
+          throw new ValidationError(
+            puuidValidation.error || "Invalid PUUID format"
+          );
+        }
+
+        logger.info("Fetching matches by PUUID and queue (optimized)", {
+          puuid,
+          queueId,
+          limit,
+        });
+
+        const mongo = MongoService.getInstance();
+        const collection = await mongo.getCollection<MatchCollection>(
+          this.collectionName
+        );
+
+        // PHASE 2.1 OPTIMIZATION: Use optimized compound index
+        // This query will use the participants_puuid_queue_end_time index
+        let query = collection
+          .find({
+            "info.participants.puuid": puuid,
+            "info.queueId": queueId,
+          })
+          .sort({ "info.gameEndTimestamp": -1 });
+
+        if (limit) {
+          query = query.limit(limit);
+        }
+
+        const matches = await query.toArray();
+
+        logger.info("Matches fetched by PUUID and queue (optimized)", {
+          puuid,
+          queueId,
+          count: matches.length,
+          limit,
+          optimization: "Phase2.1_CompoundIndexOptimized",
+        });
+
+        return matches;
+      },
+      {
+        collection: this.collectionName,
+        operation: "getMatchesByPuuidAndQueue",
+      }
+    );
+  }
+
+  /**
+   * Get recent matches for a player within date range - OPTIMIZED
+   */
+  async getRecentMatchesByPuuid(
+    puuid: string,
+    startTimestamp?: number,
+    endTimestamp?: number,
+    limit?: number
+  ): Promise<MatchCollection[]> {
+    return this.errorHandler.repository(
+      async () => {
+        // Validate PUUID
+        const puuidValidation = ValidationHelper.validateString(
+          puuid,
+          "puuid",
+          78,
+          78
+        );
+        if (!puuidValidation.isValid) {
+          throw new ValidationError(
+            puuidValidation.error || "Invalid PUUID format"
+          );
+        }
+
+        logger.info("Fetching recent matches by PUUID (optimized)", {
+          puuid,
+          startTimestamp,
+          endTimestamp,
+          limit,
+        });
+
+        const mongo = MongoService.getInstance();
+        const collection = await mongo.getCollection<MatchCollection>(
+          this.collectionName
+        );
+
+        // Build optimized query
+        const filter: Record<string, unknown> = {
+          "info.participants.puuid": puuid,
+        };
+
+        // Add date range filter
+        if (startTimestamp || endTimestamp) {
+          const ts: Record<string, number> = {};
+          if (startTimestamp) ts.$gte = startTimestamp;
+          if (endTimestamp) ts.$lte = endTimestamp;
+          filter["info.gameCreation"] = ts;
+        }
+
+        // PHASE 2.1 OPTIMIZATION: Use optimized compound index
+        // This will use the player_matches_by_creation_fixed index
+        let query = collection.find(filter).sort({ "info.gameCreation": -1 });
+
+        if (limit) {
+          query = query.limit(limit);
+        }
+
+        const matches = await query.toArray();
+
+        logger.info("Recent matches fetched by PUUID (optimized)", {
+          puuid,
+          startTimestamp,
+          endTimestamp,
+          count: matches.length,
+          limit,
+          optimization: "Phase2.1_DateRangeOptimized",
+        });
+
+        return matches;
+      },
+      { collection: this.collectionName, operation: "getRecentMatchesByPuuid" }
     );
   }
 

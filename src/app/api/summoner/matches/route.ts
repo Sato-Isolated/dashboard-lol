@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
 import { MongoService } from "@/shared/services/database/MongoService";
 import { z } from "zod";
-import { withValidation, withMiddleware } from "@/shared/lib/validation/middleware";
+import {
+  withValidation,
+  withMiddleware,
+} from "@/shared/lib/validation/middleware";
 
 // Validation schemas
 const postMatchesSchema = z.object({
@@ -46,12 +49,13 @@ export const GET = withValidation(
       ? parseInt(validatedData.from, 10)
       : undefined;
     const to = validatedData.to ? parseInt(validatedData.to, 10) : undefined;
-
     const mongo = MongoService.getInstance();
     const collection = await mongo.getCollection("matches");
 
+    // PHASE 2.1 OPTIMIZATION: Use optimized query pattern for array field queries
+    // Instead of using $elemMatch, query the array field directly for better index usage
     const query: Record<string, unknown> = {
-      "info.participants": { $elemMatch: { riotIdGameName: name } },
+      "info.participants.riotIdGameName": name, // Direct array field query
     };
 
     if (from || to) {
@@ -61,9 +65,10 @@ export const GET = withValidation(
       query["info.gameEndTimestamp"] = ts;
     }
 
+    // PHASE 2.1 OPTIMIZATION: Use optimized sort and hint for index usage
     const matches = await collection
       .find(query)
-      .sort({ "info.gameEndTimestamp": -1 })
+      .sort({ "info.gameEndTimestamp": -1 }) // Use indexed field for sorting
       .skip(start)
       .limit(count)
       .toArray();

@@ -30,9 +30,7 @@ export const GET = withValidation(
       throw new NotFoundError("Summoner", `${name}#${tagline} in ${region}`);
     }
 
-    const puuid = summoner.puuid;
-
-    // Aggregate stats by champion
+    const puuid = summoner.puuid; // PHASE 2.1 OPTIMIZATION: Aggregate stats by champion using optimized pipeline
     const pipeline = [
       {
         $match: {
@@ -41,8 +39,11 @@ export const GET = withValidation(
           "info.gameEndedInEarlySurrender": { $ne: true },
         },
       },
+      // Unwind participants to process individual player data
       { $unwind: "$info.participants" },
+      // Match only the specific player's data
       { $match: { "info.participants.puuid": puuid } },
+      // Group by champion with optimized aggregation
       {
         $group: {
           _id: "$info.participants.championName",
@@ -61,11 +62,13 @@ export const GET = withValidation(
           goldEarned: { $sum: "$info.participants.goldEarned" },
         },
       },
+      // Filter by minimum games
       {
         $match: {
           games: { $gte: minGames },
         },
       },
+      // Sort by games played
       { $sort: { games: -1 } },
     ];
 

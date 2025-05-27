@@ -7,8 +7,8 @@ import {
   CreateIndexesOptions,
   IndexSpecification,
 } from "mongodb";
-import { config } from  "@/shared/lib/config";
-import { logger } from  "@/shared/lib/logger/logger";
+import { config } from "@/shared/lib/config";
+import { logger } from "@/shared/lib/logger/logger";
 
 interface IndexDefinition {
   collection: string;
@@ -132,6 +132,55 @@ export class MongoService {
         collection: name,
         duration_ms: Date.now() - startTime,
       });
+      throw error;
+    }
+  }
+
+  public async aggregateWithOptions<T extends Document>(
+    collectionName: string,
+    pipeline: Document[],
+    options?: {
+      hint?: string | Document;
+      maxTimeMS?: number;
+      allowDiskUse?: boolean;
+    }
+  ): Promise<T[]> {
+    const timerId = logger.startTimer("mongodb_aggregate", {
+      method: "aggregateWithOptions",
+      class: "MongoService",
+      collection: collectionName,
+      hint: options?.hint,
+    });
+
+    const startTime = Date.now();
+
+    try {
+      const collection = await this.getCollection<T>(collectionName);
+      const cursor = collection.aggregate<T>(pipeline, options);
+      const results = await cursor.toArray();
+
+      logger.logDatabaseOperation(
+        "aggregate",
+        collectionName,
+        { pipeline: pipeline.length + " stages" },
+        Date.now() - startTime,
+        results.length
+      );
+
+      logger.endTimer(timerId);
+      return results;
+    } catch (error) {
+      logger.endTimer(timerId);
+      logger.error(
+        `Aggregation failed on collection ${collectionName}`,
+        error,
+        {
+          collection: collectionName,
+          duration_ms: Date.now() - startTime,
+          pipeline_stages: pipeline.length,
+          hint: options?.hint,
+        }
+      );
       throw error;
     }
   }
@@ -260,6 +309,36 @@ export class MongoService {
             {
               spec: { "info.gameCreation": -1, "metadata.participants": 1 },
               options: { name: "match_creation_participants" },
+            }, // Optimized indexes for Phase 2.1 MongoDB optimization
+            {
+              spec: {
+                "info.participants.puuid": 1,
+                "info.gameEndTimestamp": -1,
+                "info.queueId": 1,
+              },
+              options: { name: "player_matches_optimized_final" },
+            },
+            {
+              spec: { "info.participants.puuid": 1, "info.gameCreation": -1 },
+              options: { name: "player_matches_by_creation_final" },
+            },
+            {
+              spec: {
+                "info.participants.puuid": 1,
+                "info.gameEndTimestamp": -1,
+              },
+              options: {
+                name: "aram_player_history_final",
+                partialFilterExpression: { "info.queueId": 450 },
+              },
+            },
+            {
+              spec: {
+                "info.participants.puuid": 1,
+                "info.gameCreation": -1,
+                "info.queueId": 1,
+              },
+              options: { name: "player_date_queue_final" },
             },
           ],
         },
