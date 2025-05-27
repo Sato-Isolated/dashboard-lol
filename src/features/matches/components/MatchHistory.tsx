@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -251,7 +251,8 @@ const MatchHistory: React.FC = React.memo(() => {
               </motion.div>
             ))}
           </motion.div>
-        </motion.div>{" "}        {/* Match List Skeleton */}
+        </motion.div>{" "}
+        {/* Match List Skeleton */}
         <SectionCard title="Match History" loading={false} error={null}>
           <motion.div
             className="space-y-4"
@@ -260,10 +261,7 @@ const MatchHistory: React.FC = React.memo(() => {
             animate="visible"
           >
             {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                variants={itemVariants}
-              >
+              <motion.div key={i} variants={itemVariants}>
                 <MatchCardSkeleton />
               </motion.div>
             ))}
