@@ -96,91 +96,35 @@ body {
   background: linear-gradient(135deg, #0891b2, #0284c7);
 }
 
-/* Theme color indicators for footer theme switcher */
-.theme-light {
-  background: linear-gradient(135deg, #ffffff, #f8fafc);
+/* Custom scrollbar for favorites section */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
 }
-.theme-dark {
-  background: linear-gradient(135deg, #1f2937, #111827);
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
 }
-.theme-cupcake {
-  background: linear-gradient(135deg, #fef7cd, #fbbf24);
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, hsl(var(--p)), hsl(var(--s)));
+  border-radius: 2px;
 }
-.theme-bumblebee {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, hsl(var(--pf)), hsl(var(--sf)));
 }
-.theme-emerald {
-  background: linear-gradient(135deg, #10b981, #059669);
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
 }
-.theme-corporate {
-  background: linear-gradient(135deg, #1e40af, #1d4ed8);
-}
-.theme-synthwave {
-  background: linear-gradient(135deg, #e91e63, #9c27b0);
-}
-.theme-retro {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-}
-.theme-cyberpunk {
-  background: linear-gradient(135deg, #ff007f, #00ffff);
-}
-.theme-valentine {
-  background: linear-gradient(135deg, #f472b6, #ec4899);
-}
-.theme-halloween {
-  background: linear-gradient(135deg, #ff6b00, #8b5cf6);
-}
-.theme-garden {
-  background: linear-gradient(135deg, #10b981, #22c55e);
-}
-.theme-forest {
-  background: linear-gradient(135deg, #059669, #047857);
-}
-.theme-aqua {
-  background: linear-gradient(135deg, #0891b2, #0284c7);
-}
-.theme-lofi {
-  background: linear-gradient(135deg, #6b7280, #4b5563);
-}
-.theme-pastel {
-  background: linear-gradient(135deg, #fbbf24, #f472b6);
-}
-.theme-fantasy {
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
-}
-.theme-wireframe {
-  background: linear-gradient(135deg, #000000, #374151);
-}
-.theme-black {
-  background: linear-gradient(135deg, #000000, #1f2937);
-}
-.theme-luxury {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-}
-.theme-dracula {
-  background: linear-gradient(135deg, #6d28d9, #7c3aed);
-}
-.theme-cmyk {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
-}
-.theme-autumn {
-  background: linear-gradient(135deg, #dc2626, #ea580c);
-}
-.theme-business {
-  background: linear-gradient(135deg, #1f2937, #374151);
-}
-.theme-acid {
-  background: linear-gradient(135deg, #84cc16, #65a30d);
-}
-.theme-lemonade {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-}
-.theme-night {
-  background: linear-gradient(135deg, #1e293b, #0f172a);
-}
-.theme-coffee {
-  background: linear-gradient(135deg, #92400e, #b45309);
-}
-.theme-winter {
-  background: linear-gradient(135deg, #0891b2, #0284c7);
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }

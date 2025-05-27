@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion } from "framer-motion";
 
 interface Badge {
   label: string;
@@ -28,66 +29,124 @@ const MatchCardStatsBlockComponent: React.FC<MatchCardStatsBlockProps> = ({
     }),
     [kdaParts]
   );
-
   // Memoize badges to prevent unnecessary re-renders when array reference changes
   const renderBadges = useMemo(
     () =>
-      specialBadges.map((b) => (
-        <span
-          key={b.label}
-          className={`badge badge-lg text-white font-bold shadow-md bg-gradient-to-r ${b.color} border-0 flex items-center gap-1 px-3 py-2 text-sm animate-pulse`}
+      specialBadges.map((badge, index) => (
+        <motion.span
+          key={badge.label}
+          initial={{ opacity: 0, scale: 0, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{
+            delay: 0.5 + index * 0.1,
+            type: "spring",
+            stiffness: 400,
+            damping: 25,
+          }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white font-bold 
+                     shadow-lg bg-gradient-to-r ${badge.color} border border-white/20
+                     text-xs hover:shadow-xl transition-all duration-300 cursor-default`}
         >
-          <span>{b.icon}</span> {b.label}
-        </span>
+          <span className="text-sm">{badge.icon}</span>
+          <span>{badge.label}</span>
+        </motion.span>
       )),
     [specialBadges]
   );
-
   return (
-    <div className="flex flex-col items-center justify-center flex-1 px-2 min-w-[140px]">
-      <div className="flex items-end gap-2 text-2xl font-extrabold tracking-tight">
-        <span className="text-base-content drop-shadow font-mono">{kills}</span>
-        <span className="text-error">/</span>
-        <span className="text-base-content drop-shadow font-mono">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.3, duration: 0.5 }}
+      className="flex flex-col items-center justify-center flex-1 px-4 min-w-[160px] 
+                 bg-gradient-to-br from-base-200/30 to-base-100/20 rounded-2xl 
+                 border border-base-content/10 backdrop-blur-sm shadow-inner
+                 hover:border-primary/30 transition-all duration-300 py-4"
+    >
+      {/* KDA Display */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
+        className="flex items-center gap-3 text-3xl font-extrabold tracking-tight mb-3"
+      >
+        {" "}
+        <motion.span
+          whileHover={{ scale: 1.1 }}
+          className="text-success drop-shadow-lg font-mono cursor-default"
+        >
+          {kills}
+        </motion.span>
+        <span className="text-base-content/50 text-2xl">/</span>
+        <motion.span
+          whileHover={{ scale: 1.1 }}
+          className="text-error drop-shadow-lg font-mono cursor-default"
+        >
           {deaths}
-        </span>
-        <span className="text-error">/</span>
-        <span className="text-base-content drop-shadow font-mono">
+        </motion.span>
+        <span className="text-base-content/50 text-2xl">/</span>
+        <motion.span
+          whileHover={{ scale: 1.1 }}
+          className="text-info drop-shadow-lg font-mono cursor-default"
+        >
           {assists}
-        </span>
-      </div>
-      <span className="text-xs font-bold text-primary/80 mt-1 flex items-center gap-1">
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-info/20 text-info font-bold border border-info/40">
-          <svg
-            className="w-3 h-3 mr-1"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 20l9-5-9-5-9 5 9 5z" />
-          </svg>
-          KDA: {kdaValue}
-        </span>
-      </span>
-      <span className="text-xs text-error font-bold mt-1 flex items-center gap-1">
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error/20 text-error font-bold border border-error/40">
-          <svg
-            className="w-3 h-3 mr-1"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="12" cy="12" r="10" />
-          </svg>
-          P/Kill {pKill}%
-        </span>
-      </span>
-      <div className="flex gap-2 mt-2 flex-wrap justify-center">
+        </motion.span>
+      </motion.div>
+
+      {/* KDA Ratio */}
+      <motion.div
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        whileHover={{ scale: 1.05 }}
+        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full 
+                   bg-gradient-to-r from-primary/20 to-accent/20 
+                   border border-primary/30 text-primary font-bold text-sm
+                   shadow-lg hover:shadow-primary/30 transition-all duration-300 mb-2"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 20l9-5-9-5-9 5 9 5z" />
+          <path d="M12 10l9-5-9-5-9 5 9 5z" />
+        </svg>
+        <span>KDA: {kdaValue}</span>
+      </motion.div>
+
+      {/* P/Kill Percentage */}
+      <motion.div
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        whileHover={{ scale: 1.05 }}
+        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full 
+                   bg-gradient-to-r from-secondary/20 to-accent/20 
+                   border border-secondary/30 text-secondary font-bold text-sm
+                   shadow-lg hover:shadow-secondary/30 transition-all duration-300 mb-3"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="8,12 12,16 16,12" />
+        </svg>
+        <span>P/Kill {pKill}%</span>
+      </motion.div>
+
+      {/* Special Badges */}
+      <div className="flex gap-2 flex-wrap justify-center max-w-[140px]">
         {renderBadges}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

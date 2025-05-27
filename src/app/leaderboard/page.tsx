@@ -1,6 +1,6 @@
 import { MongoService } from "@/shared/services/database/MongoService";
 import type { Document } from "mongodb";
-import LeaderboardTable from "./components/LeaderboardTable";
+import LeaderboardTable from "@/features/leaderboard/components/LeaderboardTable";
 
 const PLATFORMS = [
   { label: "EUW", value: "euw1" },

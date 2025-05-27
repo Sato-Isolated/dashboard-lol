@@ -1,5 +1,6 @@
 import { UIMatch, UIPlayer } from "@/features/matches/types/ui-match.types";
 import React, { useState, useMemo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import MatchCardHeader from "./MatchCardHeader";
 import MatchCardChampionBlock from "./MatchCardChampionBlock";
 import MatchCardStatsBlock from "./MatchCardStatsBlock";
@@ -133,73 +134,192 @@ const MatchCardComponent: React.FC<{ match: UIMatch }> = ({ match }) => {
     };
   }, [match.players, match.champion]);
 
-  // Memoize responsive visibility check
-  const shouldShowContent = useMemo(() => {
-    return open || (typeof window !== "undefined" && window.innerWidth < 640);
-  }, [open]);
+  const isWin = match.result === "Win";
 
   return (
-    <div
-      className={`card bg-gradient-to-br from-base-200/80 to-base-100/70 border-2 border-primary/40 shadow-2xl rounded-3xl mb-8 transition-all duration-300 pb-4 relative overflow-hidden group backdrop-blur-xl ring-1 ring-primary/10 ${
-        open
-          ? "ring-4 ring-primary/30 scale-[1.01]"
-          : "hover:scale-[1.01] hover:ring-2 hover:ring-primary/10"
-      }`}
-      style={{
-        boxShadow:
-          "0 8px 40px 0 rgba(31,38,135,0.28), 0 2px 24px 0 rgba(80,80,255,0.18), 0 1.5px 8px 0 rgba(80,80,255,0.10)",
-        border: "2px solid rgba(80,80,255,0.18)",
-        backdropFilter: "blur(12px) saturate(1.2)",
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ scale: 1.01, y: -2 }}
+      transition={{
+        duration: 0.4,
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
       }}
+      className={`group relative overflow-hidden backdrop-blur-md
+        ${
+          isWin
+            ? "bg-gradient-to-br from-success/15 via-base-100/95 to-success/10 border-success/30"
+            : "bg-gradient-to-br from-error/15 via-base-100/95 to-error/10 border-error/30"
+        }
+        border-2 rounded-3xl shadow-2xl mb-6 transition-all duration-500
+        hover:shadow-3xl
+        ${
+          open
+            ? `ring-4 shadow-3xl ${isWin ? "ring-success/40" : "ring-error/40"}`
+            : "hover:ring-2 hover:ring-primary/30"
+        }`}
     >
-      {/* Decorative background blur */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl opacity-60" />
-        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-accent/10 rounded-full blur-2xl opacity-50" />
+      {/* Animated Background Effects */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          className={`absolute -top-32 -left-32 w-80 h-80 rounded-full blur-3xl
+            ${isWin ? "bg-success/30" : "bg-error/30"}`}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3],
+            rotate: [0, 90, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-32 -right-32 w-80 h-80 bg-primary/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.5, 0.2],
+            rotate: [0, -90, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+
+        {/* Shimmer effect on hover */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+          initial={{ x: "-100%" }}
+          whileHover={{
+            x: "100%",
+            transition: {
+              duration: 0.8,
+              ease: "easeInOut",
+            },
+          }}
+        />
       </div>
-      {/* HEADER réorganisé sur une seule ligne principale */}
-      <div
-        className="relative flex flex-col sm:flex-row items-stretch gap-0 w-full px-2 sm:px-4 pt-3 sm:pt-4 pb-2 z-10 cursor-pointer hover:bg-primary/5/80 transition rounded-t-3xl"
+
+      {/* Result Badge */}
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ delay: 0.3, type: "spring", stiffness: 300 }}
+        className={`absolute top-4 left-4 z-20 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-md
+          ${
+            isWin
+              ? "bg-success/30 text-success border border-success/50 shadow-success/30"
+              : "bg-error/30 text-error border border-error/50 shadow-error/30"
+          } shadow-lg`}
+      >
+        <motion.span
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          {isWin ? "🏆 Victory" : "💀 Defeat"}
+        </motion.span>
+      </motion.div>
+
+      {/* Expand/Collapse Button */}
+      <motion.button
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleToggleOpen}
+        className={`absolute top-4 right-4 z-20 btn btn-circle btn-ghost btn-sm 
+          backdrop-blur-md bg-base-100/30 border border-base-content/20 
+          hover:bg-base-100/50 hover:border-primary/50 transition-all duration-300
+          ${open ? "shadow-lg ring-2 ring-primary/30" : ""}`}
+      >
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.4, type: "spring", stiffness: 300 }}
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </motion.div>
+      </motion.button>
+
+      {/* Main Content Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="relative flex flex-col lg:flex-row items-stretch gap-0 w-full px-4 lg:px-6 pt-6 pb-4 z-10 cursor-pointer transition-all duration-300 rounded-t-3xl"
         onClick={handleToggleOpen}
       >
-        {/* Bloc gauche : infos principales */}
+        {" "}
+        {/* Header - Game Info */}
         <MatchCardHeader
-          mode={match.mode}
           date={match.date}
           result={match.result}
           duration={match.duration}
         />
-        {/* Bloc centre : champion + spells/runes/items */}
+        {/* Champion Block - Center */}
         <MatchCardChampionBlock
           champion={match.champion}
           mainPlayer={mainPlayer}
         />
-        {/* Bloc droit : KDA, badges, etc. */}
+        {/* Stats Block - Right */}
         <MatchCardStatsBlock
           kdaParts={kdaParts}
           kdaValue={kdaValue}
           pKill={pKill}
           specialBadges={specialBadges}
         />
-      </div>
-      {/* CONTENU COLLAPSABLE toujours visible sur mobile, collapsable sur sm+ */}
-      <div
-        className={`overflow-hidden transition-all duration-300 z-10 ${
-          shouldShowContent
-            ? "max-h-[1200px] opacity-100 py-4 px-2"
-            : "max-h-0 opacity-0 p-0"
-        }`}
-        aria-hidden={!shouldShowContent}
-      >
-        <MatchCardTabs
-          tab={tab}
-          setTab={handleSetTab}
-          match={match}
-          redTeam={redTeam}
-          blueTeam={blueTeam}
-        />
-      </div>
-    </div>
+      </motion.div>
+
+      {/* Collapsible Content */}
+      <AnimatePresence mode="wait">
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+              duration: 0.5,
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+            }}
+            className="overflow-hidden z-10 border-t border-base-content/10"
+          >
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ delay: 0.1 }}
+              className="px-4 lg:px-6 py-6"
+            >
+              <MatchCardTabs
+                tab={tab}
+                setTab={handleSetTab}
+                match={match}
+                redTeam={redTeam}
+                blueTeam={blueTeam}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
@@ -223,59 +343,116 @@ MemoizedMatchCard.displayName = "MemoizedMatchCard";
 const MatchCard = withPerformanceTracking(MemoizedMatchCard, "MatchCard");
 
 export const MatchCardSkeleton: React.FC = () => (
-  <div className="card bg-gradient-to-br from-base-200/90 to-base-100/80 border border-primary/30 shadow-2xl rounded-3xl mb-6 transition-all duration-300 pb-4 animate-pulse relative overflow-hidden">
-    <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl opacity-60" />
-    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-accent/10 rounded-full blur-2xl opacity-50" />
-    <div className="relative flex flex-row items-stretch gap-0 w-full px-4 pt-4 pb-2 group z-10">
-      {/* Bloc gauche */}
-      <div className="flex flex-col justify-center min-w-[120px] max-w-[160px] bg-base-200/80 rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none border-b sm:border-b-0 sm:border-r border-primary/10 px-2">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="relative overflow-hidden backdrop-blur-md bg-gradient-to-br from-base-200/90 to-base-100/80 border-2 border-primary/20 shadow-2xl rounded-3xl mb-6 transition-all duration-300 pb-6"
+  >
+    {/* Background animated effects */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <motion.div
+        className="absolute -top-20 -left-20 w-60 h-60 bg-primary/10 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      <motion.div
+        className="absolute -bottom-20 -right-20 w-60 h-60 bg-accent/10 rounded-full blur-3xl"
+        animate={{
+          scale: [1.2, 1, 1.2],
+          opacity: [0.2, 0.5, 0.2],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+      />
+    </div>
+
+    {/* Shimmer overlay */}
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+      animate={{
+        x: ["-100%", "100%"],
+      }}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+        ease: "linear",
+        repeatDelay: 1,
+      }}
+    />
+
+    <div className="relative flex flex-col lg:flex-row items-stretch gap-0 w-full px-4 lg:px-6 pt-6 pb-4 z-10">
+      {/* Header Section Skeleton */}
+      <div className="flex flex-col justify-center min-w-[140px] max-w-[180px] p-4 rounded-2xl bg-base-200/60 backdrop-blur-sm border border-base-content/10">
+        <div className="skeleton h-6 w-20 mb-3 rounded-full" />
         <div className="skeleton h-4 w-16 mb-2" />
-        <div className="skeleton h-3 w-12 mb-2" />
-        <div className="skeleton h-4 w-14 mb-2" />
-        <div className="skeleton h-3 w-10" />
+        <div className="skeleton h-5 w-18 mb-2 rounded-full" />
+        <div className="skeleton h-4 w-14" />
       </div>
-      {/* Bloc centre */}
-      <div className="flex flex-row items-center gap-3 px-4">
-        <div className="avatar relative">
-          <div className="mask mask-squircle w-16 h-16 border-4 border-primary shadow-lg shadow-primary/30">
-            <div className="skeleton w-16 h-16 rounded" />
-          </div>
-          <span className="absolute -bottom-2 -right-2 skeleton badge badge-primary badge-xs shadow w-6 h-6" />
+
+      {/* Champion Section Skeleton */}
+      <div className="flex flex-row items-center gap-4 px-6 flex-1">
+        <div className="relative">
+          {/* Champion avatar */}
+          <div className="skeleton w-20 h-20 rounded-3xl shadow-xl" />
+          <div className="absolute -bottom-2 -right-2 skeleton w-8 h-6 rounded-full" />
         </div>
-        <div className="flex flex-col gap-1 ml-2">
+
+        <div className="flex flex-col gap-2">
+          {/* Spells */}
+          <div className="flex gap-2">
+            <div className="skeleton w-9 h-9 rounded-lg" />
+            <div className="skeleton w-9 h-9 rounded-lg" />
+          </div>
+          {/* Runes */}
+          <div className="flex gap-2">
+            <div className="skeleton w-9 h-9 rounded-full" />
+            <div className="skeleton w-9 h-9 rounded-full" />
+          </div>
+          {/* Items */}
           <div className="flex gap-1">
-            <div className="skeleton w-7 h-7 rounded" />
-            <div className="skeleton w-7 h-7 rounded" />
-          </div>
-          <div className="flex gap-1 mt-1">
-            <div className="skeleton w-7 h-7 rounded-full" />
-            <div className="skeleton w-7 h-7 rounded-full" />
-          </div>
-          <div className="flex gap-1 mt-1">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="skeleton w-7 h-7 rounded" />
+              <div key={i} className="skeleton w-8 h-8 rounded-lg" />
             ))}
           </div>
         </div>
       </div>
-      {/* Bloc droit */}
-      <div className="flex flex-col items-center justify-center flex-1 px-2">
-        <div className="flex items-end gap-2 text-xl font-extrabold tracking-tight">
-          <div className="skeleton h-6 w-8" />
-          <div className="skeleton h-6 w-2" />
-          <div className="skeleton h-6 w-8" />
-          <div className="skeleton h-6 w-2" />
-          <div className="skeleton h-6 w-8" />
+
+      {/* Stats Section Skeleton */}
+      <div className="flex flex-col items-center justify-center min-w-[160px] px-4">
+        {/* KDA */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="skeleton h-8 w-10" />
+          <div className="skeleton h-6 w-3" />
+          <div className="skeleton h-8 w-10" />
+          <div className="skeleton h-6 w-3" />
+          <div className="skeleton h-8 w-10" />
         </div>
-        <div className="skeleton h-4 w-16 mt-2" />
-        <div className="skeleton h-3 w-12 mt-2" />
-        <div className="flex gap-2 mt-2 flex-wrap justify-center">
-          <div className="skeleton h-6 w-20 rounded" />
-          <div className="skeleton h-6 w-20 rounded" />
+
+        {/* KDA Ratio */}
+        <div className="skeleton h-6 w-24 mb-3 rounded-full" />
+
+        {/* P/Kill */}
+        <div className="skeleton h-5 w-20 mb-3 rounded-full" />
+
+        {/* Badges */}
+        <div className="flex gap-2 flex-wrap justify-center">
+          <div className="skeleton h-8 w-24 rounded-full" />
+          <div className="skeleton h-8 w-20 rounded-full" />
         </div>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 export default MatchCard;
