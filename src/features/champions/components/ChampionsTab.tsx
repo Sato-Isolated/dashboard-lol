@@ -85,14 +85,6 @@ const ChampionRow: React.FC<{
                  hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5
                  border-b border-base-content/10"
     >
-      {/* Animated background effect */}
-      <td className="absolute inset-0 pointer-events-none">
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 
-                     opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        />
-      </td>
-
       {/* Champion info with avatar */}
       <td className="relative py-4 px-6">
         <motion.div
@@ -240,6 +232,7 @@ const ChampionsTab: React.FC = React.memo(() => {
   const [sortKey, setSortKey] = useState<string>("games");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [searchTerm, setSearchTerm] = useState<string>("");
+
   // Use optimized fetch for champion stats
   const {
     data: statsResponse,
@@ -278,10 +271,13 @@ const ChampionsTab: React.FC = React.memo(() => {
     (champ: ChampionStats) =>
       champ.games > 0 ? (champ.wins / champ.games) * 100 : 0,
     []
-  ); // Memoized champion data lookup for performance
+  );
+
+  // Memoized champion data lookup for performance
   const championDataLookup = useMemo(() => {
     return championData.data as Record<string, ChampionData>;
   }, []);
+
   // Memoized sorted and filtered stats
   const sortedStats = useMemo(() => {
     return [...stats]
@@ -321,7 +317,9 @@ const ChampionsTab: React.FC = React.memo(() => {
       }
     },
     [sortKey]
-  ); // Memoized stats calculations
+  );
+
+  // Memoized stats calculations
   const globalStats = useMemo(() => {
     const filteredStats = searchTerm
       ? stats.filter((champ) => {
@@ -363,6 +361,7 @@ const ChampionsTab: React.FC = React.memo(() => {
             0
           ) / totalGames
         : 0;
+
     return {
       totalGames,
       totalWins,

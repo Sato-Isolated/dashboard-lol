@@ -1,3 +1,4 @@
+'use client';
 import { UIMatch, UIPlayer } from "@/features/matches/types/ui-match.types";
 import React, { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";

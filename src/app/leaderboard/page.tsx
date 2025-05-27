@@ -1,16 +1,27 @@
 import { MongoService } from "@/shared/services/database/MongoService";
 import type { Document } from "mongodb";
-import LeaderboardTable from "@/features/leaderboard/components/LeaderboardTable";
+import { LeaderboardClient } from "@/features/leaderboard";
 
 const PLATFORMS = [
-  { label: "EUW", value: "euw1" },
-  { label: "EUNE", value: "eun1" },
-  { label: "NA", value: "na1" },
-  { label: "KR", value: "kr" },
-  // Ajoute d'autres plateformes si besoin
+  { label: "EUW", value: "euw1", flag: "🇪🇺", fullName: "Europe West" },
+  {
+    label: "EUNE",
+    value: "eun1",
+    flag: "🇪🇺",
+    fullName: "Europe Nordic & East",
+  },
+  { label: "NA", value: "na1", flag: "🇺🇸", fullName: "North America" },
+  { label: "KR", value: "kr", flag: "🇰🇷", fullName: "Korea" },
+  { label: "BR", value: "br1", flag: "🇧🇷", fullName: "Brazil" },
+  { label: "LAN", value: "la1", flag: "🌎", fullName: "Latin America North" },
+  { label: "LAS", value: "la2", flag: "🌎", fullName: "Latin America South" },
+  { label: "OCE", value: "oc1", flag: "🇦🇺", fullName: "Oceania" },
+  { label: "RU", value: "ru", flag: "🇷🇺", fullName: "Russia" },
+  { label: "TR", value: "tr1", flag: "🇹🇷", fullName: "Turkey" },
+  { label: "JP", value: "jp1", flag: "🇯🇵", fullName: "Japan" },
 ];
 
-type LeaderboardEntry = {
+export type LeaderboardEntry = {
   name: string;
   aramScore: number;
   profileIconId: number;
@@ -48,31 +59,10 @@ export default async function AramScoreRankPage(props: {
   const leaderboard = await getLeaderboard(platform);
 
   return (
-    <div className="p-4 max-w-3xl mx-auto min-h-[84vh]">
-      <h1 className="text-2xl font-bold mb-4">AramScore Leaderboard</h1>
-      <div className="mb-4">
-        <form method="get">
-          <label htmlFor="platform" className="mr-2 font-semibold">
-            Platform:
-          </label>
-          <select
-            id="platform"
-            name="platform"
-            defaultValue={platform}
-            className="select select-bordered"
-          >
-            {PLATFORMS.map((p) => (
-              <option key={p.value} value={p.value}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn btn-sm ml-2">
-            View
-          </button>
-        </form>
-      </div>
-      <LeaderboardTable leaderboard={leaderboard} platform={platform} />
-    </div>
+    <LeaderboardClient
+      initialLeaderboard={leaderboard}
+      initialPlatform={platform}
+      platforms={PLATFORMS}
+    />
   );
 }
