@@ -2,9 +2,9 @@
  * Optimized API hooks with caching, memoization, and performance monitoring
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { apiCache } from "@/shared/lib/cache/CacheManager";
-import { clientLogger } from "@/shared/lib/logger/client-logger";
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { apiCache } from '@/shared/lib/cache/CacheManager';
+import { clientLogger } from '@/shared/lib/logger/client-logger';
 
 interface UseOptimizedFetchOptions {
   cacheKey?: string;
@@ -32,7 +32,7 @@ export function useOptimizedFetch<T>(
   options: UseOptimizedFetchOptions = {}
 ): UseOptimizedFetchResult<T> {
   const {
-    cacheKey = url || "",
+    cacheKey = url || '',
     cacheTTL,
     enabled = true,
     staleWhileRevalidate = true,
@@ -46,8 +46,9 @@ export function useOptimizedFetch<T>(
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const inflightRequests = useRef(new Set<string>());
-  const lastSuccessfulFetchRef = useRef<string>("");
-  const isFirstRenderRef = useRef(true);  const fetchData = useCallback(
+  const lastSuccessfulFetchRef = useRef<string>('');
+  const isFirstRenderRef = useRef(true);
+  const fetchData = useCallback(
     async (useCache = true) => {
       if (!url || !enabled) {
         setError(null);
@@ -55,9 +56,10 @@ export function useOptimizedFetch<T>(
         return;
       }
 
-      const timerId = clientLogger.startTimer("api_fetch", { url, cacheKey });
+      const timerId = clientLogger.startTimer('api_fetch', { url, cacheKey });
 
-      try {        // Check cache first
+      try {
+        // Check cache first
         if (useCache && cacheKey) {
           const cached = apiCache.get<T>(cacheKey);
           if (cached) {
@@ -69,10 +71,10 @@ export function useOptimizedFetch<T>(
               fetchData(false); // Fetch without using cache
             }
             clientLogger.endTimer(timerId);
-            clientLogger.info("Cache hit", { url, cacheKey });
+            clientLogger.info('Cache hit', { url, cacheKey });
             return;
           }
-        }        // Dedupe concurrent requests
+        } // Dedupe concurrent requests
         if (dedupe && inflightRequests.current.has(cacheKey)) {
           clientLogger.endTimer(timerId);
           return;
@@ -90,7 +92,8 @@ export function useOptimizedFetch<T>(
         abortControllerRef.current = new AbortController();
 
         let attempt = 0;
-        let lastError: Error | null = null;        while (attempt < retryCount) {
+        let lastError: Error | null = null;
+        while (attempt < retryCount) {
           try {
             // Add timeout monitoring
             const timeoutId = setTimeout(() => {
@@ -102,7 +105,7 @@ export function useOptimizedFetch<T>(
             const response = await fetch(url, {
               signal: abortControllerRef.current.signal,
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
             });
 
@@ -114,7 +117,7 @@ export function useOptimizedFetch<T>(
               );
             }
 
-            const result = await response.json();            // Cache the result
+            const result = await response.json(); // Cache the result
             if (cacheKey) {
               apiCache.set(cacheKey, result, cacheTTL);
             }
@@ -122,7 +125,7 @@ export function useOptimizedFetch<T>(
             setData(result);
             setError(null);
             clientLogger.endTimer(timerId);
-            clientLogger.info("API fetch successful", {
+            clientLogger.info('API fetch successful', {
               url,
               cacheKey,
               attempt: attempt + 1,
@@ -133,14 +136,14 @@ export function useOptimizedFetch<T>(
           } catch (err) {
             lastError = err as Error;
 
-            if (err instanceof Error && err.name === "AbortError") {
+            if (err instanceof Error && err.name === 'AbortError') {
               break;
             }
 
             attempt++;
 
             if (attempt < retryCount) {
-              await new Promise((resolve) =>
+              await new Promise(resolve =>
                 setTimeout(resolve, retryDelay * attempt)
               );
             }
@@ -148,7 +151,7 @@ export function useOptimizedFetch<T>(
         }
         if (lastError && attempt >= retryCount) {
           setError(lastError.message);
-          clientLogger.error("API fetch failed after retries", {
+          clientLogger.error('API fetch failed after retries', {
             error: lastError.message,
             url,
             cacheKey,
@@ -156,9 +159,9 @@ export function useOptimizedFetch<T>(
           });
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-        clientLogger.error("API fetch error", {
-          error: err instanceof Error ? err.message : "Unknown error",
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        clientLogger.error('API fetch error', {
+          error: err instanceof Error ? err.message : 'Unknown error',
           url,
           cacheKey,
         });
@@ -203,7 +206,8 @@ export function useOptimizedFetch<T>(
       setError(null);
       setLoading(false);
     }
-  }, [url]);  useEffect(() => {
+  }, [url]);
+  useEffect(() => {
     const fetchKey = `${url}:${enabled}:${cacheKey}`;
 
     // Only proceed if we have a valid URL and are enabled

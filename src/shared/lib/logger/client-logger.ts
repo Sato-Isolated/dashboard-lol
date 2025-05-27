@@ -34,41 +34,41 @@ const createClientLogger = (): ClientLogger => {
 
     // Use appropriate console method based on level
     switch (level) {
-      case "error":
-        console.error(`[${timestamp}] ERROR: ${message}`, context || "");
+      case 'error':
+        console.error(`[${timestamp}] ERROR: ${message}`, context || '');
         break;
-      case "warn":
-        console.warn(`[${timestamp}] WARN: ${message}`, context || "");
+      case 'warn':
+        console.warn(`[${timestamp}] WARN: ${message}`, context || '');
         break;
-      case "debug":
-        console.debug(`[${timestamp}] DEBUG: ${message}`, context || "");
+      case 'debug':
+        console.debug(`[${timestamp}] DEBUG: ${message}`, context || '');
         break;
-      case "http":
-        console.log(`[${timestamp}] HTTP: ${message}`, context || "");
+      case 'http':
+        console.log(`[${timestamp}] HTTP: ${message}`, context || '');
         break;
       default:
-        console.log(`[${timestamp}] INFO: ${message}`, context || "");
+        console.log(`[${timestamp}] INFO: ${message}`, context || '');
     }
   };
 
   return {
     info: (message: string, context?: LogContext) =>
-      log("info", message, context),
+      log('info', message, context),
     error: (message: string, context?: LogContext) =>
-      log("error", message, context),
+      log('error', message, context),
     warn: (message: string, context?: LogContext) =>
-      log("warn", message, context),
+      log('warn', message, context),
     debug: (message: string, context?: LogContext) =>
-      log("debug", message, context),
+      log('debug', message, context),
     http: (message: string, context?: LogContext) =>
-      log("http", message, context),
+      log('http', message, context),
     performance: (
       operation: string,
       duration: number,
       metadata?: LogContext
     ) => {
       log(
-        "info",
+        'info',
         `Performance: ${operation} completed in ${duration}ms`,
         metadata
       );
@@ -87,7 +87,7 @@ const createClientLogger = (): ClientLogger => {
       if (timer) {
         const duration = performance.now() - timer.startTime;
         log(
-          "info",
+          'info',
           `Timer: ${timer.operation} completed in ${duration.toFixed(2)}ms`,
           timer.metadata
         );

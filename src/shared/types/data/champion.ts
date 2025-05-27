@@ -37,9 +37,9 @@ export interface Image {
 }
 
 export type Tag =
-  | "Assassin"
-  | "Fighter"
-  | "Mage"
-  | "Marksman"
-  | "Support"
-  | "Tank";
+  | 'Assassin'
+  | 'Fighter'
+  | 'Mage'
+  | 'Marksman'
+  | 'Support'
+  | 'Tank';

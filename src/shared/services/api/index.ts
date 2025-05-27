@@ -1,7 +1,7 @@
 // API services exports
 
 // Base API services
-export * from "./base";
+export * from './base';
 
 // Riot API services
-export * from "./riot";
+export * from './riot';

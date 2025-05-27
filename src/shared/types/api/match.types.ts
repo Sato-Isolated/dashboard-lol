@@ -170,7 +170,7 @@ export interface Participant {
 }
 
 export interface Challenges {
-  "12AssistStreakCount": number;
+  '12AssistStreakCount': number;
   HealFromMapSources: number;
   InfernalScalePickup: number;
   SWARM_DefeatAatrox: number;
@@ -296,12 +296,12 @@ export interface Challenges {
 }
 
 export enum IndividualPosition {
-  Invalid = "Invalid",
+  Invalid = 'Invalid',
 }
 
 export enum Lane {
-  Middle = "MIDDLE",
-  Top = "TOP",
+  Middle = 'MIDDLE',
+  Top = 'TOP',
 }
 
 export interface Perks {
@@ -322,8 +322,8 @@ export interface Style {
 }
 
 export enum Description {
-  PrimaryStyle = "primaryStyle",
-  SubStyle = "subStyle",
+  PrimaryStyle = 'primaryStyle',
+  SubStyle = 'subStyle',
 }
 
 export interface Selection {
@@ -334,8 +334,8 @@ export interface Selection {
 }
 
 export enum Role {
-  Solo = "SOLO",
-  Support = "SUPPORT",
+  Solo = 'SOLO',
+  Support = 'SUPPORT',
 }
 
 export interface Team {

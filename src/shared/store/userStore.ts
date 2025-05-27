@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface UserState {
   region: string;
@@ -11,9 +11,9 @@ interface UserState {
   }) => void;
 }
 
-export const useUserStore = create<UserState>((set) => ({
-  region: "",
-  tagline: "",
-  summonerName: "",
-  setUser: (user) => set(user),
+export const useUserStore = create<UserState>(set => ({
+  region: '',
+  tagline: '',
+  summonerName: '',
+  setUser: user => set(user),
 }));

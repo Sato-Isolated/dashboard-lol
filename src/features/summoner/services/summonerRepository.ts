@@ -1,8 +1,8 @@
-import { MongoService } from "@/shared/services/database/MongoService";
-import { SummonerCollection } from "@/features/summoner/types/summoner.types";
-import { logger } from "@/shared/lib/logger/logger";
-import { ValidationHelper, ValidationError } from "@/shared/lib/patterns";
-import { BaseRepositoryImpl } from "@/shared/lib/patterns";
+import { MongoService } from '@/shared/services/database/MongoService';
+import { SummonerCollection } from '@/features/summoner/types/summoner.types';
+import { logger } from '@/shared/lib/logger/logger';
+import { ValidationHelper, ValidationError } from '@/shared/lib/patterns';
+import { BaseRepositoryImpl } from '@/shared/lib/patterns';
 
 /**
  * Repository for summoner data operations
@@ -12,8 +12,8 @@ class SummonerRepository extends BaseRepositoryImpl<
   SummonerCollection,
   string
 > {
-  protected readonly collectionName = "summoners";
-  protected readonly featureName = "summoner";
+  protected readonly collectionName = 'summoners';
+  protected readonly featureName = 'summoner';
 
   async findById(id: string): Promise<SummonerCollection | null> {
     return this.executeOperation(async () => {
@@ -22,13 +22,13 @@ class SummonerRepository extends BaseRepositoryImpl<
         this.collectionName
       );
       return collection.findOne({
-        _id: new (await import("mongodb")).ObjectId(id),
+        _id: new (await import('mongodb')).ObjectId(id),
       });
-    }, "findById");
+    }, 'findById');
   }
 
   async create(
-    entity: Omit<SummonerCollection, "id" | "createdAt" | "updatedAt">
+    entity: Omit<SummonerCollection, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<SummonerCollection> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
@@ -38,12 +38,12 @@ class SummonerRepository extends BaseRepositoryImpl<
 
       const doc: SummonerCollection = {
         ...entity,
-        _id: new (await import("mongodb")).ObjectId(),
+        _id: new (await import('mongodb')).ObjectId(),
       };
 
       await collection.insertOne(doc);
       return doc;
-    }, "create");
+    }, 'create');
   }
 
   async update(
@@ -57,13 +57,13 @@ class SummonerRepository extends BaseRepositoryImpl<
       );
 
       const result = await collection.findOneAndUpdate(
-        { _id: new (await import("mongodb")).ObjectId(id) },
+        { _id: new (await import('mongodb')).ObjectId(id) },
         { $set: updates },
-        { returnDocument: "after" }
+        { returnDocument: 'after' }
       );
 
       return result || null;
-    }, "update");
+    }, 'update');
   }
 
   async delete(id: string): Promise<boolean> {
@@ -74,10 +74,10 @@ class SummonerRepository extends BaseRepositoryImpl<
       );
 
       const result = await collection.deleteOne({
-        _id: new (await import("mongodb")).ObjectId(id),
+        _id: new (await import('mongodb')).ObjectId(id),
       });
       return result.deletedCount > 0;
-    }, "delete");
+    }, 'delete');
   }
 
   /**
@@ -94,7 +94,7 @@ class SummonerRepository extends BaseRepositoryImpl<
         this.collectionName
       );
       return collection.findOne({ region, name, tagline });
-    }, "findByIdentity");
+    }, 'findByIdentity');
   }
 
   /**
@@ -111,39 +111,39 @@ class SummonerRepository extends BaseRepositoryImpl<
         // Validate inputs using standardized validation
         const regionValidation = ValidationHelper.validateString(
           region,
-          "region",
+          'region',
           2,
           10
         );
         if (!regionValidation.isValid) {
-          throw new ValidationError(regionValidation.error || "Invalid region");
+          throw new ValidationError(regionValidation.error || 'Invalid region');
         }
 
         const nameValidation = ValidationHelper.validateString(
           name,
-          "name",
+          'name',
           3,
           16
         );
         if (!nameValidation.isValid) {
           throw new ValidationError(
-            nameValidation.error || "Invalid summoner name"
+            nameValidation.error || 'Invalid summoner name'
           );
         }
 
         const puuidValidation = ValidationHelper.validateString(
           puuid,
-          "puuid",
+          'puuid',
           78,
           78
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || "Invalid PUUID format"
+            puuidValidation.error || 'Invalid PUUID format'
           );
         }
 
-        logger.info("Getting or creating summoner", {
+        logger.info('Getting or creating summoner', {
           region,
           name,
           tagline,
@@ -154,14 +154,14 @@ class SummonerRepository extends BaseRepositoryImpl<
         let summoner = await this.findByIdentity(region, name, tagline);
 
         if (!summoner) {
-          logger.info("Summoner not found, creating new record", {
+          logger.info('Summoner not found, creating new record', {
             region,
             name,
             tagline,
           });
 
           const doc: SummonerCollection = {
-            _id: new (await import("mongodb")).ObjectId(),
+            _id: new (await import('mongodb')).ObjectId(),
             puuid,
             region,
             name,
@@ -177,14 +177,14 @@ class SummonerRepository extends BaseRepositoryImpl<
           await collection.insertOne(doc);
           summoner = doc;
 
-          logger.info("Summoner created successfully", {
+          logger.info('Summoner created successfully', {
             region,
             name,
             tagline,
             summonerId: summoner._id,
           });
         } else {
-          logger.info("Summoner found in database", {
+          logger.info('Summoner found in database', {
             region,
             name,
             tagline,
@@ -194,7 +194,7 @@ class SummonerRepository extends BaseRepositoryImpl<
 
         return summoner;
       },
-      { collection: this.collectionName, operation: "getOrCreate" }
+      { collection: this.collectionName, operation: 'getOrCreate' }
     );
   }
 
@@ -226,7 +226,7 @@ class SummonerRepository extends BaseRepositoryImpl<
           },
         }
       );
-    }, "updateChampionMastery");
+    }, 'updateChampionMastery');
   }
 
   /**
@@ -248,7 +248,7 @@ class SummonerRepository extends BaseRepositoryImpl<
         { region, name, tagline },
         { $set: { fetchOldGames: value } }
       );
-    }, "setFetchOldGames");
+    }, 'setFetchOldGames');
   }
 
   /**
@@ -270,7 +270,7 @@ class SummonerRepository extends BaseRepositoryImpl<
         { region, name, tagline },
         { $set: { lastFetchedGameEndTimestamp: timestamp } }
       );
-    }, "setLastFetchedGameEndTimestamp");
+    }, 'setLastFetchedGameEndTimestamp');
   }
 
   /**
@@ -292,7 +292,7 @@ class SummonerRepository extends BaseRepositoryImpl<
         { region, name, tagline },
         { $set: { aramScore } }
       );
-    }, "setAramScore");
+    }, 'setAramScore');
   }
 
   /**
@@ -314,7 +314,7 @@ class SummonerRepository extends BaseRepositoryImpl<
         { region, name, tagline },
         { $set: { lastUpdateTimestamp: timestamp } }
       );
-    }, "setLastUpdateTimestamp");
+    }, 'setLastUpdateTimestamp');
   }
 }
 

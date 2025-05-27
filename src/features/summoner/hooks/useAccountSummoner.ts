@@ -1,7 +1,10 @@
-import { useApiResource } from  "@/shared/hooks/useApiResource";
-import { useEffectiveUser } from  "@/shared/hooks/useEffectiveUser";
-import type { RiotAccountDto } from "@/shared/types/api/account.types";
-import type { SummonerDto, LeagueEntry } from "@/shared/types/api/summoners.types";
+import { useApiResource } from '@/shared/hooks/useApiResource';
+import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
+import type { RiotAccountDto } from '@/shared/types/api/account.types';
+import type {
+  SummonerDto,
+  LeagueEntry,
+} from '@/shared/types/api/summoners.types';
 
 interface AccountSummonerResult {
   account: RiotAccountDto | null;

@@ -1,19 +1,21 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import GlobalErrorAlert from "../GlobalErrorAlert";
-import { useGlobalError } from "@/shared/hooks/useGlobalError";
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import GlobalErrorAlert from '../GlobalErrorAlert';
+import { useGlobalError } from '@/shared/hooks/useGlobalError';
 
 // Mock the global error hook
 const mockSetError = jest.fn();
 
-jest.mock("@/shared/hooks/useGlobalError", () => ({
+jest.mock('@/shared/hooks/useGlobalError', () => ({
   useGlobalError: jest.fn(),
 }));
 
-const mockUseGlobalError = useGlobalError as jest.MockedFunction<typeof useGlobalError>;
+const mockUseGlobalError = useGlobalError as jest.MockedFunction<
+  typeof useGlobalError
+>;
 
-describe("GlobalErrorAlert", () => {
+describe('GlobalErrorAlert', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseGlobalError.mockReturnValue({
@@ -22,64 +24,64 @@ describe("GlobalErrorAlert", () => {
     });
   });
 
-  describe("Rendering", () => {
-    it("renders nothing when no error", () => {
+  describe('Rendering', () => {
+    it('renders nothing when no error', () => {
       const { container } = render(<GlobalErrorAlert />);
       expect(container.firstChild).toBeNull();
     });
 
-    it("renders error alert when error exists", () => {
+    it('renders error alert when error exists', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error message",
+        error: 'Test error message',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      expect(screen.getByText("Test error message")).toBeInTheDocument();
+      expect(screen.getByText('Test error message')).toBeInTheDocument();
     });
 
-    it("displays error with proper alert styling", () => {
+    it('displays error with proper alert styling', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error message",
+        error: 'Test error message',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
       const alertElement = screen
-        .getByText("Test error message")
-        .closest(".alert");
+        .getByText('Test error message')
+        .closest('.alert');
       expect(alertElement).toBeInTheDocument();
-      expect(alertElement).toHaveClass("alert", "alert-error");
+      expect(alertElement).toHaveClass('alert', 'alert-error');
     });
 
-    it("shows close button when error is present", () => {
+    it('shows close button when error is present', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error message",
+        error: 'Test error message',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const closeButton = screen.getByRole("button");
+      const closeButton = screen.getByRole('button');
       expect(closeButton).toBeInTheDocument();
-      expect(closeButton).toHaveTextContent("✕");
+      expect(closeButton).toHaveTextContent('✕');
     });
   });
 
-  describe("Error Types", () => {
-    it("handles short error messages", () => {
+  describe('Error Types', () => {
+    it('handles short error messages', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Error",
+        error: 'Error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      expect(screen.getByText("Error")).toBeInTheDocument();
+      expect(screen.getByText('Error')).toBeInTheDocument();
     });
 
-    it("handles long error messages", () => {
+    it('handles long error messages', () => {
       mockUseGlobalError.mockReturnValue({
         error:
-          "This is a very long error message that might wrap to multiple lines and should still be displayed correctly in the error alert component",
+          'This is a very long error message that might wrap to multiple lines and should still be displayed correctly in the error alert component',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
@@ -89,21 +91,21 @@ describe("GlobalErrorAlert", () => {
       ).toBeInTheDocument();
     });
 
-    it("handles error messages with special characters", () => {
+    it('handles error messages with special characters', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Error: Failed to fetch data (404) - Not Found!",
+        error: 'Error: Failed to fetch data (404) - Not Found!',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
       expect(
-        screen.getByText("Error: Failed to fetch data (404) - Not Found!")
+        screen.getByText('Error: Failed to fetch data (404) - Not Found!')
       ).toBeInTheDocument();
     });
 
-    it("handles multiline error messages", () => {
+    it('handles multiline error messages', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Line 1\nLine 2\nLine 3",
+        error: 'Line 1\nLine 2\nLine 3',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
@@ -111,9 +113,9 @@ describe("GlobalErrorAlert", () => {
       expect(screen.getByText(/Line 1.*Line 2.*Line 3/)).toBeInTheDocument();
     });
 
-    it("handles empty string error", () => {
+    it('handles empty string error', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "",
+        error: '',
         setError: mockSetError,
       });
       const { container } = render(<GlobalErrorAlert />);
@@ -123,102 +125,102 @@ describe("GlobalErrorAlert", () => {
     });
   });
 
-  describe("Positioning and Layout", () => {
-    it("applies correct positioning classes", () => {
+  describe('Positioning and Layout', () => {
+    it('applies correct positioning classes', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const alertElement = screen.getByText("Test error").closest(".alert");
+      const alertElement = screen.getByText('Test error').closest('.alert');
       expect(alertElement).toHaveClass(
-        "fixed",
-        "top-4",
-        "left-1/2",
-        "-translate-x-1/2",
-        "z-50"
+        'fixed',
+        'top-4',
+        'left-1/2',
+        '-translate-x-1/2',
+        'z-50'
       );
     });
 
-    it("applies correct width constraints", () => {
+    it('applies correct width constraints', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const alertElement = screen.getByText("Test error").closest(".alert");
-      expect(alertElement).toHaveClass("w-fit");
+      const alertElement = screen.getByText('Test error').closest('.alert');
+      expect(alertElement).toHaveClass('w-fit');
     });
 
-    it("applies shadow styling", () => {
+    it('applies shadow styling', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const alertElement = screen.getByText("Test error").closest(".alert");
-      expect(alertElement).toHaveClass("shadow-lg");
+      const alertElement = screen.getByText('Test error').closest('.alert');
+      expect(alertElement).toHaveClass('shadow-lg');
     });
   });
 
-  describe("Interactive Behavior", () => {
-    it("calls setError with null when close button is clicked", () => {
+  describe('Interactive Behavior', () => {
+    it('calls setError with null when close button is clicked', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const closeButton = screen.getByRole("button");
+      const closeButton = screen.getByRole('button');
       fireEvent.click(closeButton);
 
       expect(mockSetError).toHaveBeenCalledWith(null);
       expect(mockSetError).toHaveBeenCalledTimes(1);
     });
 
-    it("close button has proper classes", () => {
+    it('close button has proper classes', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const closeButton = screen.getByRole("button");
-      expect(closeButton).toHaveClass("btn", "btn-xs", "btn-ghost", "ml-4");
+      const closeButton = screen.getByRole('button');
+      expect(closeButton).toHaveClass('btn', 'btn-xs', 'btn-ghost', 'ml-4');
     });
 
-    it("close button has proper aria-label", () => {
+    it('close button has proper aria-label', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const closeButton = screen.getByRole("button");
-      expect(closeButton).toHaveAttribute("aria-label", "Fermer l'erreur");
+      const closeButton = screen.getByRole('button');
+      expect(closeButton).toHaveAttribute('aria-label', "Fermer l'erreur");
     });
   });
 
-  describe("State Management", () => {
-    it("updates when error state changes", () => {
+  describe('State Management', () => {
+    it('updates when error state changes', () => {
       // Start with no error
       mockUseGlobalError.mockReturnValue({
         error: null,
         setError: mockSetError,
       });
       const { rerender } = render(<GlobalErrorAlert />);
-      expect(screen.queryByText("New error")).not.toBeInTheDocument();
+      expect(screen.queryByText('New error')).not.toBeInTheDocument();
 
       // Add error
       mockUseGlobalError.mockReturnValue({
-        error: "New error",
+        error: 'New error',
         setError: mockSetError,
       });
       rerender(<GlobalErrorAlert />);
-      expect(screen.getByText("New error")).toBeInTheDocument();
+      expect(screen.getByText('New error')).toBeInTheDocument();
 
       // Clear error
       mockUseGlobalError.mockReturnValue({
@@ -226,29 +228,29 @@ describe("GlobalErrorAlert", () => {
         setError: mockSetError,
       });
       rerender(<GlobalErrorAlert />);
-      expect(screen.queryByText("New error")).not.toBeInTheDocument();
+      expect(screen.queryByText('New error')).not.toBeInTheDocument();
     });
 
-    it("updates error message content", () => {
+    it('updates error message content', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "First error",
+        error: 'First error',
         setError: mockSetError,
       });
       const { rerender } = render(<GlobalErrorAlert />);
-      expect(screen.getByText("First error")).toBeInTheDocument();
+      expect(screen.getByText('First error')).toBeInTheDocument();
 
       mockUseGlobalError.mockReturnValue({
-        error: "Second error",
+        error: 'Second error',
         setError: mockSetError,
       });
       rerender(<GlobalErrorAlert />);
-      expect(screen.getByText("Second error")).toBeInTheDocument();
-      expect(screen.queryByText("First error")).not.toBeInTheDocument();
+      expect(screen.getByText('Second error')).toBeInTheDocument();
+      expect(screen.queryByText('First error')).not.toBeInTheDocument();
     });
   });
 
-  describe("Performance", () => {
-    it("does not render when error is null", () => {
+  describe('Performance', () => {
+    it('does not render when error is null', () => {
       mockUseGlobalError.mockReturnValue({
         error: null,
         setError: mockSetError,
@@ -259,7 +261,7 @@ describe("GlobalErrorAlert", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("efficiently updates on error changes", () => {
+    it('efficiently updates on error changes', () => {
       const { rerender } = render(<GlobalErrorAlert />);
 
       // Multiple re-renders should work efficiently
@@ -274,8 +276,8 @@ describe("GlobalErrorAlert", () => {
     });
   });
 
-  describe("Edge Cases", () => {
-    it("handles null error gracefully", () => {
+  describe('Edge Cases', () => {
+    it('handles null error gracefully', () => {
       mockUseGlobalError.mockReturnValue({
         error: null,
         setError: mockSetError,
@@ -285,7 +287,7 @@ describe("GlobalErrorAlert", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("handles undefined error gracefully", () => {
+    it('handles undefined error gracefully', () => {
       mockUseGlobalError.mockReturnValue({
         error: undefined as any,
         setError: mockSetError,
@@ -295,17 +297,17 @@ describe("GlobalErrorAlert", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("handles numeric error codes", () => {
+    it('handles numeric error codes', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "404",
+        error: '404',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      expect(screen.getByText("404")).toBeInTheDocument();
+      expect(screen.getByText('404')).toBeInTheDocument();
     });
 
-    it("handles JSON error strings", () => {
+    it('handles JSON error strings', () => {
       mockUseGlobalError.mockReturnValue({
         error: '{"error": "Invalid request", "code": 400}',
         setError: mockSetError,
@@ -317,8 +319,8 @@ describe("GlobalErrorAlert", () => {
       ).toBeInTheDocument();
     });
 
-    it("handles very long error messages", () => {
-      const longError = "A".repeat(1000);
+    it('handles very long error messages', () => {
+      const longError = 'A'.repeat(1000);
       mockUseGlobalError.mockReturnValue({
         error: longError,
         setError: mockSetError,
@@ -329,30 +331,30 @@ describe("GlobalErrorAlert", () => {
     });
   });
 
-  describe("Styling Consistency", () => {
-    it("maintains consistent DaisyUI classes", () => {
+  describe('Styling Consistency', () => {
+    it('maintains consistent DaisyUI classes', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const alertElement = screen.getByText("Test error").closest(".alert");
-      expect(alertElement).toHaveClass("alert", "alert-error");
+      const alertElement = screen.getByText('Test error').closest('.alert');
+      expect(alertElement).toHaveClass('alert', 'alert-error');
 
-      const closeButton = screen.getByRole("button");
-      expect(closeButton).toHaveClass("btn", "btn-xs", "btn-ghost");
+      const closeButton = screen.getByRole('button');
+      expect(closeButton).toHaveClass('btn', 'btn-xs', 'btn-ghost');
     });
 
-    it("applies proper z-index for overlay", () => {
+    it('applies proper z-index for overlay', () => {
       mockUseGlobalError.mockReturnValue({
-        error: "Test error",
+        error: 'Test error',
         setError: mockSetError,
       });
       render(<GlobalErrorAlert />);
 
-      const alertElement = screen.getByText("Test error").closest(".alert");
-      expect(alertElement).toHaveClass("z-50");
+      const alertElement = screen.getByText('Test error').closest('.alert');
+      expect(alertElement).toHaveClass('z-50');
     });
   });
 });

@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Load environment variables
-if (typeof window === "undefined") {
+if (typeof window === 'undefined') {
   // Only load dotenv on server side
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require("dotenv-safe").config({
+  require('dotenv-safe').config({
     allowEmptyValues: true,
     silent: false,
   });
@@ -13,36 +13,36 @@ if (typeof window === "undefined") {
 // Configuration schema with validation
 const configSchema = z.object({
   // Database
-  DB_CONN_STRING: z.string().min(1, "Database connection string is required"),
-  DB_NAME: z.string().min(1, "Database name is required"),
+  DB_CONN_STRING: z.string().min(1, 'Database connection string is required'),
+  DB_NAME: z.string().min(1, 'Database name is required'),
 
   // Riot API
-  RIOT_API_KEY: z.string().min(1, "Riot API key is required"),
-  RIOT_API_BASE_URL: z.string().url().default("https://na1.api.riotgames.com"),
+  RIOT_API_KEY: z.string().min(1, 'Riot API key is required'),
+  RIOT_API_BASE_URL: z.string().url().default('https://na1.api.riotgames.com'),
 
   // Development mode
   DEV_MODE_MOCK_API: z
     .string()
-    .transform((val) => val === "true")
-    .default("false"),
+    .transform(val => val === 'true')
+    .default('false'),
 
   // Application
   NODE_ENV: z
-    .enum(["development", "test", "production"])
-    .default("development"),
-  PORT: z.string().transform(Number).default("3000"),
+    .enum(['development', 'test', 'production'])
+    .default('development'),
+  PORT: z.string().transform(Number).default('3000'),
 
   // Logging
-  LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
+  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
 
   // Rate Limiting
-  RIOT_API_RATE_LIMIT_PER_SECOND: z.string().transform(Number).default("20"),
-  RIOT_API_RATE_LIMIT_PER_MINUTE: z.string().transform(Number).default("100"),
+  RIOT_API_RATE_LIMIT_PER_SECOND: z.string().transform(Number).default('20'),
+  RIOT_API_RATE_LIMIT_PER_MINUTE: z.string().transform(Number).default('100'),
 
   // Cache Settings (for future Redis implementation)
-  CACHE_TTL_SUMMONER: z.string().transform(Number).default("3600"), // 1 hour
-  CACHE_TTL_MATCHES: z.string().transform(Number).default("1800"), // 30 minutes
-  CACHE_TTL_RANKINGS: z.string().transform(Number).default("300"), // 5 minutes
+  CACHE_TTL_SUMMONER: z.string().transform(Number).default('3600'), // 1 hour
+  CACHE_TTL_MATCHES: z.string().transform(Number).default('1800'), // 30 minutes
+  CACHE_TTL_RANKINGS: z.string().transform(Number).default('300'), // 5 minutes
 });
 
 type Config = z.infer<typeof configSchema>;
@@ -77,10 +77,10 @@ class ConfigService {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const missingFields = error.errors.map(
-          (e) => `${e.path.join(".")}: ${e.message}`
+          e => `${e.path.join('.')}: ${e.message}`
         );
         throw new Error(
-          `Configuration validation failed:\n${missingFields.join("\n")}`
+          `Configuration validation failed:\n${missingFields.join('\n')}`
         );
       }
       throw error;
@@ -103,15 +103,15 @@ class ConfigService {
   }
 
   public isDevelopment(): boolean {
-    return this.config.NODE_ENV === "development";
+    return this.config.NODE_ENV === 'development';
   }
 
   public isProduction(): boolean {
-    return this.config.NODE_ENV === "production";
+    return this.config.NODE_ENV === 'production';
   }
 
   public isTest(): boolean {
-    return this.config.NODE_ENV === "test";
+    return this.config.NODE_ENV === 'test';
   }
 }
 

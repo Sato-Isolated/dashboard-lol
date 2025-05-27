@@ -1,8 +1,8 @@
-"use client";
-import React, { useState } from "react";
-import { default as MatchCard, MatchCardSkeleton } from "./MatchCard";
-import type { UIMatch } from "@/features/matches/types/ui-match.types";
-import { Button } from "@/shared/components/ui/Button";
+'use client';
+import React, { useState } from 'react';
+import { default as MatchCard, MatchCardSkeleton } from './MatchCard';
+import type { UIMatch } from '@/features/matches/types/ui-match.types';
+import { Button } from '@/shared/components/ui/Button';
 
 interface MatchListProps {
   matches: UIMatch[];
@@ -11,7 +11,7 @@ interface MatchListProps {
   hasMore?: boolean;
   onLoadMore?: () => void;
   loadingMore?: boolean;
-  variant?: "default" | "compact" | "minimal";
+  variant?: 'default' | 'compact' | 'minimal';
   showStats?: boolean;
   maxInitialItems?: number;
   enablePagination?: boolean;
@@ -42,7 +42,7 @@ const calculateMatchStats = (matches: UIMatch[]): MatchStats => {
       wins: 0,
       losses: 0,
       winRate: 0,
-      avgKda: "0.00",
+      avgKda: '0.00',
       recentFormWins: 0,
       recentFormTotal: 0,
       mostPlayedChampions: [],
@@ -50,7 +50,7 @@ const calculateMatchStats = (matches: UIMatch[]): MatchStats => {
   }
 
   const totalGames = matches.length;
-  const wins = matches.filter((m) => m.result === "Win").length;
+  const wins = matches.filter(m => m.result === 'Win').length;
   const losses = totalGames - wins;
   const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
 
@@ -58,10 +58,10 @@ const calculateMatchStats = (matches: UIMatch[]): MatchStats => {
   let totalKills = 0,
     totalDeaths = 0,
     totalAssists = 0;
-  matches.forEach((match) => {
-    const kdaParts = match.kda.includes("/")
-      ? match.kda.split("/")
-      : match.kda.split(":");
+  matches.forEach(match => {
+    const kdaParts = match.kda.includes('/')
+      ? match.kda.split('/')
+      : match.kda.split(':');
     totalKills += Number(kdaParts[0]) || 0;
     totalDeaths += Number(kdaParts[1]) || 0;
     totalAssists += Number(kdaParts[2]) || 0;
@@ -74,17 +74,17 @@ const calculateMatchStats = (matches: UIMatch[]): MatchStats => {
 
   // Recent form (last 10 games)
   const recentMatches = matches.slice(0, Math.min(10, totalGames));
-  const recentFormWins = recentMatches.filter((m) => m.result === "Win").length;
+  const recentFormWins = recentMatches.filter(m => m.result === 'Win').length;
   const recentFormTotal = recentMatches.length;
 
   // Most played champions
   const championCount: Record<string, { games: number; wins: number }> = {};
-  matches.forEach((match) => {
+  matches.forEach(match => {
     if (!championCount[match.champion]) {
       championCount[match.champion] = { games: 0, wins: 0 };
     }
     championCount[match.champion].games++;
-    if (match.result === "Win") {
+    if (match.result === 'Win') {
       championCount[match.champion].wins++;
     }
   });
@@ -111,51 +111,51 @@ const calculateMatchStats = (matches: UIMatch[]): MatchStats => {
 };
 
 const MatchStatsCard: React.FC<{ stats: MatchStats }> = ({ stats }) => (
-  <div className="bg-base-200 rounded-xl p-4 mb-6">
-    <h3 className="text-lg font-semibold text-base-content mb-4">
+  <div className='bg-base-200 rounded-xl p-4 mb-6'>
+    <h3 className='text-lg font-semibold text-base-content mb-4'>
       Match Statistics
     </h3>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="text-center">
-        <div className="text-2xl font-bold text-base-content">
+    <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+      <div className='text-center'>
+        <div className='text-2xl font-bold text-base-content'>
           {stats.totalGames}
         </div>
-        <div className="text-xs text-base-content/60">Total Games</div>
+        <div className='text-xs text-base-content/60'>Total Games</div>
       </div>
-      <div className="text-center">
-        <div className="text-2xl font-bold text-success">
+      <div className='text-center'>
+        <div className='text-2xl font-bold text-success'>
           {stats.winRate.toFixed(1)}%
         </div>
-        <div className="text-xs text-base-content/60">Win Rate</div>
+        <div className='text-xs text-base-content/60'>Win Rate</div>
       </div>
-      <div className="text-center">
-        <div className="text-2xl font-bold text-info">{stats.avgKda}</div>
-        <div className="text-xs text-base-content/60">Avg KDA</div>
+      <div className='text-center'>
+        <div className='text-2xl font-bold text-info'>{stats.avgKda}</div>
+        <div className='text-xs text-base-content/60'>Avg KDA</div>
       </div>
-      <div className="text-center">
-        <div className="text-2xl font-bold text-primary">
+      <div className='text-center'>
+        <div className='text-2xl font-bold text-primary'>
           {stats.recentFormWins}/{stats.recentFormTotal}
         </div>
-        <div className="text-xs text-base-content/60">Recent Form</div>
+        <div className='text-xs text-base-content/60'>Recent Form</div>
       </div>
     </div>
 
     {stats.mostPlayedChampions.length > 0 && (
-      <div className="mt-4">
-        <div className="text-sm font-medium text-base-content mb-2">
+      <div className='mt-4'>
+        <div className='text-sm font-medium text-base-content mb-2'>
           Most Played
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           {stats.mostPlayedChampions.map(({ champion, games, winRate }) => (
             <div
               key={champion}
-              className="bg-base-300 rounded-lg p-2 flex-1 text-center"
+              className='bg-base-300 rounded-lg p-2 flex-1 text-center'
             >
-              <div className="text-sm font-semibold text-base-content">
+              <div className='text-sm font-semibold text-base-content'>
                 {champion}
               </div>
-              <div className="text-xs text-base-content/70">{games} games</div>
-              <div className="text-xs text-base-content/50">
+              <div className='text-xs text-base-content/70'>{games} games</div>
+              <div className='text-xs text-base-content/50'>
                 {winRate.toFixed(0)}% WR
               </div>
             </div>
@@ -172,47 +172,47 @@ const CompactMatchItem: React.FC<{ match: UIMatch; index: number }> = ({
 }) => (
   <div
     className={`flex items-center gap-3 p-3 rounded-lg ${
-      match.result === "Win"
-        ? "bg-success/10 border-l-4 border-success"
-        : "bg-error/10 border-l-4 border-error"
+      match.result === 'Win'
+        ? 'bg-success/10 border-l-4 border-success'
+        : 'bg-error/10 border-l-4 border-error'
     }`}
   >
-    <div className="text-sm text-base-content/60">#{index + 1}</div>
-    <div className="flex-1">
-      <div className="flex items-center gap-2">
-        <span className="font-semibold text-base-content">
+    <div className='text-sm text-base-content/60'>#{index + 1}</div>
+    <div className='flex-1'>
+      <div className='flex items-center gap-2'>
+        <span className='font-semibold text-base-content'>
           {match.champion}
         </span>
         <span
           className={`text-sm font-medium ${
-            match.result === "Win" ? "text-success" : "text-error"
+            match.result === 'Win' ? 'text-success' : 'text-error'
           }`}
         >
           {match.result}
         </span>
       </div>
-      <div className="text-xs text-base-content/60">
+      <div className='text-xs text-base-content/60'>
         {match.kda} • {match.mode} • {match.duration}
       </div>
     </div>
-    <div className="text-xs text-base-content/50">{match.date}</div>
+    <div className='text-xs text-base-content/50'>{match.date}</div>
   </div>
 );
 
 const MinimalMatchItem: React.FC<{ match: UIMatch }> = ({ match }) => (
-  <div className="flex items-center justify-between p-2 hover:bg-base-300/50 rounded-lg transition-colors">
-    <div className="flex items-center gap-2">
+  <div className='flex items-center justify-between p-2 rounded-lg transition-colors'>
+    <div className='flex items-center gap-2'>
       <div
         className={`w-2 h-2 rounded-full ${
-          match.result === "Win" ? "bg-success" : "bg-error"
+          match.result === 'Win' ? 'bg-success' : 'bg-error'
         }`}
       />
-      <span className="text-sm font-medium text-base-content">
+      <span className='text-sm font-medium text-base-content'>
         {match.champion}
       </span>
-      <span className="text-xs text-base-content/60">{match.kda}</span>
+      <span className='text-xs text-base-content/60'>{match.kda}</span>
     </div>
-    <span className="text-xs text-base-content/50">{match.date}</span>
+    <span className='text-xs text-base-content/50'>{match.date}</span>
   </div>
 );
 
@@ -223,13 +223,13 @@ export const MatchList: React.FC<MatchListProps> = ({
   hasMore = false,
   onLoadMore,
   loadingMore = false,
-  variant = "default",
+  variant = 'default',
   showStats = true,
   maxInitialItems,
   enablePagination = false,
-  className = "",
-  emptyStateMessage = "No matches found",
-  title = "Match History",
+  className = '',
+  emptyStateMessage = 'No matches found',
+  title = 'Match History',
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -260,33 +260,33 @@ export const MatchList: React.FC<MatchListProps> = ({
   if (loading) {
     return (
       <div className={`space-y-4 ${className}`}>
-        {title && <div className="skeleton h-8 w-48" />}
+        {title && <div className='skeleton h-8 w-48' />}
         {showStats && (
-          <div className="bg-base-200 rounded-xl p-4 animate-pulse">
-            <div className="skeleton h-6 w-32 mb-4" />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className='bg-base-200 rounded-xl p-4 animate-pulse'>
+            <div className='skeleton h-6 w-32 mb-4' />
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="text-center">
-                  <div className="skeleton h-8 w-12 mx-auto mb-2" />
-                  <div className="skeleton h-3 w-16 mx-auto" />
+                <div key={i} className='text-center'>
+                  <div className='skeleton h-8 w-12 mx-auto mb-2' />
+                  <div className='skeleton h-3 w-16 mx-auto' />
                 </div>
               ))}
             </div>
           </div>
         )}
-        <div className="space-y-4">
-          {[...Array(variant === "minimal" ? 5 : 3)].map((_, i) =>
-            variant === "minimal" ? (
-              <div key={i} className="skeleton h-8 w-full rounded-lg" />
-            ) : variant === "compact" ? (
-              <div key={i} className="bg-base-200 rounded-lg p-3 animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="skeleton h-4 w-8" />
-                  <div className="flex-1">
-                    <div className="skeleton h-4 w-32 mb-1" />
-                    <div className="skeleton h-3 w-24" />
+        <div className='space-y-4'>
+          {[...Array(variant === 'minimal' ? 5 : 3)].map((_, i) =>
+            variant === 'minimal' ? (
+              <div key={i} className='skeleton h-8 w-full rounded-lg' />
+            ) : variant === 'compact' ? (
+              <div key={i} className='bg-base-200 rounded-lg p-3 animate-pulse'>
+                <div className='flex items-center gap-3'>
+                  <div className='skeleton h-4 w-8' />
+                  <div className='flex-1'>
+                    <div className='skeleton h-4 w-32 mb-1' />
+                    <div className='skeleton h-3 w-24' />
                   </div>
-                  <div className="skeleton h-3 w-16" />
+                  <div className='skeleton h-3 w-16' />
                 </div>
               </div>
             ) : (
@@ -304,8 +304,8 @@ export const MatchList: React.FC<MatchListProps> = ({
       <div
         className={`bg-base-200 rounded-xl p-6 border border-error/20 text-center ${className}`}
       >
-        <div className="text-error text-lg mb-2">⚠️ Error Loading Matches</div>
-        <div className="text-base-content/70 text-sm">{error}</div>
+        <div className='text-error text-lg mb-2'>⚠️ Error Loading Matches</div>
+        <div className='text-base-content/70 text-sm'>{error}</div>
       </div>
     );
   }
@@ -314,11 +314,11 @@ export const MatchList: React.FC<MatchListProps> = ({
   if (!matches || matches.length === 0) {
     return (
       <div className={`bg-base-200 rounded-xl p-8 text-center ${className}`}>
-        <div className="text-6xl mb-4">🎮</div>
-        <div className="text-lg font-semibold text-base-content mb-2">
+        <div className='text-6xl mb-4'>🎮</div>
+        <div className='text-lg font-semibold text-base-content mb-2'>
           No Matches
         </div>
-        <div className="text-base-content/60">{emptyStateMessage}</div>
+        <div className='text-base-content/60'>{emptyStateMessage}</div>
       </div>
     );
   }
@@ -326,47 +326,47 @@ export const MatchList: React.FC<MatchListProps> = ({
   return (
     <div className={`space-y-4 ${className}`}>
       {title && (
-        <h2 className="text-2xl font-bold text-base-content">{title}</h2>
+        <h2 className='text-2xl font-bold text-base-content'>{title}</h2>
       )}
 
-      {showStats && variant !== "minimal" && <MatchStatsCard stats={stats} />}
+      {showStats && variant !== 'minimal' && <MatchStatsCard stats={stats} />}
 
-      <div className="space-y-4">
-        {variant === "minimal"
+      <div className='space-y-4'>
+        {variant === 'minimal'
           ? displayedMatches.map((match, index) => (
               <MinimalMatchItem key={match.gameId || index} match={match} />
             ))
-          : variant === "compact"
-          ? displayedMatches.map((match, index) => (
-              <CompactMatchItem
-                key={match.gameId || index}
-                match={match}
-                index={index}
-              />
-            ))
-          : displayedMatches.map((match, index) => (
-              <MatchCard key={match.gameId || index} match={match} />
-            ))}
+          : variant === 'compact'
+            ? displayedMatches.map((match, index) => (
+                <CompactMatchItem
+                  key={match.gameId || index}
+                  match={match}
+                  index={index}
+                />
+              ))
+            : displayedMatches.map((match, index) => (
+                <MatchCard key={match.gameId || index} match={match} />
+              ))}
       </div>
 
       {/* Pagination */}
       {enablePagination && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6">
+        <div className='flex justify-center items-center gap-2 mt-6'>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            variant='outline'
+            size='sm'
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
             Previous
           </Button>
-          <span className="text-base-content/70 px-4">
+          <span className='text-base-content/70 px-4'>
             Page {currentPage} of {totalPages}
           </span>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            variant='outline'
+            size='sm'
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
             Next
@@ -378,22 +378,22 @@ export const MatchList: React.FC<MatchListProps> = ({
       {!enablePagination && (
         <>
           {maxInitialItems && matches.length > maxInitialItems && !showAll && (
-            <div className="text-center">
-              <Button variant="outline" onClick={() => setShowAll(true)}>
+            <div className='text-center'>
+              <Button variant='outline' onClick={() => setShowAll(true)}>
                 Show All {matches.length} Matches
               </Button>
             </div>
           )}
 
           {hasMore && onLoadMore && (
-            <div className="text-center">
+            <div className='text-center'>
               <Button
-                variant="primary"
+                variant='primary'
                 onClick={onLoadMore}
                 isLoading={loadingMore}
                 disabled={loadingMore}
               >
-                {loadingMore ? "Loading..." : "Load More Matches"}
+                {loadingMore ? 'Loading...' : 'Load More Matches'}
               </Button>
             </div>
           )}

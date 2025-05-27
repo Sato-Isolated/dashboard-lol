@@ -1,15 +1,15 @@
-import { NextResponse } from "next/server";
-import { MongoService } from "@/shared/services/database/MongoService";
-import type { Match } from "@/shared/types/api/match.types";
-import { z } from "zod";
-import { withValidation } from "@/shared/lib/validation/middleware";
-import { NotFoundError } from "@/shared/lib/errorHandler";
+import { NextResponse } from 'next/server';
+import { MongoService } from '@/shared/services/database/MongoService';
+import type { Match } from '@/shared/types/api/match.types';
+import { z } from 'zod';
+import { withValidation } from '@/shared/lib/validation/middleware';
+import { NotFoundError } from '@/shared/lib/errorHandler';
 
 // Validation schema
 const championsStatsSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  region: z.string().min(1, "Region is required"),
-  tagline: z.string().min(1, "Tagline is required"),
+  name: z.string().min(1, 'Name is required'),
+  region: z.string().min(1, 'Region is required'),
+  tagline: z.string().min(1, 'Tagline is required'),
   minGames: z.coerce.number().min(1).default(1).optional(),
 });
 
@@ -21,45 +21,45 @@ export const GET = withValidation(
 
     const mongo = MongoService.getInstance();
     const collection = await mongo.getCollection<{ puuid: string }>(
-      "summoners"
+      'summoners'
     );
 
     // Find summoner's puuid
     const summoner = await collection.findOne({ region, name, tagline });
     if (!summoner || !summoner.puuid) {
-      throw new NotFoundError("Summoner", `${name}#${tagline} in ${region}`);
+      throw new NotFoundError('Summoner', `${name}#${tagline} in ${region}`);
     }
 
     const puuid = summoner.puuid; // PHASE 2.1 OPTIMIZATION: Aggregate stats by champion using optimized pipeline
     const pipeline = [
       {
         $match: {
-          "info.participants.puuid": puuid,
-          "info.gameDuration": { $gte: 300 },
-          "info.gameEndedInEarlySurrender": { $ne: true },
+          'info.participants.puuid': puuid,
+          'info.gameDuration': { $gte: 300 },
+          'info.gameEndedInEarlySurrender': { $ne: true },
         },
       },
       // Unwind participants to process individual player data
-      { $unwind: "$info.participants" },
+      { $unwind: '$info.participants' },
       // Match only the specific player's data
-      { $match: { "info.participants.puuid": puuid } },
+      { $match: { 'info.participants.puuid': puuid } },
       // Group by champion with optimized aggregation
       {
         $group: {
-          _id: "$info.participants.championName",
+          _id: '$info.participants.championName',
           games: { $sum: 1 },
           wins: {
             $sum: {
-              $cond: ["$info.participants.win", 1, 0],
+              $cond: ['$info.participants.win', 1, 0],
             },
           },
-          kills: { $sum: "$info.participants.kills" },
-          deaths: { $sum: "$info.participants.deaths" },
-          assists: { $sum: "$info.participants.assists" },
+          kills: { $sum: '$info.participants.kills' },
+          deaths: { $sum: '$info.participants.deaths' },
+          assists: { $sum: '$info.participants.assists' },
           totalDamageDealtToChampions: {
-            $sum: "$info.participants.totalDamageDealtToChampions",
+            $sum: '$info.participants.totalDamageDealtToChampions',
           },
-          goldEarned: { $sum: "$info.participants.goldEarned" },
+          goldEarned: { $sum: '$info.participants.goldEarned' },
         },
       },
       // Filter by minimum games
@@ -72,11 +72,11 @@ export const GET = withValidation(
       { $sort: { games: -1 } },
     ];
 
-    const matchesCol = await mongo.getCollection<Match>("matches");
+    const matchesCol = await mongo.getCollection<Match>('matches');
     const stats = await matchesCol.aggregate(pipeline).toArray();
 
     // Format output
-    const result = stats.map((s) => ({
+    const result = stats.map(s => ({
       champion: s._id,
       games: s.games,
       wins: s.wins,

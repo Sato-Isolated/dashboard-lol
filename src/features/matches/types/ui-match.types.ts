@@ -3,12 +3,12 @@
 export interface UIMatch {
   champion: string;
   gameId: string;
-  result: "Win" | "Loss";
+  result: 'Win' | 'Loss';
   kda: string;
   date: string;
   mode: string;
   duration: string;
-  team: "Red" | "Blue";
+  team: 'Red' | 'Blue';
   teamKills: number;
   teamGold: number;
   enemyKills: number;
@@ -44,7 +44,7 @@ export interface UIPlayer {
   damage: number;
   gold: number;
   items: number[];
-  team: "Red" | "Blue";
+  team: 'Red' | 'Blue';
   win: boolean;
   mvp: boolean;
   spell1: number;

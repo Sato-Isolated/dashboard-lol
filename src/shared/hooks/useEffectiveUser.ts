@@ -1,7 +1,7 @@
-"use client";
-import { useParams } from "next/navigation";
-import { useUserStore } from "@/shared/store/userStore";
-import { useEffect } from "react";
+'use client';
+import { useParams } from 'next/navigation';
+import { useUserStore } from '@/shared/store/userStore';
+import { useEffect } from 'react';
 
 export function useEffectiveUser(): {
   effectiveRegion: string;

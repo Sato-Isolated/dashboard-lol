@@ -1,53 +1,53 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Platform region validation (for most API calls)
 export const regionSchema = z.enum([
-  "na1",
-  "euw1",
-  "eune1",
-  "kr",
-  "jp1",
-  "br1",
-  "la1",
-  "la2",
-  "oc1",
-  "tr1",
-  "ru",
-  "ph2",
-  "sg2",
-  "th2",
-  "tw2",
-  "vn2",
+  'na1',
+  'euw1',
+  'eune1',
+  'kr',
+  'jp1',
+  'br1',
+  'la1',
+  'la2',
+  'oc1',
+  'tr1',
+  'ru',
+  'ph2',
+  'sg2',
+  'th2',
+  'tw2',
+  'vn2',
 ]);
 
 // Regional region validation (for Account API calls)
 export const regionalRegionSchema = z.enum([
-  "europe",
-  "americas",
-  "asia",
-  "sea",
+  'europe',
+  'americas',
+  'asia',
+  'sea',
 ]);
 
 // Queue validation
 export const queueSchema = z.enum([
-  "RANKED_SOLO_5x5",
-  "RANKED_FLEX_SR",
-  "RANKED_FLEX_TT",
-  "RANKED_TFT",
-  "NORMAL",
-  "ARAM",
+  'RANKED_SOLO_5x5',
+  'RANKED_FLEX_SR',
+  'RANKED_FLEX_TT',
+  'RANKED_TFT',
+  'NORMAL',
+  'ARAM',
 ]);
 
 // Summoner schemas
 export const summonerNameSchema = z
   .string()
-  .min(3, "Summoner name must be at least 3 characters")
-  .max(16, "Summoner name cannot exceed 16 characters")
-  .regex(/^[a-zA-Z0-9_\s]+$/, "Summoner name contains invalid characters");
+  .min(3, 'Summoner name must be at least 3 characters')
+  .max(16, 'Summoner name cannot exceed 16 characters')
+  .regex(/^[a-zA-Z0-9_\s]+$/, 'Summoner name contains invalid characters');
 
-export const puuidSchema = z.string().length(78, "Invalid PUUID format");
+export const puuidSchema = z.string().length(78, 'Invalid PUUID format');
 
-export const summonerIdSchema = z.string().min(1, "Summoner ID is required");
+export const summonerIdSchema = z.string().min(1, 'Summoner ID is required');
 
 // API Request schemas
 export const getSummonerRequestSchema = z.object({
@@ -61,11 +61,11 @@ export const getMatchHistoryRequestSchema = z.object({
   start: z.coerce.number().min(0).default(0),
   count: z.coerce.number().min(1).max(100).default(20),
   queue: queueSchema.optional(),
-  type: z.enum(["ranked", "normal", "aram"]).optional(),
+  type: z.enum(['ranked', 'normal', 'aram']).optional(),
 });
 
 export const getMatchRequestSchema = z.object({
-  matchId: z.string().min(1, "Match ID is required"),
+  matchId: z.string().min(1, 'Match ID is required'),
   region: regionSchema,
 });
 
@@ -298,7 +298,7 @@ export function validateSummonerName(name: string): {
     if (error instanceof z.ZodError) {
       return { isValid: false, error: error.errors[0].message };
     }
-    return { isValid: false, error: "Invalid summoner name" };
+    return { isValid: false, error: 'Invalid summoner name' };
   }
 }
 
@@ -310,7 +310,7 @@ export function validateRegion(region: string): {
     regionSchema.parse(region);
     return { isValid: true };
   } catch {
-    return { isValid: false, error: "Invalid region" };
+    return { isValid: false, error: 'Invalid region' };
   }
 }
 
@@ -322,6 +322,6 @@ export function validateRegionalRegion(region: string): {
     regionalRegionSchema.parse(region);
     return { isValid: true };
   } catch {
-    return { isValid: false, error: "Invalid regional region" };
+    return { isValid: false, error: 'Invalid regional region' };
   }
 }

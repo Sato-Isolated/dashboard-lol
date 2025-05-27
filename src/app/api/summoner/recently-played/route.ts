@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
-import { MongoService } from "@/shared/services/database/MongoService";
-import { withValidation } from "@/shared/lib/validation/middleware";
-import { logger } from "@/shared/lib/logger/logger";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { fetchAndStoreMatches } from '@/scripts/fetchAndStoreMatches';
+import { MongoService } from '@/shared/services/database/MongoService';
+import { withValidation } from '@/shared/lib/validation/middleware';
+import { logger } from '@/shared/lib/logger/logger';
+import { z } from 'zod';
 
 // Utility function to get recently played players
 async function getRecentlyPlayed({
@@ -21,7 +21,7 @@ async function getRecentlyPlayed({
   const db = await mongo.connect();
   // Find summoner's puuid
   const summoner = await db
-    .collection("summoners")
+    .collection('summoners')
     .findOne({ region, name, tagline });
   if (!summoner || !summoner.puuid) {
     return [];
@@ -29,25 +29,25 @@ async function getRecentlyPlayed({
   const puuid = summoner.puuid; // PHASE 2.1 OPTIMIZATION: Aggregate teammates from matches using optimized pipeline
   const pipeline = [
     // First match: Use optimized index for player's matches
-    { $match: { "info.participants.puuid": puuid } },
+    { $match: { 'info.participants.puuid': puuid } },
     // Sort by recent matches for better query performance
-    { $sort: { "info.gameEndTimestamp": -1 } },
+    { $sort: { 'info.gameEndTimestamp': -1 } },
     // Limit to recent games for performance (optimized from 100 to focus on recent data)
     { $limit: 100 },
     // Unwind participants to process each player
-    { $unwind: "$info.participants" },
+    { $unwind: '$info.participants' },
     // Filter out the current player
-    { $match: { "info.participants.puuid": { $ne: puuid } } },
+    { $match: { 'info.participants.puuid': { $ne: puuid } } },
     // Group by teammate PUUID with optimized aggregation
     {
       $group: {
-        _id: "$info.participants.puuid",
-        name: { $first: "$info.participants.riotIdGameName" },
-        tagline: { $first: "$info.participants.riotIdTagline" },
+        _id: '$info.participants.puuid',
+        name: { $first: '$info.participants.riotIdGameName' },
+        tagline: { $first: '$info.participants.riotIdTagline' },
         games: { $sum: 1 },
         wins: {
           $sum: {
-            $cond: [{ $eq: ["$info.participants.win", true] }, 1, 0],
+            $cond: [{ $eq: ['$info.participants.win', true] }, 1, 0],
           },
         },
       },
@@ -57,11 +57,11 @@ async function getRecentlyPlayed({
     { $limit: limit },
   ];
   const teammates = await db
-    .collection("matches")
+    .collection('matches')
     .aggregate(pipeline)
     .toArray();
   // Format output
-  return teammates.map((t) => ({
+  return teammates.map(t => ({
     puuid: t._id,
     name: t.name,
     tagline: t.tagline,
@@ -84,7 +84,7 @@ export const GET = withValidation(
   async (req, validatedData, _context) => {
     const { name, region, tagline, limit = 5 } = validatedData;
 
-    logger.info("Fetching recently played", {
+    logger.info('Fetching recently played', {
       region,
       name,
       tagline,
@@ -114,7 +114,7 @@ export const POST = withValidation(
   async (req, validatedData, _context) => {
     const { region, name, tagline } = validatedData;
 
-    logger.info("Updating recently played matches", {
+    logger.info('Updating recently played matches', {
       region,
       name,
       tagline,

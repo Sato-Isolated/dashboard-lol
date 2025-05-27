@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import LeaderboardRow from "./LeaderboardRow";
-import { withPerformanceTracking } from "@/shared/components/performance/SimplePerformanceWrapper";
+import React from 'react';
+import { motion } from 'framer-motion';
+import LeaderboardRow from './LeaderboardRow';
+import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 interface LeaderboardTableProps {
   leaderboard: Array<{
@@ -21,10 +21,10 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
 }) => {
   if (leaderboard.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">🏆</div>
-        <h3 className="text-xl font-bold mb-2">No players found</h3>
-        <p className="text-base-content/70">
+      <div className='text-center py-12'>
+        <div className='text-6xl mb-4'>🏆</div>
+        <h3 className='text-xl font-bold mb-2'>No players found</h3>
+        <p className='text-base-content/70'>
           Be the first to be ranked on this platform!
         </p>
       </div>
@@ -32,14 +32,14 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="table table-zebra w-full">
+    <div className='overflow-x-auto'>
+      <table className='table table-zebra w-full'>
         <thead>
-          <tr className="bg-base-200">
-            <th className="text-lg font-bold">#</th>
-            <th className="text-lg font-bold">Summoner</th>
-            <th className="text-lg font-bold">ARAM Score</th>
-            <th className="text-lg font-bold">Tier</th>
+          <tr className='bg-base-200'>
+            <th className='text-lg font-bold'>#</th>
+            <th className='text-lg font-bold'>Summoner</th>
+            <th className='text-lg font-bold'>ARAM Score</th>
+            <th className='text-lg font-bold'>Tier</th>
           </tr>
         </thead>
         <tbody>
@@ -54,10 +54,10 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
               }}
               whileHover={{
                 scale: 1.02,
-                backgroundColor: "rgba(var(--p), 0.1)",
+                backgroundColor: 'rgba(var(--p), 0.1)',
                 transition: { duration: 0.2 },
               }}
-              className="hover:bg-primary/5 transition-all duration-200"
+              className='transition-all duration-200'
             >
               <LeaderboardRow
                 entry={entry}
@@ -76,9 +76,9 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
 
 export const LeaderboardTable = withPerformanceTracking(
   React.memo(LeaderboardTableComponent),
-  "LeaderboardTable"
+  'LeaderboardTable'
 );
 
-LeaderboardTable.displayName = "LeaderboardTable";
+LeaderboardTable.displayName = 'LeaderboardTable';
 
 export default LeaderboardTable;

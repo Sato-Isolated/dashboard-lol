@@ -1,9 +1,9 @@
-import { AccountService } from "./accountService";
-import { ChampionService } from "@/features/champions/services/championService";
-import { SummonerService } from "@/features/summoner/services/summonerService";
-import { ChampionMasteryService } from "@/features/champions/services/championMasteryService";
-import { MatchService } from "@/features/matches/services/matchService";
-import { RegionalRegionMap } from "@/shared/types/api/regions.types";
+import { AccountService } from './accountService';
+import { ChampionService } from '@/features/champions/services/championService';
+import { SummonerService } from '@/features/summoner/services/summonerService';
+import { ChampionMasteryService } from '@/features/champions/services/championMasteryService';
+import { MatchService } from '@/features/matches/services/matchService';
+import { RegionalRegionMap } from '@/shared/types/api/regions.types';
 
 export function createAccountService(platformRegion: string) {
   const regionalRegion =

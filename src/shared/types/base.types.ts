@@ -12,7 +12,7 @@
  */
 
 // Re-export all shared types for easy access
-export * from "./index";
+export * from './index';
 
 // Base interfaces that other types should extend
 export interface BaseEntity {
@@ -30,14 +30,14 @@ export interface BaseApiResponse<T = unknown> {
 
 export interface BaseRepository<T, ID = string> {
   findById(id: ID): Promise<T | null>;
-  create(entity: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<T>;
+  create(entity: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;
   update(id: ID, updates: Partial<T>): Promise<T | null>;
   delete(id: ID): Promise<boolean>;
 }
 
 export interface BaseService<T, ID = string> {
   get(id: ID): Promise<T | null>;
-  create(data: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<T>;
+  create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;
   update(id: ID, data: Partial<T>): Promise<T | null>;
   delete(id: ID): Promise<boolean>;
 }
@@ -78,7 +78,7 @@ export interface ErrorContext {
 }
 
 // Loading and status types
-export type LoadingState = "idle" | "loading" | "success" | "error";
+export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
 
 export interface AsyncState<T> {
   readonly data: T | null;

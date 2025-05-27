@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, forwardRef } from "react";
-import usePerformanceOptimization from "@/shared/hooks/usePerformanceOptimization";
+import React, { useEffect, useRef, forwardRef } from 'react';
+import usePerformanceOptimization from '@/shared/hooks/usePerformanceOptimization';
 
 interface PerformanceWrapperProps {
   componentName: string;
@@ -28,7 +28,7 @@ export function withPerformanceTracking<P extends object>(
         componentName ||
           WrappedComponent.displayName ||
           WrappedComponent.name ||
-          "Unknown"
+          'Unknown'
       );
 
       return () => {
@@ -87,14 +87,14 @@ export const PerformanceWrapper: React.FC<PerformanceWrapperProps> = ({
 
       const handleFocus = () => {
         const endTracking = trackUserInteraction(`${componentName}_focus`);
-        interactionTrackers.set("focus", endTracking);
+        interactionTrackers.set('focus', endTracking);
       };
 
       const handleBlur = () => {
-        const endTracking = interactionTrackers.get("focus");
+        const endTracking = interactionTrackers.get('focus');
         if (endTracking) {
           endTracking();
-          interactionTrackers.delete("focus");
+          interactionTrackers.delete('focus');
         }
       };
 
@@ -103,19 +103,19 @@ export const PerformanceWrapper: React.FC<PerformanceWrapperProps> = ({
         setTimeout(endTracking, 0);
       };
 
-      container.addEventListener("click", handleClick);
-      container.addEventListener("focus", handleFocus, true);
-      container.addEventListener("blur", handleBlur, true);
-      container.addEventListener("keydown", handleKeyDown);
+      container.addEventListener('click', handleClick);
+      container.addEventListener('focus', handleFocus, true);
+      container.addEventListener('blur', handleBlur, true);
+      container.addEventListener('keydown', handleKeyDown);
 
       return () => {
-        container.removeEventListener("click", handleClick);
-        container.removeEventListener("focus", handleFocus, true);
-        container.removeEventListener("blur", handleBlur, true);
-        container.removeEventListener("keydown", handleKeyDown);
+        container.removeEventListener('click', handleClick);
+        container.removeEventListener('focus', handleFocus, true);
+        container.removeEventListener('blur', handleBlur, true);
+        container.removeEventListener('keydown', handleKeyDown);
 
         // End any ongoing tracking
-        interactionTrackers.forEach((endTracking) => endTracking());
+        interactionTrackers.forEach(endTracking => endTracking());
       };
     }
   }, [trackInteractions, componentName, trackUserInteraction]);

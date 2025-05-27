@@ -10,19 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rimraf .next",
-    "test": "jest",
-    "test:specific": "node scripts/runSpecificTests.js",
-    "test:specific:ts": "tsx scripts/runSpecificTests.ts",
-    "test:specific:watch": "node scripts/runSpecificTests.js --watch",
-    "test:components": "jest --testPathPattern=\"(src/features|src/shared).*__tests__.*\\.(test|spec)\\.(ts|tsx)$\"",
-    "db:indexes": "tsx src/scripts/createIndexes.ts",
-    "db:indexes:drop": "tsx src/scripts/createIndexes.ts drop",
-    "test:phase1": "tsx src/scripts/testPhase1.ts",
-    "migrate:create-structure": "tsx scripts/migration/createStructure.ts",
-    "migrate:move-files": "tsx scripts/migration/moveFiles.ts",
-    "migrate:update-imports": "tsx scripts/migration/updateImports.ts",
-    "migrate:validate": "tsx scripts/migration/validate.ts",
-    "migrate:all": "npm run migrate:create-structure && npm run migrate:move-files && npm run migrate:update-imports && npm run migrate:validate"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest"
   },
   "dependencies": {
     "dotenv-safe": "^9.1.0",
@@ -58,6 +48,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "jest-environment-jsdom": "^29.7.0",
     "majestic": "^1.8.1",
+    "prettier": "^3.5.3",
     "tailwindcss": "^4",
     "tsx": "^4.19.4",
     "typescript": "^5"

@@ -1,5 +1,5 @@
 // src/hooks/useApiResource.ts
-import useSWR from "swr";
+import useSWR from 'swr';
 
 export function useApiResource<T = unknown>(
   url: string | null,
@@ -9,7 +9,7 @@ export function useApiResource<T = unknown>(
     const res = await fetch(url);
     const json = await res.json();
     if (!res.ok)
-      throw new Error(json?.error || "Erreur lors du chargement des données");
+      throw new Error(json?.error || 'Erreur lors du chargement des données');
     return json;
   };
 

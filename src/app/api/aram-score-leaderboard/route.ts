@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { MongoService } from "@/shared/services/database/MongoService";
-import { z } from "zod";
-import { withValidation } from "@/shared/lib/validation/middleware";
+import { NextResponse } from 'next/server';
+import { MongoService } from '@/shared/services/database/MongoService';
+import { z } from 'zod';
+import { withValidation } from '@/shared/lib/validation/middleware';
 
 // Validation schema for leaderboard query
 const leaderboardSchema = z.object({
@@ -13,13 +13,13 @@ const leaderboardSchema = z.object({
 export const GET = withValidation(
   leaderboardSchema,
   async (req, validatedData, _context) => {
-    const platform = validatedData.platform || "euw1";
+    const platform = validatedData.platform || 'euw1';
     const limit = validatedData.limit
       ? Math.min(parseInt(validatedData.limit), 1000)
       : 100;
 
     const mongo = MongoService.getInstance();
-    const collection = await mongo.getCollection("summoners");
+    const collection = await mongo.getCollection('summoners');
 
     // Get the top players by aramScore for the platform
     const leaderboard = await collection

@@ -2,7 +2,7 @@
 const {
   getSummonerSpellImage,
   getRuneIcon,
-} = require("./src/shared/lib/utils/helpers.ts");
+} = require('./src/shared/lib/utils/helpers.ts');
 
-console.log("Testing getSummonerSpellImage function:");
-console.log("getSummonerSpellImage(4):", getSummonerSpellImage(4));
+console.log('Testing getSummonerSpellImage function:');
+console.log('getSummonerSpellImage(4):', getSummonerSpellImage(4));

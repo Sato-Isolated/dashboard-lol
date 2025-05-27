@@ -1,10 +1,10 @@
-import { SummonerDto, LeagueEntry } from "@/shared/types/api/summoners.types";
-import { RiotApiClient } from "@/shared/services/api/riot/RiotApiClient";
-import { StandardErrorHandler, ValidationHelper } from "@/shared/lib/patterns";
+import { SummonerDto, LeagueEntry } from '@/shared/types/api/summoners.types';
+import { RiotApiClient } from '@/shared/services/api/riot/RiotApiClient';
+import { StandardErrorHandler, ValidationHelper } from '@/shared/lib/patterns';
 
 export class SummonerService extends RiotApiClient {
-  private readonly featureName = "summoner";
-  private readonly serviceName = "riot-summoner-api";
+  private readonly featureName = 'summoner';
+  private readonly serviceName = 'riot-summoner-api';
 
   private get errorHandler() {
     return StandardErrorHandler.createFeatureHandler(this.featureName);
@@ -16,9 +16,9 @@ export class SummonerService extends RiotApiClient {
 
   public async getSummonerByPuuid(puuid: string): Promise<SummonerDto> {
     // Validate input
-    const validation = ValidationHelper.validateString(puuid, "puuid", 78, 78);
+    const validation = ValidationHelper.validateString(puuid, 'puuid', 78, 78);
     if (!validation.isValid) {
-      throw new Error(validation.error || "Invalid PUUID format");
+      throw new Error(validation.error || 'Invalid PUUID format');
     }
 
     const endpoint = `/lol/summoner/v4/summoners/by-puuid/${puuid}`;
@@ -35,11 +35,11 @@ export class SummonerService extends RiotApiClient {
     // Validate input
     const validation = ValidationHelper.validateString(
       summonerId,
-      "summonerId",
+      'summonerId',
       1
     );
     if (!validation.isValid) {
-      throw new Error(validation.error || "Invalid summoner ID");
+      throw new Error(validation.error || 'Invalid summoner ID');
     }
 
     const endpoint = `/lol/league/v4/entries/by-summoner/${summonerId}`;

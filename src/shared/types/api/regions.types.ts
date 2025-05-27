@@ -1,10 +1,10 @@
-import { PlatformRegion } from "./platformregion.types";
+import { PlatformRegion } from './platformregion.types';
 
 export const RegionalRegion = {
-  EUROPE: "europe",
-  AMERICAS: "americas",
-  ASIA: "asia",
-  SEA: "sea",
+  EUROPE: 'europe',
+  AMERICAS: 'americas',
+  ASIA: 'asia',
+  SEA: 'sea',
 } as const;
 
 export const RegionalRegionMap: Record<PlatformRegion, RegionalRegion> = {

@@ -7,12 +7,12 @@ export async function handleUserUpdate(
   name: string,
   tagline: string
 ) {
-  const res = await fetch("/api/summoner/matches", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch('/api/summoner/matches', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ region, name, tagline }),
   });
-  if (!res.ok) throw new Error("Error while updating matches");
+  if (!res.ok) throw new Error('Error while updating matches');
 }
 
 export async function handleUserChampionMastery(
@@ -20,12 +20,12 @@ export async function handleUserChampionMastery(
   name: string,
   tagline: string
 ) {
-  const res = await fetch("/api/summoner/masteries", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch('/api/summoner/masteries', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ region, name, tagline }),
   });
-  if (!res.ok) throw new Error("Error while updating champion masteries");
+  if (!res.ok) throw new Error('Error while updating champion masteries');
 }
 
 export async function handleUserRecentlyPlayedUpdate(
@@ -33,10 +33,10 @@ export async function handleUserRecentlyPlayedUpdate(
   name: string,
   tagline: string
 ) {
-  const res = await fetch("/api/summoner/recently-played", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch('/api/summoner/recently-played', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ region, name, tagline }),
   });
-  if (!res.ok) throw new Error("Error while updating recently played players");
+  if (!res.ok) throw new Error('Error while updating recently played players');
 }

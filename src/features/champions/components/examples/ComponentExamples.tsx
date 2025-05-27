@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import ChampionCard, {
   type ChampionCardData,
   type ChampionStats,
   type ChampionMastery,
-} from "../ChampionCard";
-import type { ChampionData } from "@/shared/types/data/champion";
+} from '../ChampionCard';
+import type { ChampionData } from '@/shared/types/data/champion';
 
 // Example Champion Data
 const exampleChampionData: ChampionData = {
-  version: "14.1.1",
-  id: "Ahri",
-  key: "103",
-  name: "Ahri",
-  title: "the Nine-Tailed Fox",
+  version: '14.1.1',
+  id: 'Ahri',
+  key: '103',
+  name: 'Ahri',
+  title: 'the Nine-Tailed Fox',
   blurb:
-    "Innately connected to the latent power of Runeterra, Ahri is a vastaya who can reshape magic into orbs of raw energy.",
+    'Innately connected to the latent power of Runeterra, Ahri is a vastaya who can reshape magic into orbs of raw energy.',
   info: {
     attack: 3,
     defense: 4,
@@ -22,16 +22,16 @@ const exampleChampionData: ChampionData = {
     difficulty: 5,
   },
   image: {
-    full: "Ahri.png",
-    sprite: "champion0.png",
-    group: "champion",
+    full: 'Ahri.png',
+    sprite: 'champion0.png',
+    group: 'champion',
     x: 48,
     y: 0,
     w: 48,
     h: 48,
   },
-  tags: ["Mage", "Assassin"],
-  partype: "Mana",
+  tags: ['Mage', 'Assassin'],
+  partype: 'Mana',
   stats: {
     hp: 570,
     hpperlevel: 96,
@@ -57,7 +57,7 @@ const exampleChampionData: ChampionData = {
 };
 
 const exampleStats: ChampionStats = {
-  champion: "Ahri",
+  champion: 'Ahri',
   games: 45,
   wins: 31,
   kda: 2.4,
@@ -75,22 +75,22 @@ const exampleMastery: ChampionMastery = {
 // High-level champion example
 const highLevelChampionData: ChampionData = {
   ...exampleChampionData,
-  id: "Yasuo",
-  name: "Yasuo",
-  title: "the Unforgiven",
+  id: 'Yasuo',
+  name: 'Yasuo',
+  title: 'the Unforgiven',
   blurb:
-    "An Ionian of deep resolve, Yasuo is an agile swordsman who wields the air itself against his enemies.",
+    'An Ionian of deep resolve, Yasuo is an agile swordsman who wields the air itself against his enemies.',
   info: {
     attack: 8,
     defense: 4,
     magic: 4,
     difficulty: 10,
   },
-  tags: ["Fighter", "Assassin"],
+  tags: ['Fighter', 'Assassin'],
 };
 
 const highLevelStats: ChampionStats = {
-  champion: "Yasuo",
+  champion: 'Yasuo',
   games: 127,
   wins: 89,
   kda: 3.1,
@@ -108,22 +108,22 @@ const highLevelMastery: ChampionMastery = {
 // Support champion example
 const supportChampionData: ChampionData = {
   ...exampleChampionData,
-  id: "Thresh",
-  name: "Thresh",
-  title: "the Chain Warden",
+  id: 'Thresh',
+  name: 'Thresh',
+  title: 'the Chain Warden',
   blurb:
-    "Sadistic and cunning, Thresh is an ambitious and restless spirit of the Shadow Isles.",
+    'Sadistic and cunning, Thresh is an ambitious and restless spirit of the Shadow Isles.',
   info: {
     attack: 5,
     defense: 6,
     magic: 6,
     difficulty: 7,
   },
-  tags: ["Support", "Tank"],
+  tags: ['Support', 'Tank'],
 };
 
 const supportStats: ChampionStats = {
-  champion: "Thresh",
+  champion: 'Thresh',
   games: 23,
   wins: 19,
   kda: 4.2,
@@ -140,8 +140,8 @@ const supportMastery: ChampionMastery = {
 
 const ChampionCardExamples: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState<
-    "compact" | "default" | "detailed"
-  >("default");
+    'compact' | 'default' | 'detailed'
+  >('default');
   const [showLoading, setShowLoading] = useState(false);
 
   const champions: ChampionCardData[] = [
@@ -163,47 +163,47 @@ const ChampionCardExamples: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-base-content mb-2">
+    <div className='space-y-8 p-6'>
+      <div className='text-center'>
+        <h1 className='text-3xl font-bold text-base-content mb-2'>
           ChampionCard Component Examples
         </h1>
-        <p className="text-base-content/70 mb-6">
+        <p className='text-base-content/70 mb-6'>
           Demonstrating all variants and usage patterns of the ChampionCard
           component
         </p>
       </div>
 
       {/* Controls */}
-      <div className="card bg-base-200 p-4 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">Controls</h2>
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Variant:</span>
+      <div className='card bg-base-200 p-4 rounded-xl'>
+        <h2 className='text-xl font-semibold mb-4'>Controls</h2>
+        <div className='flex flex-wrap gap-4 items-center'>
+          <div className='form-control'>
+            <label className='label'>
+              <span className='label-text'>Variant:</span>
             </label>
             <select
-              className="select select-bordered"
+              className='select select-bordered'
               value={selectedVariant}
-              onChange={(e) =>
+              onChange={e =>
                 setSelectedVariant(
-                  e.target.value as "compact" | "default" | "detailed"
+                  e.target.value as 'compact' | 'default' | 'detailed'
                 )
               }
             >
-              <option value="compact">Compact</option>
-              <option value="default">Default</option>
-              <option value="detailed">Detailed</option>
+              <option value='compact'>Compact</option>
+              <option value='default'>Default</option>
+              <option value='detailed'>Detailed</option>
             </select>
           </div>
-          <div className="form-control">
-            <label className="label cursor-pointer">
-              <span className="label-text mr-2">Show Loading:</span>
+          <div className='form-control'>
+            <label className='label cursor-pointer'>
+              <span className='label-text mr-2'>Show Loading:</span>
               <input
-                type="checkbox"
-                className="toggle toggle-primary"
+                type='checkbox'
+                className='toggle toggle-primary'
                 checked={showLoading}
-                onChange={(e) => setShowLoading(e.target.checked)}
+                onChange={e => setShowLoading(e.target.checked)}
               />
             </label>
           </div>
@@ -211,19 +211,19 @@ const ChampionCardExamples: React.FC = () => {
       </div>
 
       {/* Examples Grid */}
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold text-base-content">
+      <div className='space-y-6'>
+        <h2 className='text-2xl font-semibold text-base-content'>
           {selectedVariant.charAt(0).toUpperCase() + selectedVariant.slice(1)}
           Variant
         </h2>
 
         <div
           className={`grid gap-4 ${
-            selectedVariant === "compact"
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-              : selectedVariant === "detailed"
-              ? "grid-cols-1 lg:grid-cols-2"
-              : "grid-cols-1 md:grid-cols-2"
+            selectedVariant === 'compact'
+              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              : selectedVariant === 'detailed'
+                ? 'grid-cols-1 lg:grid-cols-2'
+                : 'grid-cols-1 md:grid-cols-2'
           }`}
         >
           {champions.map((champion, index) => (
@@ -243,23 +243,23 @@ const ChampionCardExamples: React.FC = () => {
       </div>
 
       {/* Usage Examples */}
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold text-base-content">
+      <div className='space-y-6'>
+        <h2 className='text-2xl font-semibold text-base-content'>
           Usage Examples
         </h2>
 
         {/* Stats Only */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">
+          <h3 className='text-lg font-semibold mb-3'>
             Statistics Only (No Mastery)
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <ChampionCard
               champion={{
                 championData: exampleChampionData,
                 stats: exampleStats,
               }}
-              variant="default"
+              variant='default'
               showStats={true}
               showMastery={false}
             />
@@ -268,7 +268,7 @@ const ChampionCardExamples: React.FC = () => {
                 championData: highLevelChampionData,
                 stats: highLevelStats,
               }}
-              variant="default"
+              variant='default'
               showStats={true}
               showMastery={false}
             />
@@ -277,16 +277,16 @@ const ChampionCardExamples: React.FC = () => {
 
         {/* Mastery Only */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">
+          <h3 className='text-lg font-semibold mb-3'>
             Mastery Only (No Stats)
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <ChampionCard
               champion={{
                 championData: exampleChampionData,
                 mastery: exampleMastery,
               }}
-              variant="default"
+              variant='default'
               showStats={false}
               showMastery={true}
             />
@@ -295,7 +295,7 @@ const ChampionCardExamples: React.FC = () => {
                 championData: supportChampionData,
                 mastery: supportMastery,
               }}
-              variant="default"
+              variant='default'
               showStats={false}
               showMastery={true}
             />
@@ -304,13 +304,13 @@ const ChampionCardExamples: React.FC = () => {
 
         {/* Basic Champion Info Only */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Champion Info Only</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <h3 className='text-lg font-semibold mb-3'>Champion Info Only</h3>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <ChampionCard
               champion={{
                 championData: exampleChampionData,
               }}
-              variant="compact"
+              variant='compact'
               showStats={false}
               showMastery={false}
             />
@@ -318,7 +318,7 @@ const ChampionCardExamples: React.FC = () => {
               champion={{
                 championData: highLevelChampionData,
               }}
-              variant="compact"
+              variant='compact'
               showStats={false}
               showMastery={false}
             />
@@ -326,7 +326,7 @@ const ChampionCardExamples: React.FC = () => {
               champion={{
                 championData: supportChampionData,
               }}
-              variant="compact"
+              variant='compact'
               showStats={false}
               showMastery={false}
             />
@@ -335,27 +335,27 @@ const ChampionCardExamples: React.FC = () => {
 
         {/* Loading States */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Loading States</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <h3 className='text-lg font-semibold mb-3'>Loading States</h3>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <ChampionCard
               champion={{
                 championData: exampleChampionData,
               }}
-              variant="compact"
+              variant='compact'
               loading={true}
             />
             <ChampionCard
               champion={{
                 championData: exampleChampionData,
               }}
-              variant="default"
+              variant='default'
               loading={true}
             />
             <ChampionCard
               champion={{
                 championData: exampleChampionData,
               }}
-              variant="detailed"
+              variant='detailed'
               loading={true}
             />
           </div>
@@ -363,9 +363,9 @@ const ChampionCardExamples: React.FC = () => {
       </div>
 
       {/* Integration Examples */}
-      <div className="card bg-base-100 p-6 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">Integration Notes</h2>
-        <div className="space-y-3 text-sm">
+      <div className='card bg-base-100 p-6 rounded-xl'>
+        <h2 className='text-xl font-semibold mb-4'>Integration Notes</h2>
+        <div className='space-y-3 text-sm'>
           <div>
             <strong>ChampionsTab Integration:</strong> Use with ChampionStats
             interface for performance data
@@ -386,12 +386,12 @@ const ChampionCardExamples: React.FC = () => {
       </div>
 
       {/* Code Examples */}
-      <div className="card bg-base-100 p-6 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">Code Examples</h2>
-        <div className="space-y-4">
+      <div className='card bg-base-100 p-6 rounded-xl'>
+        <h2 className='text-xl font-semibold mb-4'>Code Examples</h2>
+        <div className='space-y-4'>
           <div>
-            <h3 className="font-semibold mb-2">Basic Usage:</h3>
-            <pre className="bg-base-200 p-3 rounded text-sm overflow-x-auto">
+            <h3 className='font-semibold mb-2'>Basic Usage:</h3>
+            <pre className='bg-base-200 p-3 rounded text-sm overflow-x-auto'>
               {`<ChampionCard
   champion={{
     championData: championData,
@@ -404,8 +404,8 @@ const ChampionCardExamples: React.FC = () => {
             </pre>
           </div>
           <div>
-            <h3 className="font-semibold mb-2">Compact Grid:</h3>
-            <pre className="bg-base-200 p-3 rounded text-sm overflow-x-auto">
+            <h3 className='font-semibold mb-2'>Compact Grid:</h3>
+            <pre className='bg-base-200 p-3 rounded text-sm overflow-x-auto'>
               {`<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
   {champions.map(champion => (
     <ChampionCard

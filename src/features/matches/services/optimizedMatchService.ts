@@ -1,7 +1,7 @@
 // features/matches/services/optimizedMatchService.ts
-import { MongoService } from "@/shared/services/database/MongoService";
-import { PerformanceLogger } from "@/shared/services/logging/PerformanceLogger";
-import type { Match } from "@/shared/types/api/match.types";
+import { MongoService } from '@/shared/services/database/MongoService';
+import { PerformanceLogger } from '@/shared/services/logging/PerformanceLogger';
+import type { Match } from '@/shared/types/api/match.types';
 
 // Define MatchQueryOptions interface locally for now
 interface MatchQueryOptions {
@@ -12,7 +12,7 @@ interface MatchQueryOptions {
   toDate?: Date;
   gameMode?: string;
   championId?: number;
-  outcome?: "win" | "lose";
+  outcome?: 'win' | 'lose';
 }
 
 export class OptimizedMatchService {
@@ -30,13 +30,13 @@ export class OptimizedMatchService {
     puuid: string,
     options: MatchQueryOptions = {}
   ): Promise<Match[]> {
-    const perfLogger = new PerformanceLogger("get_player_matches", {
+    const perfLogger = new PerformanceLogger('get_player_matches', {
       puuid: puuid.substring(0, 8),
       options,
     });
 
     try {
-      const collection = await this.mongo.getCollection<Match>("matches");
+      const collection = await this.mongo.getCollection<Match>('matches');
 
       // Construction du pipeline d'agrégation optimisé
       const pipeline = [
@@ -47,19 +47,19 @@ export class OptimizedMatchService {
               $elemMatch: { puuid: puuid },
             },
             // Filtres additionnels qui utilisent l'index composé
-            ...(options.queueId && { "info.queueId": options.queueId }),
+            ...(options.queueId && { 'info.queueId': options.queueId }),
             ...(options.fromDate && {
-              "info.gameCreation": { $gte: options.fromDate.getTime() },
+              'info.gameCreation': { $gte: options.fromDate.getTime() },
             }),
             ...(options.toDate && {
-              "info.gameCreation": { $lte: options.toDate.getTime() },
+              'info.gameCreation': { $lte: options.toDate.getTime() },
             }),
           },
         },
 
         // Stage 2: Sort utilisant l'index
         {
-          $sort: { "info.gameEndTimestamp": -1 },
+          $sort: { 'info.gameEndTimestamp': -1 },
         },
 
         // Stage 3: Pagination
@@ -69,17 +69,17 @@ export class OptimizedMatchService {
         // Stage 4: Projection optimisée (seulement les champs nécessaires)
         {
           $project: {
-            "metadata.matchId": 1,
-            "info.gameCreation": 1,
-            "info.gameEndTimestamp": 1,
-            "info.gameDuration": 1,
-            "info.gameMode": 1,
-            "info.queueId": 1,
+            'metadata.matchId': 1,
+            'info.gameCreation': 1,
+            'info.gameEndTimestamp': 1,
+            'info.gameDuration': 1,
+            'info.gameMode': 1,
+            'info.queueId': 1,
             participants: {
               $filter: {
-                input: "$participants",
-                as: "participant",
-                cond: { $eq: ["$$participant.puuid", puuid] },
+                input: '$participants',
+                as: 'participant',
+                cond: { $eq: ['$$participant.puuid', puuid] },
               },
             },
           },
@@ -87,10 +87,10 @@ export class OptimizedMatchService {
       ];
 
       const matches = await this.mongo.aggregateWithOptions<Match>(
-        "matches",
+        'matches',
         pipeline,
         {
-          hint: "player_matches_optimized", // Force l'utilisation de notre index
+          hint: 'player_matches_optimized', // Force l'utilisation de notre index
           maxTimeMS: 10000,
         }
       );
@@ -109,9 +109,9 @@ export class OptimizedMatchService {
    */
   async getPlayerAramMatches(
     puuid: string,
-    options: Omit<MatchQueryOptions, "queueId"> = {}
+    options: Omit<MatchQueryOptions, 'queueId'> = {}
   ): Promise<Match[]> {
-    const perfLogger = new PerformanceLogger("get_player_aram_matches", {
+    const perfLogger = new PerformanceLogger('get_player_aram_matches', {
       puuid: puuid.substring(0, 8),
     });
 
@@ -145,21 +145,21 @@ export class OptimizedMatchService {
     mostPlayedChampion: string;
     queueDistribution: Record<number, number>;
   }> {
-    const perfLogger = new PerformanceLogger("get_player_match_stats", {
+    const perfLogger = new PerformanceLogger('get_player_match_stats', {
       puuid: puuid.substring(0, 8),
       fromDate,
       toDate,
     });
 
     try {
-      const collection = await this.mongo.getCollection("matches");
+      const collection = await this.mongo.getCollection('matches');
 
       const pipeline = [
         // Match avec index optimisé pour les dates
         {
           $match: {
-            "participants.puuid": puuid,
-            "info.gameCreation": {
+            'participants.puuid': puuid,
+            'info.gameCreation': {
               $gte: fromDate.getTime(),
               ...(toDate && { $lte: toDate.getTime() }),
             },
@@ -167,12 +167,12 @@ export class OptimizedMatchService {
         },
 
         // Unwind pour traiter chaque participant
-        { $unwind: "$participants" },
+        { $unwind: '$participants' },
 
         // Filter pour garder seulement notre joueur
         {
           $match: {
-            "participants.puuid": puuid,
+            'participants.puuid': puuid,
           },
         },
 
@@ -183,14 +183,14 @@ export class OptimizedMatchService {
             totalMatches: { $sum: 1 },
             totalWins: {
               $sum: {
-                $cond: [{ $eq: ["$participants.win", true] }, 1, 0],
+                $cond: [{ $eq: ['$participants.win', true] }, 1, 0],
               },
             },
-            totalKills: { $sum: "$participants.kills" },
-            totalDeaths: { $sum: "$participants.deaths" },
-            totalAssists: { $sum: "$participants.assists" },
-            champions: { $push: "$participants.championName" },
-            queues: { $push: "$info.queueId" },
+            totalKills: { $sum: '$participants.kills' },
+            totalDeaths: { $sum: '$participants.deaths' },
+            totalAssists: { $sum: '$participants.assists' },
+            champions: { $push: '$participants.championName' },
+            queues: { $push: '$info.queueId' },
           },
         },
 
@@ -202,7 +202,7 @@ export class OptimizedMatchService {
               $round: [
                 {
                   $multiply: [
-                    { $divide: ["$totalWins", "$totalMatches"] },
+                    { $divide: ['$totalWins', '$totalMatches'] },
                     100,
                   ],
                 },
@@ -213,8 +213,8 @@ export class OptimizedMatchService {
               $round: [
                 {
                   $divide: [
-                    { $add: ["$totalKills", "$totalAssists"] },
-                    { $max: ["$totalDeaths", 1] },
+                    { $add: ['$totalKills', '$totalAssists'] },
+                    { $max: ['$totalDeaths', 1] },
                   ],
                 },
                 2,
@@ -227,10 +227,10 @@ export class OptimizedMatchService {
       ];
 
       const [result] = await this.mongo.aggregateWithOptions(
-        "matches",
+        'matches',
         pipeline,
         {
-          hint: "player_matches_by_creation",
+          hint: 'player_matches_by_creation',
           maxTimeMS: 15000,
         }
       );
@@ -240,7 +240,7 @@ export class OptimizedMatchService {
           totalMatches: 0,
           winRate: 0,
           averageKDA: 0,
-          mostPlayedChampion: "",
+          mostPlayedChampion: '',
           queueDistribution: {},
         };
       }
@@ -258,7 +258,7 @@ export class OptimizedMatchService {
 
       const mostPlayedChampion =
         Object.entries(championCounts).sort(([, a], [, b]) => b - a)[0]?.[0] ||
-        "";
+        '';
 
       const stats = {
         totalMatches: result.totalMatches,
@@ -284,21 +284,21 @@ export class OptimizedMatchService {
     queueId: number,
     limit: number = 50
   ): Promise<Match[]> {
-    const perfLogger = new PerformanceLogger("get_recent_matches_by_queue", {
+    const perfLogger = new PerformanceLogger('get_recent_matches_by_queue', {
       queueId,
       limit,
     });
 
     try {
-      const collection = await this.mongo.getCollection<Match>("matches");
+      const collection = await this.mongo.getCollection<Match>('matches');
 
       const matches = await collection
         .find(
-          { "info.queueId": queueId },
+          { 'info.queueId': queueId },
           {
-            sort: { "info.gameEndTimestamp": -1 },
+            sort: { 'info.gameEndTimestamp': -1 },
             limit,
-            hint: "queue_timeline",
+            hint: 'queue_timeline',
           }
         )
         .toArray();
@@ -318,18 +318,18 @@ export class OptimizedMatchService {
     puuid: string,
     options: MatchQueryOptions = {}
   ): Promise<any> {
-    const collection = await this.mongo.getCollection("matches");
+    const collection = await this.mongo.getCollection('matches');
 
     const explanation = await collection
       .find({
         participants: {
           $elemMatch: { puuid: puuid },
         },
-        ...(options.queueId && { "info.queueId": options.queueId }),
+        ...(options.queueId && { 'info.queueId': options.queueId }),
       })
-      .sort({ "info.gameEndTimestamp": -1 })
+      .sort({ 'info.gameEndTimestamp': -1 })
       .limit(20)
-      .explain("executionStats");
+      .explain('executionStats');
 
     return {
       indexUsed: explanation.queryPlanner.winningPlan.inputStage?.indexName,

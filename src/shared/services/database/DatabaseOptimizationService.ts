@@ -1,5 +1,5 @@
-import { MongoService } from "@/shared/services/database/MongoService";
-import { logger } from "@/shared/lib/logger/logger";
+import { MongoService } from '@/shared/services/database/MongoService';
+import { logger } from '@/shared/lib/logger/logger';
 
 // Types for MongoDB collection statistics
 interface CollectionStats {
@@ -51,9 +51,9 @@ export class DatabaseOptimizationService {
       // Champion mastery indexes
       await this.createChampionMasteryIndexes(mongo);
 
-      logger.info("Database indexes created successfully");
+      logger.info('Database indexes created successfully');
     } catch (error) {
-      logger.error("Failed to create database indexes", { error });
+      logger.error('Failed to create database indexes', { error });
       throw error;
     }
   }
@@ -62,14 +62,14 @@ export class DatabaseOptimizationService {
    * Create indexes for summoner collection
    */
   private async createSummonerIndexes(mongo: MongoService): Promise<void> {
-    const collection = await mongo.getCollection("summoners");
+    const collection = await mongo.getCollection('summoners');
 
     // Compound index for common query pattern (region + name + tagline)
     await collection.createIndex(
       { region: 1, name: 1, tagline: 1 },
       {
         unique: true,
-        name: "summoner_identity_unique",
+        name: 'summoner_identity_unique',
         background: true,
       }
     );
@@ -79,7 +79,7 @@ export class DatabaseOptimizationService {
       { puuid: 1 },
       {
         unique: true,
-        name: "summoner_puuid_unique",
+        name: 'summoner_puuid_unique',
         background: true,
       }
     );
@@ -88,7 +88,7 @@ export class DatabaseOptimizationService {
     await collection.createIndex(
       { lastUpdateTimestamp: 1 },
       {
-        name: "summoner_last_update",
+        name: 'summoner_last_update',
         background: true,
       }
     );
@@ -97,68 +97,68 @@ export class DatabaseOptimizationService {
     await collection.createIndex(
       { aramScore: -1 },
       {
-        name: "summoner_aram_score_desc",
+        name: 'summoner_aram_score_desc',
         background: true,
       }
     );
 
-    logger.info("Summoner collection indexes created");
+    logger.info('Summoner collection indexes created');
   }
 
   /**
    * Create indexes for match collection
    */
   private async createMatchIndexes(mongo: MongoService): Promise<void> {
-    const collection = await mongo.getCollection("matches");
+    const collection = await mongo.getCollection('matches');
 
     // Unique index for match ID
     await collection.createIndex(
       { _id: 1 },
       {
         unique: true,
-        name: "match_id_unique",
+        name: 'match_id_unique',
         background: true,
       }
     );
 
     // Compound index for participant queries (puuid + gameEndTimestamp)
     await collection.createIndex(
-      { "info.participants.puuid": 1, "info.gameEndTimestamp": -1 },
+      { 'info.participants.puuid': 1, 'info.gameEndTimestamp': -1 },
       {
-        name: "match_participant_timestamp",
+        name: 'match_participant_timestamp',
         background: true,
       }
     );
 
     // Index for game mode filtering
     await collection.createIndex(
-      { "info.gameMode": 1, "info.gameEndTimestamp": -1 },
+      { 'info.gameMode': 1, 'info.gameEndTimestamp': -1 },
       {
-        name: "match_gamemode_timestamp",
+        name: 'match_gamemode_timestamp',
         background: true,
       }
     );
 
     // Index for match duration queries
     await collection.createIndex(
-      { "info.gameDuration": 1 },
+      { 'info.gameDuration': 1 },
       {
-        name: "match_duration",
+        name: 'match_duration',
         background: true,
       }
     );
 
     // Sparse index for queue type (only for ranked games)
     await collection.createIndex(
-      { "info.queueId": 1 },
+      { 'info.queueId': 1 },
       {
-        name: "match_queue_id",
+        name: 'match_queue_id',
         background: true,
         sparse: true,
       }
     );
 
-    logger.info("Match collection indexes created");
+    logger.info('Match collection indexes created');
   }
 
   /**
@@ -167,19 +167,19 @@ export class DatabaseOptimizationService {
   private async createChampionMasteryIndexes(
     mongo: MongoService
   ): Promise<void> {
-    const collection = await mongo.getCollection("summoners");
+    const collection = await mongo.getCollection('summoners');
 
     // Index for champion mastery lookups
     await collection.createIndex(
       { championMastery: 1 },
       {
-        name: "summoner_champion_mastery",
+        name: 'summoner_champion_mastery',
         background: true,
         sparse: true,
       }
     );
 
-    logger.info("Champion mastery indexes created");
+    logger.info('Champion mastery indexes created');
   }
   /**
    * Analyze collection statistics for optimization insights
@@ -191,8 +191,8 @@ export class DatabaseOptimizationService {
     try {
       const mongo = MongoService.getInstance();
 
-      const summonersCollection = await mongo.getCollection("summoners");
-      const matchesCollection = await mongo.getCollection("matches");
+      const summonersCollection = await mongo.getCollection('summoners');
+      const matchesCollection = await mongo.getCollection('matches');
 
       // Use estimatedDocumentCount instead of stats() since stats() is not available
       const [summonerCount, matchCount] = await Promise.all([
@@ -212,7 +212,7 @@ export class DatabaseOptimizationService {
         avgObjSize: 0,
       };
 
-      logger.info("Collection statistics analyzed", {
+      logger.info('Collection statistics analyzed', {
         summoners: {
           count: summonerStats.count,
         },
@@ -226,7 +226,7 @@ export class DatabaseOptimizationService {
         matches: matchStats,
       };
     } catch (error) {
-      logger.error("Failed to analyze collection stats", { error });
+      logger.error('Failed to analyze collection stats', { error });
       throw error;
     }
   }
@@ -240,18 +240,18 @@ export class DatabaseOptimizationService {
 
       // Get profiler data for slow queries
       const profilerData = await db
-        .collection("system.profile")
+        .collection('system.profile')
         .find({ ts: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } }) // Last 24 hours
         .sort({ ts: -1 })
         .limit(100)
         .toArray();
 
-      logger.info("Slow query analysis completed", {
+      logger.info('Slow query analysis completed', {
         slowQueries: profilerData.length,
       });
 
       // Map to ProfilerData type
-      return profilerData.map((doc) => ({
+      return profilerData.map(doc => ({
         ts: doc.ts,
         op: doc.op,
         ns: doc.ns,
@@ -261,7 +261,7 @@ export class DatabaseOptimizationService {
         execStats: doc.execStats,
       })) as ProfilerData[];
     } catch (error) {
-      logger.error("Failed to analyze slow queries", {
+      logger.error('Failed to analyze slow queries', {
         error: error instanceof Error ? error.message : String(error),
       });
       return [];
@@ -278,9 +278,9 @@ export class DatabaseOptimizationService {
       // Create views for common aggregation queries
       await this.createOptimizedViews(mongo);
 
-      logger.info("Aggregation pipelines optimized");
+      logger.info('Aggregation pipelines optimized');
     } catch (error) {
-      logger.error("Failed to optimize aggregation pipelines", {
+      logger.error('Failed to optimize aggregation pipelines', {
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -295,8 +295,8 @@ export class DatabaseOptimizationService {
 
     try {
       // View for summoner leaderboard with ARAM scores
-      await db.createCollection("summoner_leaderboard", {
-        viewOn: "summoners",
+      await db.createCollection('summoner_leaderboard', {
+        viewOn: 'summoners',
         pipeline: [
           { $match: { aramScore: { $exists: true, $gt: 0 } } },
           { $sort: { aramScore: -1 } },
@@ -312,12 +312,12 @@ export class DatabaseOptimizationService {
         ],
       });
 
-      logger.info("Leaderboard view created");
+      logger.info('Leaderboard view created');
     } catch (error) {
       // View might already exist
       if (
         !(error instanceof Error) ||
-        !error.message.includes("already exists")
+        !error.message.includes('already exists')
       ) {
         throw error;
       }
@@ -325,12 +325,12 @@ export class DatabaseOptimizationService {
 
     try {
       // View for recent matches summary
-      await db.createCollection("recent_matches_summary", {
-        viewOn: "matches",
+      await db.createCollection('recent_matches_summary', {
+        viewOn: 'matches',
         pipeline: [
           {
             $match: {
-              "info.gameEndTimestamp": {
+              'info.gameEndTimestamp': {
                 $gte: Date.now() - 7 * 24 * 60 * 60 * 1000,
               },
             },
@@ -338,20 +338,20 @@ export class DatabaseOptimizationService {
           {
             $project: {
               _id: 1,
-              gameMode: "$info.gameMode",
-              gameEndTimestamp: "$info.gameEndTimestamp",
-              gameDuration: "$info.gameDuration",
+              gameMode: '$info.gameMode',
+              gameEndTimestamp: '$info.gameEndTimestamp',
+              gameDuration: '$info.gameDuration',
               participants: {
                 $map: {
-                  input: "$info.participants",
-                  as: "participant",
+                  input: '$info.participants',
+                  as: 'participant',
                   in: {
-                    puuid: "$$participant.puuid",
-                    championName: "$$participant.championName",
-                    kills: "$$participant.kills",
-                    deaths: "$$participant.deaths",
-                    assists: "$$participant.assists",
-                    win: "$$participant.win",
+                    puuid: '$$participant.puuid',
+                    championName: '$$participant.championName',
+                    kills: '$$participant.kills',
+                    deaths: '$$participant.deaths',
+                    assists: '$$participant.assists',
+                    win: '$$participant.win',
                   },
                 },
               },
@@ -360,12 +360,12 @@ export class DatabaseOptimizationService {
         ],
       });
 
-      logger.info("Recent matches summary view created");
+      logger.info('Recent matches summary view created');
     } catch (error) {
       // View might already exist
       if (
         !(error instanceof Error) ||
-        !error.message.includes("already exists")
+        !error.message.includes('already exists')
       ) {
         throw error;
       }
@@ -381,18 +381,18 @@ export class DatabaseOptimizationService {
 
       // Remove matches older than 6 months
       const sixMonthsAgo = Date.now() - 6 * 30 * 24 * 60 * 60 * 1000;
-      const matchesCollection = await mongo.getCollection("matches");
+      const matchesCollection = await mongo.getCollection('matches');
 
       const result = await matchesCollection.deleteMany({
-        "info.gameEndTimestamp": { $lt: sixMonthsAgo },
+        'info.gameEndTimestamp': { $lt: sixMonthsAgo },
       });
 
-      logger.info("Old data cleanup completed", {
+      logger.info('Old data cleanup completed', {
         deletedMatches: result.deletedCount,
         cutoffDate: new Date(sixMonthsAgo).toISOString(),
       });
     } catch (error) {
-      logger.error("Failed to cleanup old data", {
+      logger.error('Failed to cleanup old data', {
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;

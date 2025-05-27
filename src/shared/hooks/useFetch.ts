@@ -1,11 +1,11 @@
-import useSWR from "swr";
+import useSWR from 'swr';
 
 export function useFetch<T = unknown>(url: string | null, cacheKey: string) {
   const fetcher = async (url: string) => {
     const res = await fetch(url);
     const json = await res.json();
     if (!res.ok)
-      throw new Error(json?.error || "Erreur lors du chargement des données");
+      throw new Error(json?.error || 'Erreur lors du chargement des données');
     return json;
   };
 

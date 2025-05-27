@@ -1,19 +1,19 @@
-import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import SummonerProfile from "../SummonerProfile";
-import type { UIRecentlyPlayed } from "@/shared/types/ui-leftcolumn";
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import SummonerProfile from '../SummonerProfile';
+import type { UIRecentlyPlayed } from '@/shared/types/ui-leftcolumn';
 
 // Mock hooks
-jest.mock("@/shared/hooks/useEffectiveUser");
-jest.mock("@/features/summoner/hooks/useAccountSummoner");
-jest.mock("@/shared/hooks/useOptimizedFetch");
+jest.mock('@/shared/hooks/useEffectiveUser');
+jest.mock('@/features/summoner/hooks/useAccountSummoner');
+jest.mock('@/shared/hooks/useOptimizedFetch');
 
 // Mock components
-jest.mock("../RankBadge", () => {
+jest.mock('../RankBadge', () => {
   return function MockRankBadge({ aramScore, leagues }: any) {
     return (
-      <div data-testid="rank-badge">
+      <div data-testid='rank-badge'>
         ARAM Score: {aramScore}, Leagues: {leagues.length}
       </div>
     );
@@ -21,38 +21,38 @@ jest.mock("../RankBadge", () => {
 });
 
 // Mock performance wrapper
-jest.mock("@/shared/components/performance/SimplePerformanceWrapper", () => ({
+jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
   withPerformanceTracking: (Component: any) => Component,
 }));
 
-describe("SummonerProfile", () => {
+describe('SummonerProfile', () => {
   const mockUseEffectiveUser = jest.requireMock(
-    "@/shared/hooks/useEffectiveUser"
+    '@/shared/hooks/useEffectiveUser'
   );
   const mockUseAccountSummoner = jest.requireMock(
-    "@/features/summoner/hooks/useAccountSummoner"
+    '@/features/summoner/hooks/useAccountSummoner'
   );
   const mockUseOptimizedFetch = jest.requireMock(
-    "@/shared/hooks/useOptimizedFetch"
+    '@/shared/hooks/useOptimizedFetch'
   );
 
   const mockRecentlyPlayed: UIRecentlyPlayed[] = [
     {
-      name: "Player1",
-      tagline: "EUW1",
+      name: 'Player1',
+      tagline: 'EUW1',
       games: 15,
       wins: 10,
       winrate: 67,
     },
     {
-      name: "Player2",
-      tagline: "NA1",
+      name: 'Player2',
+      tagline: 'NA1',
       games: 8,
       wins: 3,
       winrate: 38,
     },
     {
-      name: "Player3",
+      name: 'Player3',
       tagline: undefined,
       games: 12,
       wins: 8,
@@ -62,12 +62,12 @@ describe("SummonerProfile", () => {
 
   const mockLeagues = [
     {
-      leagueId: "league-1",
-      queueType: "RANKED_SOLO_5x5",
-      tier: "GOLD",
-      rank: "II",
-      summonerId: "summoner-id",
-      summonerName: "TestPlayer",
+      leagueId: 'league-1',
+      queueType: 'RANKED_SOLO_5x5',
+      tier: 'GOLD',
+      rank: 'II',
+      summonerId: 'summoner-id',
+      summonerName: 'TestPlayer',
       leaguePoints: 1247,
       wins: 89,
       losses: 67,
@@ -80,9 +80,9 @@ describe("SummonerProfile", () => {
 
   const defaultMocks = {
     useEffectiveUser: {
-      effectiveRegion: "euw1",
-      effectiveName: "TestPlayer",
-      effectiveTagline: "EUW1",
+      effectiveRegion: 'euw1',
+      effectiveName: 'TestPlayer',
+      effectiveTagline: 'EUW1',
     },
     useAccountSummoner: {
       leagues: mockLeagues,
@@ -111,88 +111,88 @@ describe("SummonerProfile", () => {
     );
   });
 
-  describe("Component Rendering", () => {
-    it("renders rank badge section", () => {
+  describe('Component Rendering', () => {
+    it('renders rank badge section', () => {
       render(<SummonerProfile />);
 
-      expect(screen.getByText("Rank & Badges")).toBeInTheDocument();
-      expect(screen.getByTestId("rank-badge")).toBeInTheDocument();
+      expect(screen.getByText('Rank & Badges')).toBeInTheDocument();
+      expect(screen.getByTestId('rank-badge')).toBeInTheDocument();
     });
 
-    it("renders recently played section", () => {
+    it('renders recently played section', () => {
       render(<SummonerProfile />);
 
-      expect(screen.getByText("Recently Played With")).toBeInTheDocument();
+      expect(screen.getByText('Recently Played With')).toBeInTheDocument();
     });
 
-    it("displays recently played table headers", () => {
+    it('displays recently played table headers', () => {
       render(<SummonerProfile />);
 
-      expect(screen.getByText("Summoner")).toBeInTheDocument();
-      expect(screen.getByText("Games")).toBeInTheDocument();
-      expect(screen.getByText("WR")).toBeInTheDocument();
-      expect(screen.getByText("W/L")).toBeInTheDocument();
+      expect(screen.getByText('Summoner')).toBeInTheDocument();
+      expect(screen.getByText('Games')).toBeInTheDocument();
+      expect(screen.getByText('WR')).toBeInTheDocument();
+      expect(screen.getByText('W/L')).toBeInTheDocument();
     });
 
-    it("passes correct props to RankBadge", () => {
+    it('passes correct props to RankBadge', () => {
       render(<SummonerProfile />);
 
-      const rankBadge = screen.getByTestId("rank-badge");
-      expect(rankBadge).toHaveTextContent("ARAM Score: 1500, Leagues: 1");
+      const rankBadge = screen.getByTestId('rank-badge');
+      expect(rankBadge).toHaveTextContent('ARAM Score: 1500, Leagues: 1');
     });
   });
 
-  describe("Recently Played Players", () => {
-    it("displays recently played players", () => {
+  describe('Recently Played Players', () => {
+    it('displays recently played players', () => {
       render(<SummonerProfile />);
 
-      expect(screen.getByText("Player1")).toBeInTheDocument();
-      expect(screen.getByText("Player2")).toBeInTheDocument();
-      expect(screen.getByText("Player3")).toBeInTheDocument();
+      expect(screen.getByText('Player1')).toBeInTheDocument();
+      expect(screen.getByText('Player2')).toBeInTheDocument();
+      expect(screen.getByText('Player3')).toBeInTheDocument();
     });
 
-    it("displays player statistics", () => {
+    it('displays player statistics', () => {
       render(<SummonerProfile />);
 
-      expect(screen.getByText("15")).toBeInTheDocument(); // games
-      expect(screen.getAllByText("67%").length).toBeGreaterThan(0); // winrate
-      expect(screen.getByText("(10W/5L)")).toBeInTheDocument(); // wins/losses
+      expect(screen.getByText('15')).toBeInTheDocument(); // games
+      expect(screen.getAllByText('67%').length).toBeGreaterThan(0); // winrate
+      expect(screen.getByText('(10W/5L)')).toBeInTheDocument(); // wins/losses
     });
 
-    it("creates correct player profile links", () => {
+    it('creates correct player profile links', () => {
       render(<SummonerProfile />);
 
-      const player1Link = screen.getByText("Player1").closest("a");
+      const player1Link = screen.getByText('Player1').closest('a');
       expect(player1Link).toHaveAttribute(
-        "href",
-        "/euw1/summoner/Player1/EUW1"
+        'href',
+        '/euw1/summoner/Player1/EUW1'
       );
 
-      const player2Link = screen.getByText("Player2").closest("a");
-      expect(player2Link).toHaveAttribute("href", "/euw1/summoner/Player2/NA1");
+      const player2Link = screen.getByText('Player2').closest('a');
+      expect(player2Link).toHaveAttribute('href', '/euw1/summoner/Player2/NA1');
     });
 
-    it("handles players without tagline", () => {
+    it('handles players without tagline', () => {
       render(<SummonerProfile />);
 
-      const player3Link = screen.getByText("Player3").closest("a");
+      const player3Link = screen.getByText('Player3').closest('a');
       expect(player3Link).toHaveAttribute(
-        "href",
-        "/euw1/summoner/Player3/EUW1"
+        'href',
+        '/euw1/summoner/Player3/EUW1'
       );
     });
 
-    it("displays win/loss calculations correctly", () => {
+    it('displays win/loss calculations correctly', () => {
       render(<SummonerProfile />);
 
       // Player1: 10W/5L (15 games, 10 wins)
-      expect(screen.getByText("(10W/5L)")).toBeInTheDocument();
+      expect(screen.getByText('(10W/5L)')).toBeInTheDocument();
 
       // Player2: 3W/5L (8 games, 3 wins)
-      expect(screen.getByText("(3W/5L)")).toBeInTheDocument();
+      expect(screen.getByText('(3W/5L)')).toBeInTheDocument();
     });
 
-    it("shows no data message when no recently played", () => {
+    it('shows no data message when no recently played', () => {
       mockUseOptimizedFetch.useOptimizedFetch.mockReturnValue({
         data: { data: [] },
         loading: false,
@@ -201,12 +201,12 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      expect(screen.getByText("No data")).toBeInTheDocument();
+      expect(screen.getByText('No data')).toBeInTheDocument();
     });
   });
 
-  describe("Loading States", () => {
-    it("renders loading skeleton when summoner is loading", () => {
+  describe('Loading States', () => {
+    it('renders loading skeleton when summoner is loading', () => {
       mockUseAccountSummoner.useAccountSummoner.mockReturnValue({
         ...defaultMocks.useAccountSummoner,
         loading: true,
@@ -214,11 +214,11 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      const skeletons = document.querySelectorAll(".skeleton");
+      const skeletons = document.querySelectorAll('.skeleton');
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
-    it("renders loading skeleton when recently played is loading", () => {
+    it('renders loading skeleton when recently played is loading', () => {
       mockUseOptimizedFetch.useOptimizedFetch.mockReturnValue({
         data: null,
         loading: true,
@@ -227,11 +227,11 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      const skeletons = document.querySelectorAll(".skeleton");
+      const skeletons = document.querySelectorAll('.skeleton');
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
-    it("shows loading animation in skeleton elements", () => {
+    it('shows loading animation in skeleton elements', () => {
       mockUseAccountSummoner.useAccountSummoner.mockReturnValue({
         ...defaultMocks.useAccountSummoner,
         loading: true,
@@ -239,56 +239,56 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      const animatedElements = document.querySelectorAll(".animate-pulse");
+      const animatedElements = document.querySelectorAll('.animate-pulse');
       expect(animatedElements.length).toBeGreaterThan(0);
     });
   });
 
-  describe("Error States", () => {
-    it("displays error message when fetch fails", () => {
+  describe('Error States', () => {
+    it('displays error message when fetch fails', () => {
       mockUseOptimizedFetch.useOptimizedFetch.mockReturnValue({
         data: null,
         loading: false,
-        error: "Failed to fetch recently played data",
+        error: 'Failed to fetch recently played data',
       });
 
       render(<SummonerProfile />);
 
       expect(
-        screen.getByText("Failed to fetch recently played data")
+        screen.getByText('Failed to fetch recently played data')
       ).toBeInTheDocument();
     });
 
-    it("applies error styling", () => {
+    it('applies error styling', () => {
       mockUseOptimizedFetch.useOptimizedFetch.mockReturnValue({
         data: null,
         loading: false,
-        error: "Failed to fetch recently played data",
+        error: 'Failed to fetch recently played data',
       });
 
       render(<SummonerProfile />);
 
       const errorContainer = screen
-        .getByText("Failed to fetch recently played data")
-        .closest(".alert");
-      expect(errorContainer).toHaveClass("alert-error");
+        .getByText('Failed to fetch recently played data')
+        .closest('.alert');
+      expect(errorContainer).toHaveClass('alert-error');
     });
   });
 
-  describe("Data Fetching", () => {
-    it("constructs correct API URL for recently played", () => {
+  describe('Data Fetching', () => {
+    it('constructs correct API URL for recently played', () => {
       render(<SummonerProfile />);
 
       expect(mockUseOptimizedFetch.useOptimizedFetch).toHaveBeenCalledWith(
-        "/api/summoner/recently-played?name=TestPlayer&region=euw1&tagline=EUW1&limit=5",
+        '/api/summoner/recently-played?name=TestPlayer&region=euw1&tagline=EUW1&limit=5',
         expect.objectContaining({
-          cacheKey: "recently-played:euw1:TestPlayer:EUW1",
+          cacheKey: 'recently-played:euw1:TestPlayer:EUW1',
           cacheTTL: 120000, // 2 minutes
         })
       );
     });
 
-    it("handles missing effective user data", () => {
+    it('handles missing effective user data', () => {
       mockUseEffectiveUser.useEffectiveUser.mockReturnValue({
         effectiveRegion: null,
         effectiveName: null,
@@ -303,21 +303,21 @@ describe("SummonerProfile", () => {
       );
     });
 
-    it("uses correct cache configuration", () => {
+    it('uses correct cache configuration', () => {
       render(<SummonerProfile />);
 
       expect(mockUseOptimizedFetch.useOptimizedFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          cacheKey: expect.stringContaining("recently-played:"),
+          cacheKey: expect.stringContaining('recently-played:'),
           cacheTTL: 120000,
         })
       );
     });
   });
 
-  describe("Memoization and Performance", () => {
-    it("memoizes recently played data", () => {
+  describe('Memoization and Performance', () => {
+    it('memoizes recently played data', () => {
       const { rerender } = render(<SummonerProfile />);
 
       // Re-render with same data
@@ -327,7 +327,7 @@ describe("SummonerProfile", () => {
       expect(screen.getAllByText(/Player\d/)).toHaveLength(3);
     });
 
-    it("memoizes recently played URL", () => {
+    it('memoizes recently played URL', () => {
       const { rerender } = render(<SummonerProfile />);
 
       // Re-render without changing effective user
@@ -336,102 +336,102 @@ describe("SummonerProfile", () => {
       expect(mockUseOptimizedFetch.useOptimizedFetch).toHaveBeenCalledTimes(1);
     });
 
-    it.skip("updates URL when effective user changes", () => {
+    it.skip('updates URL when effective user changes', () => {
       // Test désactivé temporairement car le composant ne rappelle pas le hook avec la nouvelle valeur
     });
   });
 
-  describe("Table Rendering", () => {
-    it("renders table with proper structure", () => {
+  describe('Table Rendering', () => {
+    it('renders table with proper structure', () => {
       render(<SummonerProfile />);
 
-      const table = screen.getByRole("table");
-      expect(table).toHaveClass("table", "table-md", "table-zebra");
+      const table = screen.getByRole('table');
+      expect(table).toHaveClass('table', 'table-md', 'table-zebra');
 
-      const headers = screen.getAllByRole("columnheader");
+      const headers = screen.getAllByRole('columnheader');
       expect(headers).toHaveLength(4);
     });
 
-    it("applies hover effects to table rows", () => {
+    it('applies hover effects to table rows', () => {
       render(<SummonerProfile />);
 
-      const tableRows = screen.getAllByRole("row");
+      const tableRows = screen.getAllByRole('row');
       // Skip header row
       const dataRows = tableRows.slice(1);
 
-      dataRows.forEach((row) => {
-        expect(row).toHaveClass("hover:bg-base-300");
+      dataRows.forEach(row => {
+        expect(row).toHaveClass('hover:bg-base-300');
       });
     });
 
-    it("formats win/loss display correctly", () => {
+    it('formats win/loss display correctly', () => {
       render(<SummonerProfile />);
 
       // Check for specific win/loss formats
-      expect(screen.getByText("(10W/5L)")).toBeInTheDocument();
-      expect(screen.getByText("(3W/5L)")).toBeInTheDocument();
-      expect(screen.getByText("(8W/4L)")).toBeInTheDocument();
+      expect(screen.getByText('(10W/5L)')).toBeInTheDocument();
+      expect(screen.getByText('(3W/5L)')).toBeInTheDocument();
+      expect(screen.getByText('(8W/4L)')).toBeInTheDocument();
     });
   });
 
-  describe("Visual Elements", () => {
-    it("displays animated status indicators", () => {
+  describe('Visual Elements', () => {
+    it('displays animated status indicators', () => {
       render(<SummonerProfile />);
 
-      const animatedDots = document.querySelectorAll(".animate-pulse");
+      const animatedDots = document.querySelectorAll('.animate-pulse');
       expect(animatedDots.length).toBeGreaterThan(0);
     });
 
-    it("uses proper card styling", () => {
+    it('uses proper card styling', () => {
       render(<SummonerProfile />);
 
-      const cards = document.querySelectorAll(".card");
-      cards.forEach((card) => {
-        expect(card).toHaveClass("bg-base-100", "rounded-xl", "shadow-xl");
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        expect(card).toHaveClass('bg-base-100', 'rounded-xl', 'shadow-xl');
       });
     });
 
-    it("applies proper spacing and layout", () => {
+    it('applies proper spacing and layout', () => {
       render(<SummonerProfile />);
 
-      const container = screen.getByText("Rank & Badges").closest(".card");
-      expect(container?.parentElement).toHaveClass("flex", "flex-col", "gap-4");
+      const container = screen.getByText('Rank & Badges').closest('.card');
+      expect(container?.parentElement).toHaveClass('flex', 'flex-col', 'gap-4');
     });
   });
 
-  describe("Accessibility", () => {
-    it("has proper table structure for screen readers", () => {
+  describe('Accessibility', () => {
+    it('has proper table structure for screen readers', () => {
       render(<SummonerProfile />);
 
-      const table = screen.getByRole("table");
+      const table = screen.getByRole('table');
       expect(table).toBeInTheDocument();
 
-      const headers = screen.getAllByRole("columnheader");
+      const headers = screen.getAllByRole('columnheader');
       expect(headers).toHaveLength(4);
 
-      const cells = screen.getAllByRole("cell");
+      const cells = screen.getAllByRole('cell');
       expect(cells.length).toBeGreaterThan(0);
     });
 
-    it("provides meaningful link text", () => {
+    it('provides meaningful link text', () => {
       render(<SummonerProfile />);
 
-      const links = screen.getAllByRole("link");
-      links.forEach((link) => {
+      const links = screen.getAllByRole('link');
+      links.forEach(link => {
         expect(link).toHaveAccessibleName();
       });
     });
 
-    it("uses semantic headings", () => {
+    it('uses semantic headings', () => {
       render(<SummonerProfile />);
 
-      expect(screen.getByText("Rank & Badges")).toBeInTheDocument();
-      expect(screen.getByText("Recently Played With")).toBeInTheDocument();
+      expect(screen.getByText('Rank & Badges')).toBeInTheDocument();
+      expect(screen.getByText('Recently Played With')).toBeInTheDocument();
     });
   });
 
-  describe("Edge Cases", () => {
-    it("handles empty recently played data gracefully", () => {
+  describe('Edge Cases', () => {
+    it('handles empty recently played data gracefully', () => {
       mockUseOptimizedFetch.useOptimizedFetch.mockReturnValue({
         data: { data: [] },
         loading: false,
@@ -440,14 +440,14 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      expect(screen.getByText("No data")).toBeInTheDocument();
-      const table = screen.queryByRole("table");
+      expect(screen.getByText('No data')).toBeInTheDocument();
+      const table = screen.queryByRole('table');
       if (table) {
         expect(table).toBeInTheDocument();
       }
     });
 
-    it("handles null data response", () => {
+    it('handles null data response', () => {
       mockUseOptimizedFetch.useOptimizedFetch.mockReturnValue({
         data: null,
         loading: false,
@@ -456,10 +456,10 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      expect(screen.getByText("No data")).toBeInTheDocument();
+      expect(screen.getByText('No data')).toBeInTheDocument();
     });
 
-    it("handles undefined ARAM score", () => {
+    it('handles undefined ARAM score', () => {
       mockUseAccountSummoner.useAccountSummoner.mockReturnValue({
         leagues: mockLeagues,
         aramScore: undefined,
@@ -468,15 +468,15 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      const rankBadge = screen.getByTestId("rank-badge");
-      expect(rankBadge).toHaveTextContent("ARAM Score: 0");
+      const rankBadge = screen.getByTestId('rank-badge');
+      expect(rankBadge).toHaveTextContent('ARAM Score: 0');
     });
 
-    it("handles players with zero games", () => {
+    it('handles players with zero games', () => {
       const zeroGamesPlayer = [
         {
-          name: "ZeroPlayer",
-          tagline: "EUW1",
+          name: 'ZeroPlayer',
+          tagline: 'EUW1',
           games: 0,
           wins: 0,
           winrate: 0,
@@ -491,18 +491,18 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      expect(screen.getByText("0")).toBeInTheDocument(); // games
-      expect(screen.getByText("0%")).toBeInTheDocument(); // winrate
-      expect(screen.getByText("(0W/0L)")).toBeInTheDocument(); // wins/losses
+      expect(screen.getByText('0')).toBeInTheDocument(); // games
+      expect(screen.getByText('0%')).toBeInTheDocument(); // winrate
+      expect(screen.getByText('(0W/0L)')).toBeInTheDocument(); // wins/losses
     });
   });
 
-  describe("URL Encoding", () => {
-    it("properly encodes player names with special characters", () => {
+  describe('URL Encoding', () => {
+    it('properly encodes player names with special characters', () => {
       const specialCharPlayers = [
         {
-          name: "Player With Spaces",
-          tagline: "EUW1",
+          name: 'Player With Spaces',
+          tagline: 'EUW1',
           games: 5,
           wins: 3,
           winrate: 60,
@@ -517,18 +517,18 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      const link = screen.getByText("Player With Spaces").closest("a");
+      const link = screen.getByText('Player With Spaces').closest('a');
       expect(link).toHaveAttribute(
-        "href",
-        "/euw1/summoner/Player%20With%20Spaces/EUW1"
+        'href',
+        '/euw1/summoner/Player%20With%20Spaces/EUW1'
       );
     });
 
-    it("handles Unicode characters in player names", () => {
+    it('handles Unicode characters in player names', () => {
       const unicodePlayers = [
         {
-          name: "Plâyér🎮",
-          tagline: "EUW1",
+          name: 'Plâyér🎮',
+          tagline: 'EUW1',
           games: 5,
           wins: 3,
           winrate: 60,
@@ -543,10 +543,10 @@ describe("SummonerProfile", () => {
 
       render(<SummonerProfile />);
 
-      const link = screen.getByText("Plâyér🎮").closest("a");
+      const link = screen.getByText('Plâyér🎮').closest('a');
       expect(link).toHaveAttribute(
-        "href",
-        expect.stringContaining("/euw1/summoner/")
+        'href',
+        expect.stringContaining('/euw1/summoner/')
       );
     });
   });

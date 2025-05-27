@@ -1,5 +1,5 @@
 // src/utils/apiResponse.ts
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 export function apiSuccess<T>(data: T, status: number = 200) {
   return NextResponse.json(data, { status });

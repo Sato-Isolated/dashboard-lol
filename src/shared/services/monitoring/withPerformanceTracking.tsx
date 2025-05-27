@@ -1,8 +1,8 @@
 /**
  * Higher-Order Component for performance tracking
  */
-import React, { useEffect, ComponentType } from "react";
-import PerformanceMonitoringService from "./PerformanceMonitoringService";
+import React, { useEffect, ComponentType } from 'react';
+import PerformanceMonitoringService from './PerformanceMonitoringService';
 
 export function withPerformanceTracking<P extends object>(
   WrappedComponent: ComponentType<P>,

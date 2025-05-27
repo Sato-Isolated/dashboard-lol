@@ -1,212 +1,212 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import GlobalProgressBar from "../GlobalProgressBar";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import GlobalProgressBar from '../GlobalProgressBar';
 
 // Mock the global loading hook
 const mockSetLoading = jest.fn();
 
 let mockLoading = false;
-jest.mock("@/shared/hooks/useGlobalLoading", () => ({
+jest.mock('@/shared/hooks/useGlobalLoading', () => ({
   useGlobalLoading: () => ({
     loading: mockLoading,
     setLoading: mockSetLoading,
   }),
 }));
 
-describe("GlobalProgressBar", () => {
+describe('GlobalProgressBar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockLoading = false;
   });
 
-  describe("Rendering", () => {
-    it("renders nothing when not loading", () => {
+  describe('Rendering', () => {
+    it('renders nothing when not loading', () => {
       mockLoading = false;
       const { container } = render(<GlobalProgressBar />);
 
       expect(container.firstChild).toBeNull();
     });
 
-    it("renders progress bar when loading", () => {
+    it('renders progress bar when loading', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
+      const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toBeInTheDocument();
     });
 
-    it("applies correct positioning classes when loading", () => {
+    it('applies correct positioning classes when loading', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const container = screen.getByRole("progressbar").parentElement;
+      const container = screen.getByRole('progressbar').parentElement;
       expect(container).toHaveClass(
-        "fixed",
-        "top-0",
-        "left-0",
-        "w-full",
-        "z-[100]"
+        'fixed',
+        'top-0',
+        'left-0',
+        'w-full',
+        'z-[100]'
       );
     });
 
-    it("applies correct progress bar styling", () => {
+    it('applies correct progress bar styling', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
+      const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveClass(
-        "h-1",
-        "bg-gradient-to-r",
-        "from-primary",
-        "to-accent",
-        "animate-pulse",
-        "w-full",
-        "transition-all",
-        "duration-300"
+        'h-1',
+        'bg-gradient-to-r',
+        'from-primary',
+        'to-accent',
+        'animate-pulse',
+        'w-full',
+        'transition-all',
+        'duration-300'
       );
     });
   });
 
-  describe("Loading States", () => {
-    it("shows progress bar immediately when loading starts", () => {
+  describe('Loading States', () => {
+    it('shows progress bar immediately when loading starts', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
-    it("hides progress bar when loading stops", () => {
+    it('hides progress bar when loading stops', () => {
       mockLoading = true;
       const { rerender } = render(<GlobalProgressBar />);
-      expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
       mockLoading = false;
       rerender(<GlobalProgressBar />);
-      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
-    it("toggles visibility correctly", () => {
+    it('toggles visibility correctly', () => {
       const { rerender } = render(<GlobalProgressBar />);
 
       // Start not loading
-      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
 
       // Start loading
       mockLoading = true;
       rerender(<GlobalProgressBar />);
-      expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
       // Stop loading
       mockLoading = false;
       rerender(<GlobalProgressBar />);
-      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
 
       // Start loading again
       mockLoading = true;
       rerender(<GlobalProgressBar />);
-      expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
   });
 
-  describe("Styling and Appearance", () => {
-    it("has gradient background", () => {
+  describe('Styling and Appearance', () => {
+    it('has gradient background', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
+      const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveClass(
-        "bg-gradient-to-r",
-        "from-primary",
-        "to-accent"
+        'bg-gradient-to-r',
+        'from-primary',
+        'to-accent'
       );
     });
 
-    it("has animation classes", () => {
+    it('has animation classes', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("animate-pulse");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('animate-pulse');
     });
 
-    it("has transition classes", () => {
+    it('has transition classes', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("transition-all", "duration-300");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('transition-all', 'duration-300');
     });
 
-    it("has correct height", () => {
+    it('has correct height', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("h-1");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('h-1');
     });
 
-    it("spans full width", () => {
+    it('spans full width', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("w-full");
-    });
-  });
-
-  describe("Positioning and Layering", () => {
-    it("positions at top of screen", () => {
-      mockLoading = true;
-      render(<GlobalProgressBar />);
-
-      const container = screen.getByRole("progressbar").parentElement;
-      expect(container).toHaveClass("top-0");
-    });
-
-    it("positions at left edge", () => {
-      mockLoading = true;
-      render(<GlobalProgressBar />);
-
-      const container = screen.getByRole("progressbar").parentElement;
-      expect(container).toHaveClass("left-0");
-    });
-
-    it("has high z-index for overlay", () => {
-      mockLoading = true;
-      render(<GlobalProgressBar />);
-
-      const container = screen.getByRole("progressbar").parentElement;
-      expect(container).toHaveClass("z-[100]");
-    });
-
-    it("uses fixed positioning", () => {
-      mockLoading = true;
-      render(<GlobalProgressBar />);
-
-      const container = screen.getByRole("progressbar").parentElement;
-      expect(container).toHaveClass("fixed");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('w-full');
     });
   });
 
-  describe("Accessibility", () => {
-    it("has progressbar role when loading", () => {
+  describe('Positioning and Layering', () => {
+    it('positions at top of screen', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
+      const container = screen.getByRole('progressbar').parentElement;
+      expect(container).toHaveClass('top-0');
+    });
+
+    it('positions at left edge', () => {
+      mockLoading = true;
+      render(<GlobalProgressBar />);
+
+      const container = screen.getByRole('progressbar').parentElement;
+      expect(container).toHaveClass('left-0');
+    });
+
+    it('has high z-index for overlay', () => {
+      mockLoading = true;
+      render(<GlobalProgressBar />);
+
+      const container = screen.getByRole('progressbar').parentElement;
+      expect(container).toHaveClass('z-[100]');
+    });
+
+    it('uses fixed positioning', () => {
+      mockLoading = true;
+      render(<GlobalProgressBar />);
+
+      const container = screen.getByRole('progressbar').parentElement;
+      expect(container).toHaveClass('fixed');
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('has progressbar role when loading', () => {
+      mockLoading = true;
+      render(<GlobalProgressBar />);
+
+      const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toBeInTheDocument();
     });
 
-    it("provides semantic meaning for screen readers", () => {
+    it('provides semantic meaning for screen readers', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveAttribute("role", "progressbar");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('role', 'progressbar');
     });
 
-    it("does not interfere with page navigation when not loading", () => {
+    it('does not interfere with page navigation when not loading', () => {
       mockLoading = false;
       const { container } = render(<GlobalProgressBar />);
 
@@ -215,8 +215,8 @@ describe("GlobalProgressBar", () => {
     });
   });
 
-  describe("Performance", () => {
-    it("returns early when not loading", () => {
+  describe('Performance', () => {
+    it('returns early when not loading', () => {
       mockLoading = false;
       const { container } = render(<GlobalProgressBar />);
 
@@ -224,7 +224,7 @@ describe("GlobalProgressBar", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("efficiently updates loading state", () => {
+    it('efficiently updates loading state', () => {
       const { rerender } = render(<GlobalProgressBar />);
 
       // Multiple rapid state changes
@@ -233,13 +233,13 @@ describe("GlobalProgressBar", () => {
         rerender(<GlobalProgressBar />);
 
         if (mockLoading) {
-          expect(screen.getByRole("progressbar")).toBeInTheDocument();
+          expect(screen.getByRole('progressbar')).toBeInTheDocument();
         } else {
-          expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+          expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         }
       }
     });
-    it("does not cause memory leaks on rapid mounting/unmounting", () => {
+    it('does not cause memory leaks on rapid mounting/unmounting', () => {
       const { unmount: unmount1 } = render(<GlobalProgressBar />);
 
       mockLoading = true;
@@ -249,20 +249,20 @@ describe("GlobalProgressBar", () => {
       unmount2();
 
       // Should unmount cleanly
-      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
   });
 
-  describe("Integration with Global Loading State", () => {
-    it("responds to global loading hook", () => {
+  describe('Integration with Global Loading State', () => {
+    it('responds to global loading hook', () => {
       // Simulate global loading state change
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
-    it("does not call setLoading function", () => {
+    it('does not call setLoading function', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
@@ -271,34 +271,34 @@ describe("GlobalProgressBar", () => {
     });
   });
 
-  describe("Visual Behavior", () => {
-    it("has pulsing animation when active", () => {
+  describe('Visual Behavior', () => {
+    it('has pulsing animation when active', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("animate-pulse");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('animate-pulse');
     });
 
-    it("uses theme colors", () => {
+    it('uses theme colors', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("from-primary", "to-accent");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('from-primary', 'to-accent');
     });
 
-    it("has smooth transitions", () => {
+    it('has smooth transitions', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
-      expect(progressBar).toHaveClass("transition-all", "duration-300");
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('transition-all', 'duration-300');
     });
   });
 
-  describe("Edge Cases", () => {
-    it("handles undefined loading state", () => {
+  describe('Edge Cases', () => {
+    it('handles undefined loading state', () => {
       mockLoading = undefined as any;
       const { container } = render(<GlobalProgressBar />);
 
@@ -306,7 +306,7 @@ describe("GlobalProgressBar", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("handles null loading state", () => {
+    it('handles null loading state', () => {
       mockLoading = null as any;
       const { container } = render(<GlobalProgressBar />);
 
@@ -314,15 +314,15 @@ describe("GlobalProgressBar", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("handles truthy non-boolean values", () => {
-      mockLoading = "loading" as any;
+    it('handles truthy non-boolean values', () => {
+      mockLoading = 'loading' as any;
       render(<GlobalProgressBar />);
 
       // Should treat truthy values as true
-      expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
-    it("handles falsy non-boolean values", () => {
+    it('handles falsy non-boolean values', () => {
       mockLoading = 0 as any;
       const { container } = render(<GlobalProgressBar />);
 
@@ -331,38 +331,38 @@ describe("GlobalProgressBar", () => {
     });
   });
 
-  describe("Component Structure", () => {
-    it("has proper DOM structure when loading", () => {
+  describe('Component Structure', () => {
+    it('has proper DOM structure when loading', () => {
       mockLoading = true;
       const { container } = render(<GlobalProgressBar />);
 
       // Should have container div with progress bar inside
       const outerDiv = container.firstChild as Element;
-      expect(outerDiv.tagName).toBe("DIV");
-      expect(outerDiv).toHaveClass("fixed", "top-0", "left-0", "w-full");
+      expect(outerDiv.tagName).toBe('DIV');
+      expect(outerDiv).toHaveClass('fixed', 'top-0', 'left-0', 'w-full');
 
       const progressBar = outerDiv.firstChild as Element;
-      expect(progressBar.tagName).toBe("DIV");
-      expect(progressBar).toHaveAttribute("role", "progressbar");
+      expect(progressBar.tagName).toBe('DIV');
+      expect(progressBar).toHaveAttribute('role', 'progressbar');
     });
 
-    it("maintains consistent class structure", () => {
+    it('maintains consistent class structure', () => {
       mockLoading = true;
       render(<GlobalProgressBar />);
 
-      const progressBar = screen.getByRole("progressbar");
+      const progressBar = screen.getByRole('progressbar');
       const expectedClasses = [
-        "h-1",
-        "bg-gradient-to-r",
-        "from-primary",
-        "to-accent",
-        "animate-pulse",
-        "w-full",
-        "transition-all",
-        "duration-300",
+        'h-1',
+        'bg-gradient-to-r',
+        'from-primary',
+        'to-accent',
+        'animate-pulse',
+        'w-full',
+        'transition-all',
+        'duration-300',
       ];
 
-      expectedClasses.forEach((className) => {
+      expectedClasses.forEach(className => {
         expect(progressBar).toHaveClass(className);
       });
     });

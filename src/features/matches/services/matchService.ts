@@ -1,10 +1,10 @@
-import { Match } from "@/shared/types/api/match.types";
-import { RiotApiClient } from "@/shared/services/api/riot/RiotApiClient";
-import { StandardErrorHandler, ValidationHelper } from "@/shared/lib/patterns";
+import { Match } from '@/shared/types/api/match.types';
+import { RiotApiClient } from '@/shared/services/api/riot/RiotApiClient';
+import { StandardErrorHandler, ValidationHelper } from '@/shared/lib/patterns';
 
 export class MatchService extends RiotApiClient {
-  private readonly featureName = "matches";
-  private readonly serviceName = "riot-match-api";
+  private readonly featureName = 'matches';
+  private readonly serviceName = 'riot-match-api';
 
   private get errorHandler() {
     return StandardErrorHandler.createFeatureHandler(this.featureName);
@@ -16,9 +16,9 @@ export class MatchService extends RiotApiClient {
 
   public async getMatchById(matchId: string): Promise<Match> {
     // Validate input
-    const validation = ValidationHelper.validateString(matchId, "matchId", 1);
+    const validation = ValidationHelper.validateString(matchId, 'matchId', 1);
     if (!validation.isValid) {
-      throw new Error(validation.error || "Invalid match ID");
+      throw new Error(validation.error || 'Invalid match ID');
     }
 
     const endpoint = `/lol/match/v5/matches/${matchId}`;
@@ -40,25 +40,25 @@ export class MatchService extends RiotApiClient {
     }
   ): Promise<string[]> {
     // Validate input
-    const validation = ValidationHelper.validateString(puuid, "puuid", 78, 78);
+    const validation = ValidationHelper.validateString(puuid, 'puuid', 78, 78);
     if (!validation.isValid) {
-      throw new Error(validation.error || "Invalid PUUID format");
+      throw new Error(validation.error || 'Invalid PUUID format');
     }
 
     const params = new URLSearchParams();
     if (options?.startTime !== undefined)
-      params.append("startTime", options.startTime.toString());
+      params.append('startTime', options.startTime.toString());
     if (options?.endTime !== undefined)
-      params.append("endTime", options.endTime.toString());
+      params.append('endTime', options.endTime.toString());
     if (options?.queue !== undefined)
-      params.append("queue", options.queue.toString());
-    if (options?.type !== undefined) params.append("type", options.type);
+      params.append('queue', options.queue.toString());
+    if (options?.type !== undefined) params.append('type', options.type);
     if (options?.start !== undefined)
-      params.append("start", options.start.toString());
+      params.append('start', options.start.toString());
     if (options?.count !== undefined)
-      params.append("count", options.count.toString());
+      params.append('count', options.count.toString());
 
-    const query = params.toString() ? `?${params.toString()}` : "";
+    const query = params.toString() ? `?${params.toString()}` : '';
     const endpoint = `/lol/match/v5/matches/by-puuid/${puuid}/ids${query}`;
 
     return this.errorHandler.api(() => this.fetch<string[]>(endpoint), {

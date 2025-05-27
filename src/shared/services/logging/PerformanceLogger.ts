@@ -1,4 +1,4 @@
-import { logger } from "@/shared/lib/logger/logger";
+import { logger } from '@/shared/lib/logger/logger';
 
 export class PerformanceLogger {
   private timerId: string;

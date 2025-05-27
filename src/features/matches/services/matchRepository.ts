@@ -1,17 +1,17 @@
-import { MongoService } from "@/shared/services/database/MongoService";
-import { MatchCollection } from "@/features/matches/types/match.types";
-import { Match } from "@/shared/types/api/match.types";
-import { logger } from "@/shared/lib/logger/logger";
-import { ValidationHelper, ValidationError } from "@/shared/lib/patterns";
-import { BaseRepositoryImpl } from "@/shared/lib/patterns";
+import { MongoService } from '@/shared/services/database/MongoService';
+import { MatchCollection } from '@/features/matches/types/match.types';
+import { Match } from '@/shared/types/api/match.types';
+import { logger } from '@/shared/lib/logger/logger';
+import { ValidationHelper, ValidationError } from '@/shared/lib/patterns';
+import { BaseRepositoryImpl } from '@/shared/lib/patterns';
 
 /**
  * Repository for match data operations
  * Implements standardized patterns for consistent error handling and logging
  */
 class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
-  protected readonly collectionName = "matches";
-  protected readonly featureName = "matches";
+  protected readonly collectionName = 'matches';
+  protected readonly featureName = 'matches';
 
   async findById(id: string): Promise<MatchCollection | null> {
     return this.executeOperation(async () => {
@@ -20,11 +20,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         this.collectionName
       );
       return collection.findOne({ _id: id });
-    }, "findById");
+    }, 'findById');
   }
 
   async create(
-    entity: Omit<MatchCollection, "id" | "createdAt" | "updatedAt">
+    entity: Omit<MatchCollection, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<MatchCollection> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
@@ -35,7 +35,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       const doc = entity as MatchCollection;
       await collection.insertOne(doc);
       return doc;
-    }, "create");
+    }, 'create');
   }
 
   async update(
@@ -51,11 +51,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       const result = await collection.findOneAndUpdate(
         { _id: id },
         { $set: updates },
-        { returnDocument: "after" }
+        { returnDocument: 'after' }
       );
 
       return result || null;
-    }, "update");
+    }, 'update');
   }
 
   async delete(id: string): Promise<boolean> {
@@ -67,7 +67,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
       const result = await collection.deleteOne({ _id: id });
       return result.deletedCount > 0;
-    }, "delete");
+    }, 'delete');
   }
 
   /**
@@ -79,17 +79,17 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Validate match data
         const matchIdValidation = ValidationHelper.validateString(
           match.metadata.matchId,
-          "matchId",
+          'matchId',
           10,
           50
         );
         if (!matchIdValidation.isValid) {
           throw new ValidationError(
-            matchIdValidation.error || "Invalid match ID"
+            matchIdValidation.error || 'Invalid match ID'
           );
         }
 
-        logger.info("Inserting match", {
+        logger.info('Inserting match', {
           matchId: match.metadata.matchId,
           gameMode: match.info.gameMode,
           gameDuration: match.info.gameDuration,
@@ -108,28 +108,28 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         try {
           await collection.insertOne(matchDoc);
 
-          logger.info("Match inserted successfully", {
+          logger.info('Match inserted successfully', {
             matchId: match.metadata.matchId,
           });
         } catch (error: unknown) {
           if (
             error instanceof Error &&
-            error.message.includes("duplicate key")
+            error.message.includes('duplicate key')
           ) {
-            logger.warn("Match already exists", {
+            logger.warn('Match already exists', {
               matchId: match.metadata.matchId,
             });
             // Don't throw error for duplicate keys as this is expected
             return;
           } else {
-            logger.error("Failed to insert match", error as Error, {
+            logger.error('Failed to insert match', error as Error, {
               matchId: match.metadata.matchId,
             });
             throw error;
           }
         }
       },
-      { collection: this.collectionName, operation: "insertMatch" }
+      { collection: this.collectionName, operation: 'insertMatch' }
     );
   }
 
@@ -142,17 +142,17 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Validate match ID
         const matchIdValidation = ValidationHelper.validateString(
           matchId,
-          "matchId",
+          'matchId',
           10,
           50
         );
         if (!matchIdValidation.isValid) {
           throw new ValidationError(
-            matchIdValidation.error || "Invalid match ID"
+            matchIdValidation.error || 'Invalid match ID'
           );
         }
 
-        logger.info("Fetching match by ID", { matchId });
+        logger.info('Fetching match by ID', { matchId });
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
@@ -161,14 +161,14 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         const match = await collection.findOne({ _id: matchId });
 
         if (match) {
-          logger.info("Match found", { matchId });
+          logger.info('Match found', { matchId });
         } else {
-          logger.info("Match not found", { matchId });
+          logger.info('Match not found', { matchId });
         }
 
         return match;
       },
-      { collection: this.collectionName, operation: "getMatchById" }
+      { collection: this.collectionName, operation: 'getMatchById' }
     );
   }
 
@@ -177,7 +177,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
    */
   async getMultiKillMatches(): Promise<MatchCollection[]> {
     return this.executeOperation(async () => {
-      logger.info("Fetching multi-kill matches");
+      logger.info('Fetching multi-kill matches');
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
@@ -187,17 +187,17 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       const matches = await collection
         .find({
           $or: [
-            { "info.participants.doubleKills": { $gte: 1 } },
-            { "info.participants.tripleKills": { $gte: 1 } },
-            { "info.participants.quadraKills": { $gte: 1 } },
-            { "info.participants.pentaKills": { $gte: 1 } },
+            { 'info.participants.doubleKills': { $gte: 1 } },
+            { 'info.participants.tripleKills': { $gte: 1 } },
+            { 'info.participants.quadraKills': { $gte: 1 } },
+            { 'info.participants.pentaKills': { $gte: 1 } },
           ],
         })
         .toArray();
 
-      logger.info("Multi-kill matches fetched", { count: matches.length });
+      logger.info('Multi-kill matches fetched', { count: matches.length });
       return matches;
-    }, "getMultiKillMatches");
+    }, 'getMultiKillMatches');
   }
   /**
    * Get matches for a specific participant (by PUUID) - OPTIMIZED for Phase 2.1
@@ -211,17 +211,17 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Validate PUUID
         const puuidValidation = ValidationHelper.validateString(
           puuid,
-          "puuid",
+          'puuid',
           78,
           78
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || "Invalid PUUID format"
+            puuidValidation.error || 'Invalid PUUID format'
           );
         }
 
-        logger.info("Fetching matches by PUUID (optimized)", { puuid, limit });
+        logger.info('Fetching matches by PUUID (optimized)', { puuid, limit });
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
@@ -232,8 +232,8 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Query structure: { "info.participants.puuid": puuid } instead of metadata.participants
         // This allows MongoDB to use our optimized compound indexes
         let query = collection
-          .find({ "info.participants.puuid": puuid })
-          .sort({ "info.gameEndTimestamp": -1 }); // Sort by most recent first
+          .find({ 'info.participants.puuid': puuid })
+          .sort({ 'info.gameEndTimestamp': -1 }); // Sort by most recent first
 
         if (limit) {
           query = query.limit(limit);
@@ -241,16 +241,16 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const matches = await query.toArray();
 
-        logger.info("Matches fetched by PUUID (optimized)", {
+        logger.info('Matches fetched by PUUID (optimized)', {
           puuid,
           count: matches.length,
           limit,
-          optimization: "Phase2.1_IndexOptimized",
+          optimization: 'Phase2.1_IndexOptimized',
         });
 
         return matches;
       },
-      { collection: this.collectionName, operation: "getMatchesByPuuid" }
+      { collection: this.collectionName, operation: 'getMatchesByPuuid' }
     );
   }
 
@@ -267,17 +267,17 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Validate PUUID
         const puuidValidation = ValidationHelper.validateString(
           puuid,
-          "puuid",
+          'puuid',
           78,
           78
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || "Invalid PUUID format"
+            puuidValidation.error || 'Invalid PUUID format'
           );
         }
 
-        logger.info("Fetching matches by PUUID and queue (optimized)", {
+        logger.info('Fetching matches by PUUID and queue (optimized)', {
           puuid,
           queueId,
           limit,
@@ -292,10 +292,10 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // This query will use the participants_puuid_queue_end_time index
         let query = collection
           .find({
-            "info.participants.puuid": puuid,
-            "info.queueId": queueId,
+            'info.participants.puuid': puuid,
+            'info.queueId': queueId,
           })
-          .sort({ "info.gameEndTimestamp": -1 });
+          .sort({ 'info.gameEndTimestamp': -1 });
 
         if (limit) {
           query = query.limit(limit);
@@ -303,19 +303,19 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const matches = await query.toArray();
 
-        logger.info("Matches fetched by PUUID and queue (optimized)", {
+        logger.info('Matches fetched by PUUID and queue (optimized)', {
           puuid,
           queueId,
           count: matches.length,
           limit,
-          optimization: "Phase2.1_CompoundIndexOptimized",
+          optimization: 'Phase2.1_CompoundIndexOptimized',
         });
 
         return matches;
       },
       {
         collection: this.collectionName,
-        operation: "getMatchesByPuuidAndQueue",
+        operation: 'getMatchesByPuuidAndQueue',
       }
     );
   }
@@ -334,17 +334,17 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Validate PUUID
         const puuidValidation = ValidationHelper.validateString(
           puuid,
-          "puuid",
+          'puuid',
           78,
           78
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || "Invalid PUUID format"
+            puuidValidation.error || 'Invalid PUUID format'
           );
         }
 
-        logger.info("Fetching recent matches by PUUID (optimized)", {
+        logger.info('Fetching recent matches by PUUID (optimized)', {
           puuid,
           startTimestamp,
           endTimestamp,
@@ -358,7 +358,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         // Build optimized query
         const filter: Record<string, unknown> = {
-          "info.participants.puuid": puuid,
+          'info.participants.puuid': puuid,
         };
 
         // Add date range filter
@@ -366,12 +366,12 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           const ts: Record<string, number> = {};
           if (startTimestamp) ts.$gte = startTimestamp;
           if (endTimestamp) ts.$lte = endTimestamp;
-          filter["info.gameCreation"] = ts;
+          filter['info.gameCreation'] = ts;
         }
 
         // PHASE 2.1 OPTIMIZATION: Use optimized compound index
         // This will use the player_matches_by_creation_fixed index
-        let query = collection.find(filter).sort({ "info.gameCreation": -1 });
+        let query = collection.find(filter).sort({ 'info.gameCreation': -1 });
 
         if (limit) {
           query = query.limit(limit);
@@ -379,18 +379,18 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const matches = await query.toArray();
 
-        logger.info("Recent matches fetched by PUUID (optimized)", {
+        logger.info('Recent matches fetched by PUUID (optimized)', {
           puuid,
           startTimestamp,
           endTimestamp,
           count: matches.length,
           limit,
-          optimization: "Phase2.1_DateRangeOptimized",
+          optimization: 'Phase2.1_DateRangeOptimized',
         });
 
         return matches;
       },
-      { collection: this.collectionName, operation: "getRecentMatchesByPuuid" }
+      { collection: this.collectionName, operation: 'getRecentMatchesByPuuid' }
     );
   }
 
@@ -403,7 +403,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     limit?: number
   ): Promise<MatchCollection[]> {
     return this.executeOperation(async () => {
-      logger.info("Fetching recent matches", {
+      logger.info('Fetching recent matches', {
         startTimestamp,
         endTimestamp,
         limit,
@@ -419,18 +419,18 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       > = {};
 
       if (startTimestamp || endTimestamp) {
-        filter["info.gameStartTimestamp"] = {};
+        filter['info.gameStartTimestamp'] = {};
         if (startTimestamp) {
-          filter["info.gameStartTimestamp"].$gte = startTimestamp;
+          filter['info.gameStartTimestamp'].$gte = startTimestamp;
         }
         if (endTimestamp) {
-          filter["info.gameStartTimestamp"].$lte = endTimestamp;
+          filter['info.gameStartTimestamp'].$lte = endTimestamp;
         }
       }
 
       let query = collection
         .find(filter)
-        .sort({ "info.gameStartTimestamp": -1 });
+        .sort({ 'info.gameStartTimestamp': -1 });
 
       if (limit) {
         query = query.limit(limit);
@@ -438,14 +438,14 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
       const matches = await query.toArray();
 
-      logger.info("Recent matches fetched", {
+      logger.info('Recent matches fetched', {
         count: matches.length,
         filter: JSON.stringify(filter),
         limit,
       });
 
       return matches;
-    }, "getRecentMatches");
+    }, 'getRecentMatches');
   }
 }
 

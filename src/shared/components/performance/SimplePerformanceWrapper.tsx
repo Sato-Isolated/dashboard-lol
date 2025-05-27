@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, forwardRef } from "react";
+import React, { useEffect, forwardRef } from 'react';
 
 /**
  * Simple client-side performance tracking wrapper
@@ -12,13 +12,13 @@ export function withPerformanceTracking<P extends object>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PerformanceTrackedComponent = forwardRef<any, P>((props, ref) => {
     useEffect(() => {
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         const startTime = performance.now();
         const name =
           componentName ||
           WrappedComponent.displayName ||
           WrappedComponent.name ||
-          "Unknown";
+          'Unknown';
 
         return () => {
           const endTime = performance.now();
@@ -32,7 +32,7 @@ export function withPerformanceTracking<P extends object>(
           }
 
           // Track in performance observer if available
-          if ("performance" in window && "mark" in performance) {
+          if ('performance' in window && 'mark' in performance) {
             performance.mark(`${name}_render_end`);
           }
         };

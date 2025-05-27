@@ -93,8 +93,8 @@ export class CacheManager {
    * Clear champions and masteries cache specifically
    */
   clearChampionsAndMasteriesCache(): void {
-    this.clearByPattern("champion-stats:");
-    this.clearByPattern("masteries:");
+    this.clearByPattern('champion-stats:');
+    this.clearByPattern('masteries:');
   }
 
   /**
@@ -201,8 +201,11 @@ export const userDataCache = new CacheManager({
 });
 
 // Auto-cleanup every 10 minutes
-setInterval(() => {
-  apiCache.cleanup();
-  staticDataCache.cleanup();
-  userDataCache.cleanup();
-}, 10 * 60 * 1000);
+setInterval(
+  () => {
+    apiCache.cleanup();
+    staticDataCache.cleanup();
+    userDataCache.cleanup();
+  },
+  10 * 60 * 1000
+);

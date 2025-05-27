@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { getMultiKillMatches } from "@/features/matches/services/matchRepository";
-import { z } from "zod";
-import { withValidation } from "@/shared/lib/validation/middleware";
+import { NextResponse } from 'next/server';
+import { getMultiKillMatches } from '@/features/matches/services/matchRepository';
+import { z } from 'zod';
+import { withValidation } from '@/shared/lib/validation/middleware';
 
 // Empty schema since no parameters are needed
 const multikillsSchema = z.object({});
@@ -13,13 +13,13 @@ export const GET = withValidation(
 
     // For each match, extract badges from each participant
     const matchesWithBadges = matches
-      .map((match) => {
-        const participantsWithBadges = match.info.participants.map((p) => {
+      .map(match => {
+        const participantsWithBadges = match.info.participants.map(p => {
           const badges: string[] = [];
-          if (p.doubleKills && p.doubleKills > 0) badges.push("doublekill");
-          if (p.tripleKills && p.tripleKills > 0) badges.push("triplekill");
-          if (p.quadraKills && p.quadraKills > 0) badges.push("quadrakill");
-          if (p.pentaKills && p.pentaKills > 0) badges.push("pentakill");
+          if (p.doubleKills && p.doubleKills > 0) badges.push('doublekill');
+          if (p.tripleKills && p.tripleKills > 0) badges.push('triplekill');
+          if (p.quadraKills && p.quadraKills > 0) badges.push('quadrakill');
+          if (p.pentaKills && p.pentaKills > 0) badges.push('pentakill');
           return {
             summonerName: p.summonerName,
             riotIdGameName: p.riotIdGameName,
@@ -37,12 +37,10 @@ export const GET = withValidation(
           gameEndTimestamp: match.info.gameEndTimestamp,
           gameDuration: match.info.gameDuration,
           queueId: match.info.queueId,
-          participants: participantsWithBadges.filter(
-            (p) => p.badges.length > 0
-          ), // Only include participants with multikills
+          participants: participantsWithBadges.filter(p => p.badges.length > 0), // Only include participants with multikills
         };
       })
-      .filter((match) => match.participants.length > 0); // Only include matches with multikills
+      .filter(match => match.participants.length > 0); // Only include matches with multikills
 
     return NextResponse.json({
       success: true,

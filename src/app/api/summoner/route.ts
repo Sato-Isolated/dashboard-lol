@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
-import { fetchSummonerFull } from "@/features/summoner/services/summoner";
-import { z } from "zod";
-import { withMiddleware } from "@/shared/lib/validation/middleware";
-import { NotFoundError } from "@/shared/lib/errorHandler";
+import { NextResponse } from 'next/server';
+import { fetchSummonerFull } from '@/features/summoner/services/summoner';
+import { z } from 'zod';
+import { withMiddleware } from '@/shared/lib/validation/middleware';
+import { NotFoundError } from '@/shared/lib/errorHandler';
 
 // Validation schema for summoner query
 const summonerSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  region: z.string().min(1, "Region is required"),
-  tagline: z.string().min(1, "Tagline is required"),
+  name: z.string().min(1, 'Name is required'),
+  region: z.string().min(1, 'Region is required'),
+  tagline: z.string().min(1, 'Tagline is required'),
 });
 
 // GET /api/summoner?region=...&name=...&tagline=...
@@ -23,7 +23,7 @@ export const GET = withMiddleware(summonerSchema, {
   const data = await fetchSummonerFull(region, name, tagline);
 
   if (!data) {
-    throw new NotFoundError("Summoner", `${name}#${tagline} in ${region}`);
+    throw new NotFoundError('Summoner', `${name}#${tagline} in ${region}`);
   }
 
   return NextResponse.json({ success: true, data });

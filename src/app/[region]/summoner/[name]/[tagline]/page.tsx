@@ -1,29 +1,29 @@
-import { fetchSummonerFull } from "@/features/summoner/services/summoner";
-import PageWithTabs from "@/shared/components/ui/PageWithTabs";
-import HeaderSection from "@/features/summoner/components/SummonerHeader";
-import LeftColumn from "@/features/summoner/components/SummonerProfile";
-import CenterColumn from "@/features/matches/components/MatchHistory";
-import dynamic from "next/dynamic";
-import { notFound } from "next/navigation";
+import { fetchSummonerFull } from '@/features/summoner/services/summoner';
+import PageWithTabs from '@/shared/components/ui/PageWithTabs';
+import HeaderSection from '@/features/summoner/components/SummonerHeader';
+import LeftColumn from '@/features/summoner/components/SummonerProfile';
+import CenterColumn from '@/features/matches/components/MatchHistory';
+import dynamic from 'next/dynamic';
+import { notFound } from 'next/navigation';
 
 // Lazy load heavy components with loading fallbacks
 const ChampionsTab = dynamic(
-  () => import("@/features/champions/components/ChampionsTab"),
+  () => import('@/features/champions/components/ChampionsTab'),
   {
     loading: () => (
-      <div className="flex items-center justify-center h-64">
-        <div className="loading loading-spinner loading-lg" />
+      <div className='flex items-center justify-center h-64'>
+        <div className='loading loading-spinner loading-lg' />
       </div>
     ),
   }
 );
 
 const MasteryTab = dynamic(
-  () => import("@/features/champions/components/MasteryTab"),
+  () => import('@/features/champions/components/MasteryTab'),
   {
     loading: () => (
-      <div className="flex items-center justify-center h-64">
-        <div className="loading loading-spinner loading-lg" />
+      <div className='flex items-center justify-center h-64'>
+        <div className='loading loading-spinner loading-lg' />
       </div>
     ),
   }
@@ -42,7 +42,7 @@ export default async function Page(props: { params: Promise<PageParams> }) {
   // Enhanced validation to catch static file requests and invalid formats
 
   // Check if this looks like a static file request (contains file extensions)
-  if (name.includes(".") || tagline.includes(".")) {
+  if (name.includes('.') || tagline.includes('.')) {
     notFound();
   }
 
@@ -55,12 +55,12 @@ export default async function Page(props: { params: Promise<PageParams> }) {
 
   // Check for source map or development file patterns
   if (
-    name.toLowerCase().includes("installhook") ||
-    name.toLowerCase().includes("webpack") ||
-    name.toLowerCase().includes("chunk") ||
-    tagline.toLowerCase().includes("installhook") ||
-    tagline.toLowerCase().includes("webpack") ||
-    tagline.toLowerCase().includes("chunk")
+    name.toLowerCase().includes('installhook') ||
+    name.toLowerCase().includes('webpack') ||
+    name.toLowerCase().includes('chunk') ||
+    tagline.toLowerCase().includes('installhook') ||
+    tagline.toLowerCase().includes('webpack') ||
+    tagline.toLowerCase().includes('chunk')
   ) {
     notFound();
   }
@@ -82,7 +82,7 @@ export default async function Page(props: { params: Promise<PageParams> }) {
   const data = await fetchSummonerFull(region, decodedName, decodedTagline);
 
   if (!data)
-    return <div className="text-center text-error mt-8">Account not found</div>;
+    return <div className='text-center text-error mt-8'>Account not found</div>;
 
   return (
     <PageWithTabs

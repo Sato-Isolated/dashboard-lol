@@ -1,24 +1,24 @@
-import { MongoService } from "@/shared/services/database/MongoService";
-import type { Document } from "mongodb";
-import { LeaderboardClient } from "@/features/leaderboard";
+import { MongoService } from '@/shared/services/database/MongoService';
+import type { Document } from 'mongodb';
+import { LeaderboardClient } from '@/features/leaderboard';
 
 const PLATFORMS = [
-  { label: "EUW", value: "euw1", flag: "🇪🇺", fullName: "Europe West" },
+  { label: 'EUW', value: 'euw1', flag: '🇪🇺', fullName: 'Europe West' },
   {
-    label: "EUNE",
-    value: "eun1",
-    flag: "🇪🇺",
-    fullName: "Europe Nordic & East",
+    label: 'EUNE',
+    value: 'eun1',
+    flag: '🇪🇺',
+    fullName: 'Europe Nordic & East',
   },
-  { label: "NA", value: "na1", flag: "🇺🇸", fullName: "North America" },
-  { label: "KR", value: "kr", flag: "🇰🇷", fullName: "Korea" },
-  { label: "BR", value: "br1", flag: "🇧🇷", fullName: "Brazil" },
-  { label: "LAN", value: "la1", flag: "🌎", fullName: "Latin America North" },
-  { label: "LAS", value: "la2", flag: "🌎", fullName: "Latin America South" },
-  { label: "OCE", value: "oc1", flag: "🇦🇺", fullName: "Oceania" },
-  { label: "RU", value: "ru", flag: "🇷🇺", fullName: "Russia" },
-  { label: "TR", value: "tr1", flag: "🇹🇷", fullName: "Turkey" },
-  { label: "JP", value: "jp1", flag: "🇯🇵", fullName: "Japan" },
+  { label: 'NA', value: 'na1', flag: '🇺🇸', fullName: 'North America' },
+  { label: 'KR', value: 'kr', flag: '🇰🇷', fullName: 'Korea' },
+  { label: 'BR', value: 'br1', flag: '🇧🇷', fullName: 'Brazil' },
+  { label: 'LAN', value: 'la1', flag: '🌎', fullName: 'Latin America North' },
+  { label: 'LAS', value: 'la2', flag: '🌎', fullName: 'Latin America South' },
+  { label: 'OCE', value: 'oc1', flag: '🇦🇺', fullName: 'Oceania' },
+  { label: 'RU', value: 'ru', flag: '🇷🇺', fullName: 'Russia' },
+  { label: 'TR', value: 'tr1', flag: '🇹🇷', fullName: 'Turkey' },
+  { label: 'JP', value: 'jp1', flag: '🇯🇵', fullName: 'Japan' },
 ];
 
 export type LeaderboardEntry = {
@@ -30,7 +30,7 @@ export type LeaderboardEntry = {
 
 async function getLeaderboard(platform: string): Promise<LeaderboardEntry[]> {
   const mongo = MongoService.getInstance();
-  const collection = await mongo.getCollection("summoners");
+  const collection = await mongo.getCollection('summoners');
   const leaderboard = (await collection
     .find({
       region: platform,
@@ -44,10 +44,10 @@ async function getLeaderboard(platform: string): Promise<LeaderboardEntry[]> {
     .toArray()) as Document[];
   // Cast/Map pour garantir le typage
   return leaderboard.map((entry: Document) => ({
-    name: entry.name ?? "",
+    name: entry.name ?? '',
     aramScore: entry.aramScore ?? 0,
     profileIconId: entry.profileIconId ?? 29, // fallback icon
-    tagline: entry.tagline ?? "",
+    tagline: entry.tagline ?? '',
   }));
 }
 
@@ -55,7 +55,7 @@ export default async function AramScoreRankPage(props: {
   searchParams?: Promise<{ platform?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const platform = searchParams?.platform || "euw1";
+  const platform = searchParams?.platform || 'euw1';
   const leaderboard = await getLeaderboard(platform);
 
   return (

@@ -1,20 +1,23 @@
-import { NextResponse } from "next/server";
-import { fetchAndStoreMasteries } from "@/scripts/fetchAndStoreMasteries";
-import { MongoService } from "@/shared/services/database/MongoService";
-import { z } from "zod";
-import { withValidation, withMiddleware } from "@/shared/lib/validation/middleware";
+import { NextResponse } from 'next/server';
+import { fetchAndStoreMasteries } from '@/scripts/fetchAndStoreMasteries';
+import { MongoService } from '@/shared/services/database/MongoService';
+import { z } from 'zod';
+import {
+  withValidation,
+  withMiddleware,
+} from '@/shared/lib/validation/middleware';
 
 // Validation schemas
 const masteriesBodySchema = z.object({
-  region: z.string().min(1, "Region is required"),
-  name: z.string().min(1, "Name is required"),
-  tagline: z.string().min(1, "Tagline is required"),
+  region: z.string().min(1, 'Region is required'),
+  name: z.string().min(1, 'Name is required'),
+  tagline: z.string().min(1, 'Tagline is required'),
 });
 
 const masteriesQuerySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  region: z.string().min(1, "Region is required"),
-  tagline: z.string().min(1, "Tagline is required"),
+  name: z.string().min(1, 'Name is required'),
+  region: z.string().min(1, 'Region is required'),
+  tagline: z.string().min(1, 'Tagline is required'),
 });
 
 // POST /api/summoner/masteries: refresh masteries from Riot and store in DB
@@ -31,7 +34,7 @@ export const POST = withMiddleware(masteriesBodySchema, {
 
   return NextResponse.json({
     success: true,
-    message: "Masteries updated",
+    message: 'Masteries updated',
   });
 });
 
@@ -47,7 +50,7 @@ export const GET = withValidation(
         string,
         { championLevel: number; championPoints: number }
       >;
-    }>("summoners");
+    }>('summoners');
 
     const summoner = await collection.findOne({ region, name, tagline });
 

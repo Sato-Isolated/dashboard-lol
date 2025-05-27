@@ -2,9 +2,9 @@
 import {
   createAccountService,
   createSummonerService,
-} from "@/shared/services/api/riot/riotServiceFactory";
-import { getSummoner } from "@/features/summoner/services/summonerRepository";
-import type { LeagueEntry } from "@/shared/types/api/summoners.types";
+} from '@/shared/services/api/riot/riotServiceFactory';
+import { getSummoner } from '@/features/summoner/services/summonerRepository';
+import type { LeagueEntry } from '@/shared/types/api/summoners.types';
 
 export async function fetchSummonerFull(
   platformRegion: string,
@@ -45,13 +45,13 @@ export async function fetchSummonerFull(
   // Ajout : update le profileIconId en base si différent ou manquant
   if (
     dbSummoner &&
-    (typeof dbSummoner.profileIconId === "undefined" ||
+    (typeof dbSummoner.profileIconId === 'undefined' ||
       dbSummoner.profileIconId !== summonerDto.profileIconId)
   ) {
     const mongo = (
-      await import("@/shared/services/database/MongoService")
+      await import('@/shared/services/database/MongoService')
     ).MongoService.getInstance();
-    const collection = await mongo.getCollection("summoners");
+    const collection = await mongo.getCollection('summoners');
     await collection.updateOne(
       { region: platformRegion, name: account.gameName, tagline },
       { $set: { profileIconId: summonerDto.profileIconId } }
@@ -59,10 +59,10 @@ export async function fetchSummonerFull(
   }
 
   // Securely retrieve the game version
-  let version = "latest";
+  let version = 'latest';
   try {
     const res = await fetch(
-      "https://ddragon.leagueoflegends.com/api/versions.json"
+      'https://ddragon.leagueoflegends.com/api/versions.json'
     );
     if (res.ok) {
       const versions = await res.json();
@@ -71,7 +71,7 @@ export async function fetchSummonerFull(
       }
     }
   } catch {
-    version = "latest";
+    version = 'latest';
   }
 
   const summoner = {

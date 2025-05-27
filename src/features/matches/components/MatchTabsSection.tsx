@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface Tab {
   label: string;
@@ -11,14 +11,18 @@ interface TabsSectionProps {
   onTabChange: (key: string) => void;
 }
 
-const TabsSection: React.FC<TabsSectionProps> = ({ tabs, activeTab, onTabChange }) => (
-  <div className="flex gap-2 w-full border-b border-base-300 pb-2">
-    {tabs.map((tab) => (
+const TabsSection: React.FC<TabsSectionProps> = ({
+  tabs,
+  activeTab,
+  onTabChange,
+}) => (
+  <div className='flex gap-2 w-full border-b border-base-300 pb-2'>
+    {tabs.map(tab => (
       <button
         key={tab.key}
-        className={`tabs${activeTab === tab.key ? " tabs-active" : ""}`}
+        className={`tabs${activeTab === tab.key ? ' tabs-active' : ''}`}
         onClick={() => onTabChange(tab.key)}
-        type="button"
+        type='button'
       >
         {tab.label}
       </button>

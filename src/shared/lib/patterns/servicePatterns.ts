@@ -5,14 +5,14 @@
  * It ensures consistency in service implementation and makes the codebase more maintainable.
  */
 
-import { StandardErrorHandler } from "./errorHandling";
+import { StandardErrorHandler } from './errorHandling';
 import {
   BaseService,
   BaseRepository,
   PaginationParams,
   PaginatedResponse,
-} from "../../types/base.types";
-import { logger } from "@/shared/lib/logger/logger";
+} from '../../types/base.types';
+import { logger } from '@/shared/lib/logger/logger';
 
 /**
  * Base repository class that provides common CRUD operations
@@ -29,7 +29,7 @@ export abstract class BaseRepositoryImpl<T, ID = string>
 
   abstract findById(id: ID): Promise<T | null>;
   abstract create(
-    entity: Omit<T, "id" | "createdAt" | "updatedAt">
+    entity: Omit<T, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<T>;
   abstract update(id: ID, updates: Partial<T>): Promise<T | null>;
   abstract delete(id: ID): Promise<boolean>;
@@ -77,7 +77,7 @@ export abstract class BaseServiceImpl<T, ID = string>
   }
 
   abstract get(id: ID): Promise<T | null>;
-  abstract create(data: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<T>;
+  abstract create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;
   abstract update(id: ID, data: Partial<T>): Promise<T | null>;
   abstract delete(id: ID): Promise<boolean>;
 
@@ -228,7 +228,7 @@ export class CommonValidation {
 
   static validateRegion(region: string): boolean {
     return (
-      typeof region === "string" &&
+      typeof region === 'string' &&
       region.length >= 2 &&
       region.length <= 10 &&
       this.REGION_PATTERN.test(region)
@@ -237,7 +237,7 @@ export class CommonValidation {
 
   static validateSummonerName(name: string): boolean {
     return (
-      typeof name === "string" &&
+      typeof name === 'string' &&
       name.length >= 3 &&
       name.length <= 16 &&
       this.SUMMONER_NAME_PATTERN.test(name)
@@ -245,11 +245,11 @@ export class CommonValidation {
   }
 
   static validatePuuid(puuid: string): boolean {
-    return typeof puuid === "string" && puuid.length === this.PUUID_LENGTH;
+    return typeof puuid === 'string' && puuid.length === this.PUUID_LENGTH;
   }
 
   static validateMatchId(matchId: string): boolean {
-    return typeof matchId === "string" && matchId.length > 0;
+    return typeof matchId === 'string' && matchId.length > 0;
   }
 }
 
@@ -267,9 +267,9 @@ export class DataTransformationHelper {
     try {
       return transformer(apiData);
     } catch (error) {
-      logger.error("Data transformation failed", error as Error, {
+      logger.error('Data transformation failed', error as Error, {
         apiData:
-          typeof apiData === "object"
+          typeof apiData === 'object'
             ? JSON.stringify(apiData)
             : String(apiData),
       });

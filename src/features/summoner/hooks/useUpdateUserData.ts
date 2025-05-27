@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 import {
   handleUserUpdate,
   handleUserChampionMastery,
   handleUserRecentlyPlayedUpdate,
-} from "@/shared/lib/utils/backgroundApiFetcher";
-import { useEffectiveUser } from "@/shared/hooks/useEffectiveUser";
+} from '@/shared/lib/utils/backgroundApiFetcher';
+import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
 
 export function useUpdateUserData() {
   const { effectiveRegion, effectiveName, effectiveTagline } =
@@ -27,9 +27,9 @@ export function useUpdateUserData() {
         effectiveTagline
       );
       // Appel à syncAramScore via l'API
-      const res = await fetch("/api/summoner/aram-score", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/summoner/aram-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           region: effectiveRegion,
           name: effectiveName,
@@ -48,13 +48,13 @@ export function useUpdateUserData() {
     } catch (e: unknown) {
       // Check if it's an API permission error
       const errorMessage =
-        e instanceof Error ? e.message : "Error while updating.";
+        e instanceof Error ? e.message : 'Error while updating.';
       if (
-        errorMessage.includes("Forbidden") ||
-        errorMessage.includes("API key lacks required permissions")
+        errorMessage.includes('Forbidden') ||
+        errorMessage.includes('API key lacks required permissions')
       ) {
         setError(
-          "API permissions insuffisantes. Veuillez vérifier votre clé API Riot Games."
+          'API permissions insuffisantes. Veuillez vérifier votre clé API Riot Games.'
         );
       } else {
         setError(errorMessage);

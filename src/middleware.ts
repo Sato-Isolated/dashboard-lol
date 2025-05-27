@@ -1,15 +1,15 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip middleware for static files and API routes
   if (
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/") ||
-    pathname.startsWith("/static/") ||
-    pathname.includes(".") // Any file with extension
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/static/') ||
+    pathname.includes('.') // Any file with extension
   ) {
     return NextResponse.next();
   }
@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
     }
 
     // Validate that name and tagline don't contain file extensions
-    if (name.includes(".") || tagline.includes(".")) {
+    if (name.includes('.') || tagline.includes('.')) {
       return new NextResponse(null, { status: 404 });
     }
 
@@ -70,6 +70,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - Static file extensions
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)',
   ],
 };

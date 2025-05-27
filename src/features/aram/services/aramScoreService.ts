@@ -1,13 +1,13 @@
-import { MongoService } from "@/shared/services/database/MongoService";
-import { getSummoner } from "@/features/summoner/services/summonerRepository";
-import type { Participant } from "@/shared/types/api/match.types";
-import type { SummonerCollection } from "@/features/summoner/types/summoner.types";
-import type { MatchCollection } from "@/features/matches/types/match.types";
-import { StandardErrorHandler, ValidationHelper } from "@/shared/lib/patterns";
+import { MongoService } from '@/shared/services/database/MongoService';
+import { getSummoner } from '@/features/summoner/services/summonerRepository';
+import type { Participant } from '@/shared/types/api/match.types';
+import type { SummonerCollection } from '@/features/summoner/types/summoner.types';
+import type { MatchCollection } from '@/features/matches/types/match.types';
+import { StandardErrorHandler, ValidationHelper } from '@/shared/lib/patterns';
 import {
   validateRegion,
   validateSummonerName,
-} from "@/shared/lib/validation/schemas";
+} from '@/shared/lib/validation/schemas';
 
 /**
  * Calculates a unique ARAM score for a player in a match.
@@ -97,9 +97,9 @@ export function computeAramScore(
  * Handles calculation and management of ARAM scores for summoners
  */
 class AramScoreServiceImpl {
-  private readonly featureName = "aram";
-  private readonly collectionName = "summoners";
-  private readonly matchesCollectionName = "matches";
+  private readonly featureName = 'aram';
+  private readonly collectionName = 'summoners';
+  private readonly matchesCollectionName = 'matches';
 
   private get errorHandler() {
     return StandardErrorHandler.createFeatureHandler(this.featureName);
@@ -126,11 +126,11 @@ class AramScoreServiceImpl {
     return this.executeOperation(async () => {
       // Validate input
       if (!summoner) {
-        throw new Error("Summoner data is required");
+        throw new Error('Summoner data is required');
       }
 
       return !summoner.aramScoreFirstCalculated;
-    }, "shouldCalculateAramScore");
+    }, 'shouldCalculateAramScore');
   }
 
   /**
@@ -145,27 +145,27 @@ class AramScoreServiceImpl {
       // Validate inputs
       const regionValidation = validateRegion(region);
       if (!regionValidation.isValid) {
-        throw new Error(regionValidation.error || "Invalid region");
+        throw new Error(regionValidation.error || 'Invalid region');
       }
 
       const nameValidation = validateSummonerName(name);
       if (!nameValidation.isValid) {
-        throw new Error(nameValidation.error || "Invalid summoner name");
+        throw new Error(nameValidation.error || 'Invalid summoner name');
       }
 
       const taglineValidation = ValidationHelper.validateString(
         tagline,
-        "tagline",
+        'tagline',
         1
       );
       if (!taglineValidation.isValid) {
-        throw new Error(taglineValidation.error || "Invalid tagline");
+        throw new Error(taglineValidation.error || 'Invalid tagline');
       }
 
       // Get summoner data
       const summoner = await getSummoner(region, name, tagline);
       if (!summoner || !summoner.puuid) {
-        throw new Error("Summoner or puuid not found");
+        throw new Error('Summoner or puuid not found');
       }
 
       const puuid = summoner.puuid;
@@ -177,8 +177,8 @@ class AramScoreServiceImpl {
       // Find ARAM matches for this summoner
       const matches = await collection
         .find({
-          "info.gameMode": "ARAM",
-          "info.participants.puuid": puuid,
+          'info.gameMode': 'ARAM',
+          'info.participants.puuid': puuid,
         })
         .toArray();
 
@@ -200,7 +200,7 @@ class AramScoreServiceImpl {
       }
 
       return totalScore;
-    }, "calculateAramScore");
+    }, 'calculateAramScore');
   }
 
   /**
@@ -216,25 +216,25 @@ class AramScoreServiceImpl {
       // Validate inputs
       const regionValidation = validateRegion(region);
       if (!regionValidation.isValid) {
-        throw new Error(regionValidation.error || "Invalid region");
+        throw new Error(regionValidation.error || 'Invalid region');
       }
 
       const nameValidation = validateSummonerName(name);
       if (!nameValidation.isValid) {
-        throw new Error(nameValidation.error || "Invalid summoner name");
+        throw new Error(nameValidation.error || 'Invalid summoner name');
       }
 
       const taglineValidation = ValidationHelper.validateString(
         tagline,
-        "tagline",
+        'tagline',
         1
       );
       if (!taglineValidation.isValid) {
-        throw new Error(taglineValidation.error || "Invalid tagline");
+        throw new Error(taglineValidation.error || 'Invalid tagline');
       }
 
-      if (typeof score !== "number" || isNaN(score)) {
-        throw new Error("Invalid score value");
+      if (typeof score !== 'number' || isNaN(score)) {
+        throw new Error('Invalid score value');
       }
 
       const mongo = MongoService.getInstance();
@@ -252,7 +252,7 @@ class AramScoreServiceImpl {
           },
         }
       );
-    }, "updateAramScore");
+    }, 'updateAramScore');
   }
 
   /**
@@ -263,21 +263,21 @@ class AramScoreServiceImpl {
       // Validate inputs
       const regionValidation = validateRegion(region);
       if (!regionValidation.isValid) {
-        throw new Error(regionValidation.error || "Invalid region");
+        throw new Error(regionValidation.error || 'Invalid region');
       }
 
       const nameValidation = validateSummonerName(name);
       if (!nameValidation.isValid) {
-        throw new Error(nameValidation.error || "Invalid summoner name");
+        throw new Error(nameValidation.error || 'Invalid summoner name');
       }
 
       const taglineValidation = ValidationHelper.validateString(
         tagline,
-        "tagline",
+        'tagline',
         1
       );
       if (!taglineValidation.isValid) {
-        throw new Error(taglineValidation.error || "Invalid tagline");
+        throw new Error(taglineValidation.error || 'Invalid tagline');
       }
 
       const summoner = (await getSummoner(
@@ -286,7 +286,7 @@ class AramScoreServiceImpl {
         tagline
       )) as SummonerCollection | null;
       if (!summoner) {
-        throw new Error("Summoner not found");
+        throw new Error('Summoner not found');
       }
 
       const aramScoreFirstCalculated = summoner.aramScoreFirstCalculated;
@@ -304,7 +304,7 @@ class AramScoreServiceImpl {
         wasFirstCalculation: !aramScoreFirstCalculated,
         previousScore: aramScore ?? 0,
       };
-    }, "syncAramScore");
+    }, 'syncAramScore');
   }
 }
 

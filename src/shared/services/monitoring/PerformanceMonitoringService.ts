@@ -86,7 +86,7 @@ export class PerformanceMonitoringService {
     duration: number,
     statusCode: number
   ): void {
-    this.recordMetric("api_response_time", duration, {
+    this.recordMetric('api_response_time', duration, {
       endpoint,
       method,
       status: statusCode.toString(),
@@ -101,7 +101,7 @@ export class PerformanceMonitoringService {
     operation: string,
     duration: number
   ): void {
-    this.recordMetric("db_query_time", duration, {
+    this.recordMetric('db_query_time', duration, {
       collection,
       operation,
     });
@@ -111,10 +111,10 @@ export class PerformanceMonitoringService {
    * Track cache hit/miss rates
    */
   trackCacheOperation(
-    operation: "hit" | "miss" | "set" | "delete",
+    operation: 'hit' | 'miss' | 'set' | 'delete',
     cacheType: string
   ): void {
-    this.recordMetric("cache_operation", 1, {
+    this.recordMetric('cache_operation', 1, {
       operation,
       cacheType,
     });
@@ -124,7 +124,7 @@ export class PerformanceMonitoringService {
    * Track component render times
    */
   trackComponentRender(componentName: string, duration: number): void {
-    this.recordMetric("component_render_time", duration, {
+    this.recordMetric('component_render_time', duration, {
       component: componentName,
     });
   }
@@ -133,7 +133,7 @@ export class PerformanceMonitoringService {
    * Track memory usage
    */
   trackMemoryUsage(): void {
-    if (typeof window !== "undefined" && "memory" in performance) {
+    if (typeof window !== 'undefined' && 'memory' in performance) {
       const memory = (
         performance as Performance & {
           memory?: {
@@ -144,9 +144,9 @@ export class PerformanceMonitoringService {
         }
       ).memory;
       if (memory) {
-        this.recordMetric("memory_used", memory.usedJSHeapSize);
-        this.recordMetric("memory_total", memory.totalJSHeapSize);
-        this.recordMetric("memory_limit", memory.jsHeapSizeLimit);
+        this.recordMetric('memory_used', memory.usedJSHeapSize);
+        this.recordMetric('memory_total', memory.totalJSHeapSize);
+        this.recordMetric('memory_limit', memory.jsHeapSizeLimit);
       }
     }
   }
@@ -155,7 +155,7 @@ export class PerformanceMonitoringService {
    * Track user interaction performance
    */
   trackUserInteraction(interactionType: string, duration: number): void {
-    this.recordMetric("user_interaction_time", duration, {
+    this.recordMetric('user_interaction_time', duration, {
       type: interactionType,
     });
   }
@@ -176,9 +176,9 @@ export class PerformanceMonitoringService {
     const cutoff = Date.now() - timeWindow;
     const relevantMetrics = Array.from(this.metrics.values())
       .filter(
-        (metric) => metric.name === metricName && metric.timestamp >= cutoff
+        metric => metric.name === metricName && metric.timestamp >= cutoff
       )
-      .map((metric) => metric.value)
+      .map(metric => metric.value)
       .sort((a, b) => a - b);
 
     if (relevantMetrics.length === 0) {
@@ -204,16 +204,19 @@ export class PerformanceMonitoringService {
     const oneHourAgo = now - 3600000;
 
     const recentMetrics = Array.from(this.metrics.values()).filter(
-      (metric) => metric.timestamp >= oneHourAgo
+      metric => metric.timestamp >= oneHourAgo
     );
 
-    const metricsByName = recentMetrics.reduce((acc, metric) => {
-      if (!acc[metric.name]) {
-        acc[metric.name] = [];
-      }
-      acc[metric.name].push(metric.value);
-      return acc;
-    }, {} as Record<string, number[]>);
+    const metricsByName = recentMetrics.reduce(
+      (acc, metric) => {
+        if (!acc[metric.name]) {
+          acc[metric.name] = [];
+        }
+        acc[metric.name].push(metric.value);
+        return acc;
+      },
+      {} as Record<string, number[]>
+    );
 
     const dashboard: Record<string, MetricSummary> = {};
 
@@ -242,13 +245,11 @@ export class PerformanceMonitoringService {
     totalOperations: number;
   } {
     const cacheMetrics = Array.from(this.metrics.values())
-      .filter((metric) => metric.name === "cache_operation")
-      .filter((metric) => metric.timestamp >= Date.now() - 3600000);
+      .filter(metric => metric.name === 'cache_operation')
+      .filter(metric => metric.timestamp >= Date.now() - 3600000);
 
-    const hits = cacheMetrics.filter((m) => m.tags.operation === "hit").length;
-    const misses = cacheMetrics.filter(
-      (m) => m.tags.operation === "miss"
-    ).length;
+    const hits = cacheMetrics.filter(m => m.tags.operation === 'hit').length;
+    const misses = cacheMetrics.filter(m => m.tags.operation === 'miss').length;
     const total = hits + misses;
 
     return {
@@ -271,7 +272,7 @@ export class PerformanceMonitoringService {
       }
     });
 
-    keysToDelete.forEach((key) => this.metrics.delete(key));
+    keysToDelete.forEach(key => this.metrics.delete(key));
   }
 
   /**
@@ -280,7 +281,7 @@ export class PerformanceMonitoringService {
   exportMetrics(timeWindow = 3600000): MetricValue[] {
     const cutoff = Date.now() - timeWindow;
     return Array.from(this.metrics.values())
-      .filter((metric) => metric.timestamp >= cutoff)
+      .filter(metric => metric.timestamp >= cutoff)
       .sort((a, b) => a.timestamp - b.timestamp);
   }
 
@@ -315,37 +316,37 @@ export class PerformanceMonitoringService {
    * Monitor Core Web Vitals if in browser
    */
   monitorCoreWebVitals(): void {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     // Monitor Largest Contentful Paint (LCP)
-    if ("web-vitals" in window) {
+    if ('web-vitals' in window) {
       // This would require installing web-vitals package
       // For now, we'll use basic performance observer
     }
 
     // Basic performance observer for navigation timing
-    if ("PerformanceObserver" in window) {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          if (entry.entryType === "navigation") {
+    if ('PerformanceObserver' in window) {
+      const observer = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
+          if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming;
             this.recordMetric(
-              "page_load_time",
+              'page_load_time',
               navEntry.loadEventEnd - navEntry.startTime
             );
             this.recordMetric(
-              "dom_content_loaded",
+              'dom_content_loaded',
               navEntry.domContentLoadedEventEnd - navEntry.startTime
             );
             this.recordMetric(
-              "first_paint",
+              'first_paint',
               navEntry.fetchStart ? navEntry.fetchStart - navEntry.startTime : 0
             );
           }
         });
       });
 
-      observer.observe({ entryTypes: ["navigation"] });
+      observer.observe({ entryTypes: ['navigation'] });
     }
   }
 
@@ -366,7 +367,7 @@ export class PerformanceMonitoringService {
       this.cleanupOldMetrics();
     }, 300000);
 
-    console.log("Performance monitoring started");
+    console.log('Performance monitoring started');
   }
 }
 

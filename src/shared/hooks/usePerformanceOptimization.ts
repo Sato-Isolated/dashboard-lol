@@ -1,10 +1,10 @@
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo } from 'react';
 import {
   apiCache,
   staticDataCache,
   userDataCache,
-} from "@/shared/lib/cache/CacheManager";
-import PerformanceMonitoringService from "@/shared/services/monitoring/PerformanceMonitoringService";
+} from '@/shared/lib/cache/CacheManager';
+import PerformanceMonitoringService from '@/shared/services/monitoring/PerformanceMonitoringService';
 
 // Type for database service
 type DatabaseOptimizationServiceType = {
@@ -15,20 +15,20 @@ type DatabaseOptimizationServiceType = {
 
 // Conditionally import database service only on server side
 let DatabaseOptimizationService: DatabaseOptimizationServiceType = null;
-if (typeof window === "undefined") {
+if (typeof window === 'undefined') {
   try {
     // Use dynamic import for server-side only
-    import("@/shared/services/database/DatabaseOptimizationService")
+    import('@/shared/services/database/DatabaseOptimizationService')
       .then(({ default: DbService }) => {
         DatabaseOptimizationService = DbService;
       })
       .catch(() => {
         console.warn(
-          "DatabaseOptimizationService not available on client side"
+          'DatabaseOptimizationService not available on client side'
         );
       });
   } catch {
-    console.warn("DatabaseOptimizationService not available on client side");
+    console.warn('DatabaseOptimizationService not available on client side');
   }
 }
 
@@ -67,16 +67,16 @@ export function usePerformanceOptimization() {
           performanceMonitor.endTimer(operationName);
 
           // Track different types of operations
-          if (operationName.includes("api")) {
+          if (operationName.includes('api')) {
             performanceMonitor.trackAPICall(
               operationName,
-              "GET",
+              'GET',
               duration,
               200
             );
-          } else if (operationName.includes("db")) {
+          } else if (operationName.includes('db')) {
             performanceMonitor.trackDatabaseQuery(
-              "unknown",
+              'unknown',
               operationName,
               duration
             );
@@ -87,10 +87,10 @@ export function usePerformanceOptimization() {
           const duration = performance.now() - startTime;
           performanceMonitor.endTimer(operationName);
 
-          if (operationName.includes("api")) {
+          if (operationName.includes('api')) {
             performanceMonitor.trackAPICall(
               operationName,
-              "GET",
+              'GET',
               duration,
               500
             );
@@ -109,22 +109,22 @@ export function usePerformanceOptimization() {
       options: {
         cacheKey?: string;
         cacheTTL?: number;
-        cacheType?: "api" | "static" | "user";
+        cacheType?: 'api' | 'static' | 'user';
         trackPerformance?: boolean;
       } = {}
     ): Promise<T> => {
       const {
         cacheKey = url,
         cacheTTL = 5 * 60 * 1000, // 5 minutes default
-        cacheType = "api",
+        cacheType = 'api',
         trackPerformance = true,
       } = options;
       const cache =
-        cacheType === "static"
+        cacheType === 'static'
           ? staticDataCacheInstance
-          : cacheType === "user"
-          ? userDataCacheInstance
-          : apiCacheInstance;
+          : cacheType === 'user'
+            ? userDataCacheInstance
+            : apiCacheInstance;
 
       if (trackPerformance) {
         performanceMonitor.startTimer(`fetch_${cacheKey}`);
@@ -135,7 +135,7 @@ export function usePerformanceOptimization() {
         const cached = cache.get<T>(cacheKey);
         if (cached) {
           if (trackPerformance) {
-            performanceMonitor.trackCacheOperation("hit", cacheType);
+            performanceMonitor.trackCacheOperation('hit', cacheType);
             performanceMonitor.endTimer(`fetch_${cacheKey}`);
           }
           return cached;
@@ -143,7 +143,7 @@ export function usePerformanceOptimization() {
 
         // Cache miss - fetch data
         if (trackPerformance) {
-          performanceMonitor.trackCacheOperation("miss", cacheType);
+          performanceMonitor.trackCacheOperation('miss', cacheType);
         }
 
         const response = await fetch(url);
@@ -156,13 +156,13 @@ export function usePerformanceOptimization() {
         // Cache the result
         cache.set(cacheKey, data, cacheTTL);
         if (trackPerformance) {
-          performanceMonitor.trackCacheOperation("set", cacheType);
+          performanceMonitor.trackCacheOperation('set', cacheType);
         }
 
         return data;
       } catch (error) {
         if (trackPerformance) {
-          performanceMonitor.trackAPICall(url, "GET", performance.now(), 500);
+          performanceMonitor.trackAPICall(url, 'GET', performance.now(), 500);
         }
         throw error;
       } finally {
@@ -207,7 +207,7 @@ export function usePerformanceOptimization() {
   // Database optimization utilities
   const initializeDatabaseOptimization = useCallback(async () => {
     if (!DatabaseOptimizationService) {
-      console.warn("DatabaseOptimizationService not available");
+      console.warn('DatabaseOptimizationService not available');
       return false;
     }
 
@@ -216,7 +216,7 @@ export function usePerformanceOptimization() {
       await dbOptimizer.createOptimizedIndexes();
       return true;
     } catch (error) {
-      console.error("Failed to initialize database optimization:", error);
+      console.error('Failed to initialize database optimization:', error);
       return false;
     }
   }, []);
@@ -260,7 +260,7 @@ export function usePerformanceOptimization() {
     userDataCacheInstance.cleanup();
 
     // Force garbage collection if available
-    if (typeof window !== "undefined" && "gc" in window) {
+    if (typeof window !== 'undefined' && 'gc' in window) {
       (window as Window & { gc?: () => void }).gc?.();
     }
 

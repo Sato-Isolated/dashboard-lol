@@ -12,9 +12,9 @@ import {
   DatabaseError,
   ErrorHandler as BaseErrorHandler,
   RetryHandler,
-} from "@/shared/lib/errorHandler";
-import { logger } from "@/shared/lib/logger/logger";
-import { ValidationResult } from "@/shared/types/base.types";
+} from '@/shared/lib/errorHandler';
+import { logger } from '@/shared/lib/logger/logger';
+import { ValidationResult } from '@/shared/types/base.types';
 
 /**
  * Standardized error handling patterns for different types of operations
@@ -115,16 +115,16 @@ export class StandardErrorHandler {
       });
 
       // Convert technical errors to user-friendly messages
-      let userMessage = "An unexpected error occurred";
+      let userMessage = 'An unexpected error occurred';
 
       if (error instanceof ValidationError) {
         userMessage = error.message;
       } else if (error instanceof NotFoundError) {
-        userMessage = "The requested data was not found";
+        userMessage = 'The requested data was not found';
       } else if (error instanceof ExternalAPIError) {
-        userMessage = "Unable to fetch data from external service";
+        userMessage = 'Unable to fetch data from external service';
       } else if (error instanceof DatabaseError) {
-        userMessage = "Unable to access data storage";
+        userMessage = 'Unable to access data storage';
       }
 
       return { data: null, error: userMessage };
@@ -180,7 +180,7 @@ export class ValidationHelper {
     return { isValid: false, error: message, field };
   }
   static validateRequired(value: unknown, fieldName: string): ValidationResult {
-    if (value === null || value === undefined || value === "") {
+    if (value === null || value === undefined || value === '') {
       return this.error(`${fieldName} is required`, fieldName);
     }
     return this.success();
@@ -195,7 +195,7 @@ export class ValidationHelper {
     const requiredCheck = this.validateRequired(value, fieldName);
     if (!requiredCheck.isValid) return requiredCheck;
 
-    if (typeof value !== "string") {
+    if (typeof value !== 'string') {
       return this.error(`${fieldName} must be a string`, fieldName);
     }
 
@@ -251,4 +251,4 @@ export {
   DatabaseError,
   RetryHandler,
   CircuitBreaker,
-} from "@/shared/lib/errorHandler";
+} from '@/shared/lib/errorHandler';

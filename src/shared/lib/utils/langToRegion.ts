@@ -7,13 +7,13 @@
  */
 export function mapLangToRegion(lang: string): string {
   const l = lang.toLowerCase();
-  if (l.startsWith("fr")) return "euw1";
-  if (l.startsWith("en-us")) return "na1";
-  if (l.startsWith("en-gb")) return "euw1";
-  if (l.startsWith("es")) return "euw1";
-  if (l.startsWith("tr")) return "tr1";
-  if (l.startsWith("ru")) return "ru";
-  if (l.startsWith("ja")) return "jp1";
-  if (l.startsWith("ko")) return "kr";
-  return "euw1";
+  if (l.startsWith('fr')) return 'euw1';
+  if (l.startsWith('en-us')) return 'na1';
+  if (l.startsWith('en-gb')) return 'euw1';
+  if (l.startsWith('es')) return 'euw1';
+  if (l.startsWith('tr')) return 'tr1';
+  if (l.startsWith('ru')) return 'ru';
+  if (l.startsWith('ja')) return 'jp1';
+  if (l.startsWith('ko')) return 'kr';
+  return 'euw1';
 }

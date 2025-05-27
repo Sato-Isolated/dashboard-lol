@@ -1,15 +1,15 @@
-import { config } from "@/shared/lib/config";
-import { logger } from "@/shared/lib/logger/logger";
+import { config } from '@/shared/lib/config';
+import { logger } from '@/shared/lib/logger/logger';
 import {
   RetryHandler,
   CircuitBreaker,
   RateLimitError,
   ExternalAPIError,
-} from "@/shared/lib/errorHandler";
+} from '@/shared/lib/errorHandler';
 import {
   validateRegion,
   validateRegionalRegion,
-} from "@/shared/lib/validation/schemas";
+} from '@/shared/lib/validation/schemas';
 
 interface RateLimitConfig {
   perSecond: number;
@@ -29,8 +29,8 @@ export abstract class RiotApiClient {
   private readonly circuitBreaker: CircuitBreaker;
 
   private readonly rateLimits: RateLimitConfig = {
-    perSecond: config.get("RIOT_API_RATE_LIMIT_PER_SECOND"),
-    perTwoMinutes: config.get("RIOT_API_RATE_LIMIT_PER_MINUTE"),
+    perSecond: config.get('RIOT_API_RATE_LIMIT_PER_SECOND'),
+    perTwoMinutes: config.get('RIOT_API_RATE_LIMIT_PER_MINUTE'),
   };
 
   private rateLimitState: RateLimitState = {
@@ -57,7 +57,7 @@ export abstract class RiotApiClient {
       );
     }
 
-    const key = config.get("RIOT_API_KEY");
+    const key = config.get('RIOT_API_KEY');
     this.apiKey = key;
     this.baseUrl = `https://${region}.api.riotgames.com`;
     this.circuitBreaker = new CircuitBreaker(5, 60000, `RiotAPI_${region}`);
@@ -66,7 +66,7 @@ export abstract class RiotApiClient {
       this.rateLimits = { ...this.rateLimits, ...customRateLimits };
     }
 
-    logger.info("RiotApiClient initialized", {
+    logger.info('RiotApiClient initialized', {
       region,
       baseUrl: this.baseUrl,
       rateLimits: this.rateLimits,
@@ -97,7 +97,7 @@ export abstract class RiotApiClient {
 
   private async waitForRateLimit(): Promise<void> {
     while (this.isRateLimited()) {
-      await new Promise((resolve) =>
+      await new Promise(resolve =>
         setTimeout(resolve, this.RATE_LIMIT_CHECK_INTERVAL_MS)
       );
       this.resetRateLimitCountersIfNeeded();
@@ -124,8 +124,8 @@ export abstract class RiotApiClient {
 
           const startTime = Date.now();
 
-          logger.info("Making API request", {
-            service: "RiotAPI",
+          logger.info('Making API request', {
+            service: 'RiotAPI',
             endpoint,
             url: fullUrl,
           });
@@ -133,7 +133,7 @@ export abstract class RiotApiClient {
           try {
             const response = await fetch(fullUrl, {
               headers: {
-                "X-Riot-Token": this.apiKey,
+                'X-Riot-Token': this.apiKey,
               },
               next: { revalidate: 60 }, // Cache for 60 seconds
             });
@@ -147,9 +147,9 @@ export abstract class RiotApiClient {
             const data = await this.parseResponse<T>(response);
 
             logger.logApiCall(
-              "RiotAPI",
+              'RiotAPI',
               endpoint,
-              "GET",
+              'GET',
               response.status,
               duration
             );
@@ -159,9 +159,9 @@ export abstract class RiotApiClient {
             const duration = Date.now() - startTime;
 
             logger.logApiCall(
-              "RiotAPI",
+              'RiotAPI',
               endpoint,
-              "GET",
+              'GET',
               undefined,
               duration,
               error as Error
@@ -176,15 +176,15 @@ export abstract class RiotApiClient {
           retryCondition: (error: Error) => {
             // Retry on network errors and 5xx status codes, but not on 4xx
             return (
-              !error.message.includes("401") &&
-              !error.message.includes("403") &&
-              !error.message.includes("404") &&
-              !error.message.includes("429")
+              !error.message.includes('401') &&
+              !error.message.includes('403') &&
+              !error.message.includes('404') &&
+              !error.message.includes('429')
             ); // Don't retry rate limits
           },
         },
         {
-          service: "RiotAPI",
+          service: 'RiotAPI',
           endpoint,
           url: fullUrl,
         }
@@ -197,10 +197,10 @@ export abstract class RiotApiClient {
     endpoint: string,
     duration: number
   ): Promise<never> {
-    const errorBody = await response.text().catch(() => "No error details");
+    const errorBody = await response.text().catch(() => 'No error details');
 
-    logger.warn("API request failed", {
-      service: "RiotAPI",
+    logger.warn('API request failed', {
+      service: 'RiotAPI',
       endpoint,
       status: response.status,
       statusText: response.statusText,
@@ -211,30 +211,30 @@ export abstract class RiotApiClient {
     switch (response.status) {
       case 429:
         // Parse Retry-After header if available
-        const retryAfter = response.headers.get("Retry-After");
+        const retryAfter = response.headers.get('Retry-After');
         const retryAfterSeconds = retryAfter ? parseInt(retryAfter) : undefined;
-        throw new RateLimitError("Rate limit exceeded", retryAfterSeconds);
+        throw new RateLimitError('Rate limit exceeded', retryAfterSeconds);
 
       case 401:
         throw new ExternalAPIError(
-          "RiotAPI",
-          "Unauthorized: Invalid API key",
+          'RiotAPI',
+          'Unauthorized: Invalid API key',
           401,
           endpoint
         );
 
       case 403:
         throw new ExternalAPIError(
-          "RiotAPI",
-          "Forbidden: API key lacks required permissions",
+          'RiotAPI',
+          'Forbidden: API key lacks required permissions',
           403,
           endpoint
         );
 
       case 404:
         throw new ExternalAPIError(
-          "RiotAPI",
-          "Resource not found",
+          'RiotAPI',
+          'Resource not found',
           404,
           endpoint
         );
@@ -244,7 +244,7 @@ export abstract class RiotApiClient {
       case 503:
       case 504:
         throw new ExternalAPIError(
-          "RiotAPI",
+          'RiotAPI',
           `Server error: ${response.statusText}`,
           response.status,
           endpoint
@@ -252,7 +252,7 @@ export abstract class RiotApiClient {
 
       default:
         throw new ExternalAPIError(
-          "RiotAPI",
+          'RiotAPI',
           `HTTP ${response.status}: ${response.statusText}. Details: ${errorBody}`,
           response.status,
           endpoint
@@ -264,7 +264,7 @@ export abstract class RiotApiClient {
     const text = await response.text();
 
     if (!text.trim()) {
-      throw new Error("Received empty response body");
+      throw new Error('Received empty response body');
     }
 
     try {
@@ -272,7 +272,7 @@ export abstract class RiotApiClient {
     } catch (error) {
       throw new Error(
         `Failed to parse JSON response: ${
-          error instanceof Error ? error.message : "Unknown parsing error"
+          error instanceof Error ? error.message : 'Unknown parsing error'
         }`
       );
     }

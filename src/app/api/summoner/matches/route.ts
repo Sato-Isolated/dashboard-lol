@@ -1,23 +1,23 @@
-import { NextResponse } from "next/server";
-import { fetchAndStoreMatches } from "@/scripts/fetchAndStoreMatches";
-import { MongoService } from "@/shared/services/database/MongoService";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { fetchAndStoreMatches } from '@/scripts/fetchAndStoreMatches';
+import { MongoService } from '@/shared/services/database/MongoService';
+import { z } from 'zod';
 import {
   withValidation,
   withMiddleware,
-} from "@/shared/lib/validation/middleware";
+} from '@/shared/lib/validation/middleware';
 
 // Validation schemas
 const postMatchesSchema = z.object({
-  region: z.string().min(1, "Region is required"),
-  name: z.string().min(1, "Name is required"),
-  tagline: z.string().min(1, "Tagline is required"),
+  region: z.string().min(1, 'Region is required'),
+  name: z.string().min(1, 'Name is required'),
+  tagline: z.string().min(1, 'Tagline is required'),
 });
 
 const getMatchesSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  region: z.string().min(1, "Region is required"),
-  tagline: z.string().min(1, "Tagline is required"),
+  name: z.string().min(1, 'Name is required'),
+  region: z.string().min(1, 'Region is required'),
+  tagline: z.string().min(1, 'Tagline is required'),
   start: z.string().optional(),
   count: z.string().optional(),
   from: z.string().optional(),
@@ -43,32 +43,32 @@ export const GET = withValidation(
   getMatchesSchema,
   async (req, validatedData, _context) => {
     const { name } = validatedData;
-    const start = parseInt(validatedData.start || "0", 10);
-    const count = parseInt(validatedData.count || "10", 10);
+    const start = parseInt(validatedData.start || '0', 10);
+    const count = parseInt(validatedData.count || '10', 10);
     const from = validatedData.from
       ? parseInt(validatedData.from, 10)
       : undefined;
     const to = validatedData.to ? parseInt(validatedData.to, 10) : undefined;
     const mongo = MongoService.getInstance();
-    const collection = await mongo.getCollection("matches");
+    const collection = await mongo.getCollection('matches');
 
     // PHASE 2.1 OPTIMIZATION: Use optimized query pattern for array field queries
     // Instead of using $elemMatch, query the array field directly for better index usage
     const query: Record<string, unknown> = {
-      "info.participants.riotIdGameName": name, // Direct array field query
+      'info.participants.riotIdGameName': name, // Direct array field query
     };
 
     if (from || to) {
       const ts: Record<string, number> = {};
       if (from) ts.$gte = from;
       if (to) ts.$lt = to;
-      query["info.gameEndTimestamp"] = ts;
+      query['info.gameEndTimestamp'] = ts;
     }
 
     // PHASE 2.1 OPTIMIZATION: Use optimized sort and hint for index usage
     const matches = await collection
       .find(query)
-      .sort({ "info.gameEndTimestamp": -1 }) // Use indexed field for sorting
+      .sort({ 'info.gameEndTimestamp': -1 }) // Use indexed field for sorting
       .skip(start)
       .limit(count)
       .toArray();

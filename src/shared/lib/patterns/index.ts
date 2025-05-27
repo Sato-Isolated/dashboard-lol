@@ -6,15 +6,15 @@
  */
 
 // Error handling patterns
-export * from "./errorHandling";
+export * from './errorHandling';
 
 // Service patterns
-export * from "./servicePatterns";
+export * from './servicePatterns';
 
 // Validation patterns
-export { ValidationHelper } from "./errorHandling";
+export { ValidationHelper } from './errorHandling';
 export {
   CommonValidation,
   PaginationHelper,
   DataTransformationHelper,
-} from "./servicePatterns";
+} from './servicePatterns';
