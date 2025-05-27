@@ -85,7 +85,6 @@ const RecentlyPlayedRow: React.FC<{
     >
       {/* Summoner Name with enhanced styling */}
       <td className='py-4 px-4 font-semibold'>
-        {' '}
         <motion.div
           transition={{ duration: 0.2 }}
           className='flex items-center gap-2'
@@ -122,7 +121,6 @@ const RecentlyPlayedRow: React.FC<{
 
       {/* Games with enhanced badge */}
       <td className='py-4 px-4 text-center'>
-        {' '}
         <motion.div transition={{ duration: 0.2 }}>
           <span
             className={`badge badge-lg font-bold px-3 py-2 shadow-lg
@@ -142,7 +140,6 @@ const RecentlyPlayedRow: React.FC<{
 
       {/* Winrate with dynamic styling */}
       <td className='py-4 px-4 text-center'>
-        {' '}
         <motion.div transition={{ duration: 0.2 }}>
           <span
             className={`badge badge-lg font-bold px-3 py-2 shadow-lg
@@ -162,7 +159,6 @@ const RecentlyPlayedRow: React.FC<{
 
       {/* W/L with enhanced display */}
       <td className='py-4 px-4 text-center'>
-        {' '}
         <motion.div className='flex items-center justify-center gap-1 text-sm font-semibold'>
           <span className='text-success font-bold'>{player.wins}W</span>
           <span className='text-base-content/40'>/</span>
@@ -309,7 +305,7 @@ const LeftColumn: React.FC = React.memo(() => {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Rank & Badges Card - Enhanced Design */}{' '}
+      {/* Rank & Badges Card - Enhanced Design */}
       <motion.div
         variants={cardVariants}
         className='card bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 
@@ -317,7 +313,7 @@ const LeftColumn: React.FC = React.memo(() => {
                    transition-shadow duration-300'
       >
         <div className='card-body p-6'>
-          {/* Header with animated icon */}{' '}
+          {/* Header with animated icon */}
           <motion.div className='flex items-center gap-3 mb-4'>
             <motion.div
               animate={{ rotate: [0, 5, -5, 0] }}
@@ -336,13 +332,13 @@ const LeftColumn: React.FC = React.memo(() => {
               />
             </h3>
           </motion.div>
-          {/* Rank Badge Container */}{' '}
+          {/* Rank Badge Container */}
           <motion.div transition={{ duration: 0.2 }} className='relative'>
             <RankBadge aramScore={aramScore} leagues={leagues} />
           </motion.div>
         </div>
       </motion.div>
-      {/* Recently Played Card - Enhanced Design */}{' '}
+      {/* Recently Played Card - Enhanced Design */}
       <motion.div
         variants={cardVariants}
         className='card bg-gradient-to-br from-accent/10 via-accent/5 to-info/10 
@@ -350,7 +346,7 @@ const LeftColumn: React.FC = React.memo(() => {
                    transition-shadow duration-300'
       >
         <div className='card-body p-6'>
-          {/* Header with animated icon */}{' '}
+          {/* Header with animated icon */}
           <motion.div className='flex items-center justify-between mb-4'>
             <div className='flex items-center gap-3'>
               <motion.div

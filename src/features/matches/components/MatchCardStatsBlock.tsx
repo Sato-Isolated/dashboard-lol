@@ -70,15 +70,14 @@ const MatchCardStatsBlockComponent: React.FC<MatchCardStatsBlockProps> = ({
         transition={{ delay: 0.4, type: 'spring', stiffness: 300 }}
         className='flex items-center gap-3 text-3xl font-extrabold tracking-tight mb-3'
       >
-        {' '}
         <motion.span className='text-success drop-shadow-lg font-mono cursor-default'>
           {kills}
         </motion.span>
-        <span className='text-base-content/50 text-2xl'>/</span>{' '}
+        <span className='text-base-content/50 text-2xl'>/</span>
         <motion.span className='text-error drop-shadow-lg font-mono cursor-default'>
           {deaths}
         </motion.span>
-        <span className='text-base-content/50 text-2xl'>/</span>{' '}
+        <span className='text-base-content/50 text-2xl'>/</span>
         <motion.span className='text-info drop-shadow-lg font-mono cursor-default'>
           {assists}
         </motion.span>

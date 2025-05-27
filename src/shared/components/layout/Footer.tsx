@@ -21,14 +21,13 @@ const ThemeSwitcher: React.FC = () => {
 
   return (
     <div className='relative'>
-      {' '}
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className='btn btn-outline btn-sm flex items-center gap-2'
+        className='btn btn-outline btn-sm flex items-center gap-1 sm:gap-2'
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Palette className='w-4 h-4' />
-        <span className='hidden sm:inline'>Theme</span>
+        <Palette className='w-3 h-3 sm:w-4 sm:h-4' />
+        <span className='hidden sm:inline text-xs sm:text-sm'>Theme</span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
@@ -43,7 +42,7 @@ const ThemeSwitcher: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className='absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-base-100 rounded-lg shadow-xl border border-base-300 p-2 z-50 min-w-[200px]'
+            className='absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-base-100 rounded-lg shadow-xl border border-base-300 p-2 z-50 min-w-[180px] sm:min-w-[200px] max-h-60 overflow-y-auto'
           >
             <div className='grid grid-cols-2 gap-1'>
               {themes.map((t, index) => (
@@ -109,11 +108,15 @@ const StatsCard = ({
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
-    className='flex flex-col items-center p-3 bg-base-100/50 rounded-lg backdrop-blur-sm border border-base-300/50'
+    className='flex flex-col items-center p-2 sm:p-3 bg-base-100/50 rounded-lg backdrop-blur-sm border border-base-300/50 min-h-[80px] sm:min-h-[90px]'
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
   >
-    <Icon className={`w-5 h-5 ${color} mb-1`} />
-    <span className='text-lg font-bold text-base-content'>{value}</span>
-    <span className='text-xs text-base-content/60'>{label}</span>
+    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${color} mb-1`} />
+    <span className='text-base sm:text-lg font-bold text-base-content'>
+      {value}
+    </span>
+    <span className='text-xs text-base-content/60 text-center'>{label}</span>
   </motion.div>
 );
 
@@ -148,13 +151,13 @@ const Footer: React.FC = () => {
 
       <div className='relative bg-base-200/80 backdrop-blur-sm rounded-t-2xl border-t border-primary/20 mt-16'>
         {/* Main footer content */}
-        <div className='container mx-auto px-6 py-8'>
+        <div className='container mx-auto px-4 sm:px-6 py-6 sm:py-8'>
           {/* Stats section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-8'
+            className='grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8'
           >
             {footerStats.map((stat, index) => (
               <motion.div
@@ -169,7 +172,7 @@ const Footer: React.FC = () => {
           </motion.div>
 
           {/* Main footer info */}
-          <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
+          <div className='flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6'>
             {/* Logo and description */}
             <motion.div
               className='flex flex-col items-center md:items-start text-center md:text-left'
@@ -178,14 +181,14 @@ const Footer: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <div className='flex items-center gap-2 mb-2'>
-                <div className='w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center'>
-                  <Code className='w-5 h-5 text-white' />
+                <div className='w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center'>
+                  <Code className='w-3 h-3 sm:w-5 sm:h-5 text-white' />
                 </div>
-                <span className='text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent'>
+                <span className='text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent'>
                   ARAM Dashboard
                 </span>
               </div>
-              <p className='text-sm text-base-content/70 max-w-md'>
+              <p className='text-xs sm:text-sm text-base-content/70 max-w-md px-2 sm:px-0'>
                 Track your League of Legends ARAM performance with detailed
                 analytics and community rankings
               </p>
@@ -193,12 +196,12 @@ const Footer: React.FC = () => {
 
             {/* Social links and theme switcher */}
             <motion.div
-              className='flex flex-col items-center gap-4'
+              className='flex flex-col items-center gap-3 sm:gap-4'
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-1 sm:gap-2'>
                 <SocialLink
                   href='https://github.com'
                   icon={Github}
@@ -210,13 +213,14 @@ const Footer: React.FC = () => {
                   icon={Twitter}
                   label='Twitter'
                   color='text-info'
-                />{' '}
+                />
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   className='btn btn-circle btn-ghost btn-sm text-error transition-all duration-300'
                   onClick={() => {
                     // Trigger a fun animation or easter egg
                   }}
+                  aria-label='Buy us a coffee'
                 >
                   <Coffee className='w-4 h-4' />
                 </motion.button>
@@ -228,44 +232,46 @@ const Footer: React.FC = () => {
 
           {/* Bottom bar */}
           <motion.div
-            className='border-t border-base-300/50 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4'
+            className='border-t border-base-300/50 mt-6 sm:mt-8 pt-4 sm:pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4'
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <div className='flex items-center gap-2 text-sm text-base-content/60'>
+            <div className='flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm text-base-content/60 text-center sm:text-left'>
               <span>
                 &copy; {currentYear} Dashboard - League of Legends ARAM
               </span>
-              <div className='hidden sm:flex items-center gap-1'>
+              <div className='flex items-center gap-1'>
                 <span>Made with</span>
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <Heart className='w-4 h-4 text-error fill-current' />
+                  <Heart className='w-3 h-3 sm:w-4 sm:h-4 text-error fill-current' />
                 </motion.div>
                 <span>by the community</span>
               </div>
             </div>
 
-            <div className='flex items-center gap-4 text-xs text-base-content/50'>
-              {' '}
+            <div className='flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-base-content/50'>
               <motion.a
                 href='#privacy'
-                className='text-base-content/80 transition-colors'
+                className='text-base-content/80 transition-colors hover:text-primary touch-manipulation'
+                whileTap={{ scale: 0.95 }}
               >
                 Privacy Policy
               </motion.a>
               <motion.a
                 href='#terms'
-                className='text-base-content/80 transition-colors'
+                className='text-base-content/80 transition-colors hover:text-primary touch-manipulation'
+                whileTap={{ scale: 0.95 }}
               >
                 Terms of Service
               </motion.a>
               <motion.a
                 href='#api'
-                className='text-base-content/80 transition-colors'
+                className='text-base-content/80 transition-colors hover:text-primary touch-manipulation'
+                whileTap={{ scale: 0.95 }}
               >
                 API Docs
               </motion.a>

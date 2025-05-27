@@ -32,44 +32,55 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
   }
 
   return (
-    <div className='overflow-x-auto'>
-      <table className='table table-zebra w-full'>
-        <thead>
-          <tr className='bg-base-200'>
-            <th className='text-lg font-bold'>#</th>
-            <th className='text-lg font-bold'>Summoner</th>
-            <th className='text-lg font-bold'>ARAM Score</th>
-            <th className='text-lg font-bold'>Tier</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaderboard.map((entry, i) => (
-            <motion.tr
-              key={`${entry.name}-${entry.tagline}-${i}`}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: Math.min(i * 0.05, 1), // Limite le délai maximum
-              }}
-              whileHover={{
-                scale: 1.02,
-                backgroundColor: 'rgba(var(--p), 0.1)',
-                transition: { duration: 0.2 },
-              }}
-              className='transition-all duration-200'
-            >
-              <LeaderboardRow
-                entry={entry}
-                rank={i + 1}
-                platform={platform}
-                isPriority={i < 10}
-                asTableRow={false} // On gère le tr dans ce composant
-              />
-            </motion.tr>
-          ))}
-        </tbody>
-      </table>
+    <div className='w-full'>
+      <div className='overflow-x-auto bg-base-100 rounded-lg shadow-sm border border-base-300'>
+        <table className='table table-zebra w-full min-w-[600px]'>
+          <thead className='sticky top-0 bg-base-200 z-10'>
+            <tr className='bg-base-200'>
+              <th className='text-sm sm:text-lg font-bold w-16'>#</th>
+              <th className='text-sm sm:text-lg font-bold min-w-[200px]'>
+                Summoner
+              </th>
+              <th className='text-sm sm:text-lg font-bold hidden sm:table-cell w-32'>
+                ARAM Score
+              </th>
+              <th className='text-sm sm:text-lg font-bold table-cell sm:hidden w-20'>
+                Score
+              </th>
+              <th className='text-sm sm:text-lg font-bold hidden md:table-cell w-24'>
+                Tier
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaderboard.map((entry, i) => (
+              <motion.tr
+                key={`${entry.name}-${entry.tagline}-${i}`}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: Math.min(i * 0.05, 1), // Limite le délai maximum
+                }}
+                whileHover={{
+                  scale: 1.02,
+                  backgroundColor: 'rgba(var(--p), 0.1)',
+                  transition: { duration: 0.2 },
+                }}
+                className='transition-all duration-200'
+              >
+                <LeaderboardRow
+                  entry={entry}
+                  rank={i + 1}
+                  platform={platform}
+                  isPriority={i < 10}
+                  asTableRow={false} // On gère le tr dans ce composant
+                />
+              </motion.tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -110,7 +110,6 @@ const ChampionRow: React.FC<{
             )}
           </motion.div>
           <div className='flex flex-col'>
-            {' '}
             <span
               className='font-bold text-lg text-base-content 
                            transition-colors duration-300'

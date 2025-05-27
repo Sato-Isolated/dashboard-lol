@@ -57,7 +57,6 @@ const MatchCardChampionBlockComponent: React.FC<
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         className='relative'
       >
-        {' '}
         <div
           className='relative w-20 h-20 rounded-3xl overflow-hidden shadow-2xl
                         bg-gradient-to-br from-primary/20 to-accent/20
@@ -168,7 +167,6 @@ const MatchCardChampionBlockComponent: React.FC<
         >
           {runeData && runeData.rune1 && runeData.rune2 ? (
             <>
-              {' '}
               <motion.div
                 variants={{
                   hidden: { scale: 0, opacity: 0 },

@@ -85,37 +85,48 @@ const LeaderboardRowComponent: React.FC<LeaderboardRowProps> = ({
 
   const content = (
     <>
-      <td className={getRankStyle(rank)}>{rank}</td>
-      <td className='flex items-center gap-4 py-4'>
-        <div className='relative w-16 h-16'>
-          <Image
-            src={getSummonerIcon(entry.profileIconId)}
-            alt='icon'
-            fill
-            className='rounded-full border border-base-300 object-cover'
-            sizes='64px'
-            priority={isPriority}
-          />
-        </div>
-        <div className='flex flex-col'>
-          <Link
-            href={`/${platform}/summoner/${encodeURIComponent(
-              entry.name
-            )}/${encodeURIComponent(entry.tagline)}`}
-            className='text-lg font-semibold text-primary transition-colors'
-          >
-            {entry.name.replace(/ /g, '\u00A0')}
-          </Link>
-          <span className='text-sm text-base-content/60'>#{entry.tagline}</span>
+      <td className={`${getRankStyle(rank)} text-center`}>{rank}</td>
+      <td className='py-2 sm:py-3'>
+        <div className='flex items-center gap-2 sm:gap-4'>
+          <div className='relative w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex-shrink-0'>
+            <Image
+              src={getSummonerIcon(entry.profileIconId)}
+              alt='icon'
+              fill
+              className='rounded-full border border-base-300 object-cover'
+              sizes='(max-width: 640px) 40px, (max-width: 768px) 48px, 64px'
+              priority={isPriority}
+            />
+          </div>
+          <div className='flex flex-col min-w-0 flex-1'>
+            <Link
+              href={`/${platform}/summoner/${encodeURIComponent(
+                entry.name
+              )}/${encodeURIComponent(entry.tagline)}`}
+              className='text-sm sm:text-base md:text-lg font-semibold text-primary transition-colors hover:text-primary-focus truncate max-w-[150px] sm:max-w-none'
+            >
+              {entry.name.replace(/ /g, '\u00A0')}
+            </Link>
+            <span className='text-xs sm:text-sm text-base-content/60 truncate'>
+              #{entry.tagline}
+            </span>
+          </div>
         </div>
       </td>
-      <td className='text-lg font-semibold'>
-        {entry.aramScore.toLocaleString()}
+      <td className='text-sm sm:text-base md:text-lg font-semibold text-center'>
+        <span className='hidden sm:inline'>
+          {entry.aramScore.toLocaleString()}
+        </span>
+        <span className='sm:hidden'>
+          {entry.aramScore > 999
+            ? `${Math.floor(entry.aramScore / 1000)}k`
+            : entry.aramScore}
+        </span>
       </td>
-      <td>
-        <div className={`flex items-center gap-2 ${tier.color}`}>
+      <td className='hidden md:table-cell'>
+        <div className={`flex items-center justify-center gap-2 ${tier.color}`}>
           {tier.icon}
-          <span className='font-medium'>{tier.name}</span>
+          <span className='font-medium text-sm lg:text-base'>{tier.name}</span>
         </div>
       </td>
     </>

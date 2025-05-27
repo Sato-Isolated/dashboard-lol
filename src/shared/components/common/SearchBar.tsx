@@ -238,14 +238,13 @@ const SearchBar: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
         onSubmit={handleSubmit}
-        className='flex flex-col items-center gap-3 w-full max-w-2xl mx-auto px-2'
+        className='flex flex-col items-center gap-2 sm:gap-3 w-full max-w-2xl mx-auto px-2'
         autoComplete='off'
       >
-        {' '}
         <motion.div
           whileFocus={{ scale: 1.01 }}
           className={`relative w-full bg-gradient-to-r from-base-100/95 via-base-100 to-base-100/95 
-                   backdrop-blur-md border-2 rounded-3xl px-6 py-4 shadow-2xl
+                   backdrop-blur-md border-2 rounded-2xl sm:rounded-3xl px-3 sm:px-6 py-3 sm:py-4 shadow-2xl
                    transition-all duration-300 group
                    ${
                      hasError
@@ -280,11 +279,11 @@ const SearchBar: React.FC = () => {
                 delay: 1,
               }}
             />
-          </div>{' '}
+          </div>
           {/* Main input container */}
-          <div className='relative z-10 flex items-center gap-4 w-full'>
+          <div className='relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full'>
             {/* Summoner Name Input */}
-            <div className='flex-1 min-w-[140px]'>
+            <div className='flex-1 min-w-0'>
               <label htmlFor='summonerName' className='sr-only'>
                 Summoner Name
               </label>
@@ -301,7 +300,7 @@ const SearchBar: React.FC = () => {
                 }}
                 placeholder='Summoner Name'
                 aria-invalid={hasError && summonerName.trim() === ''}
-                className={`w-full bg-transparent border-0 outline-none text-lg font-semibold 
+                className={`w-full bg-transparent border-0 outline-none text-base sm:text-lg font-semibold 
                          placeholder:text-base-content/50 transition-colors duration-300
                          ${
                            hasError && summonerName.trim() === ''
@@ -319,10 +318,10 @@ const SearchBar: React.FC = () => {
               initial={{ scaleY: 0 }}
               animate={{ scaleY: 1 }}
               transition={{ delay: 0.3 }}
-              className='w-px h-8 bg-gradient-to-b from-transparent via-base-content/30 to-transparent'
+              className='hidden sm:block w-px h-6 sm:h-8 bg-gradient-to-b from-transparent via-base-content/30 to-transparent'
             />
             {/* Tagline Input */}
-            <div className='flex-shrink-0 min-w-[100px]'>
+            <div className='flex-shrink-0 min-w-0 sm:min-w-[100px]'>
               <label htmlFor='tagline' className='sr-only'>
                 Tagline
               </label>
@@ -336,7 +335,7 @@ const SearchBar: React.FC = () => {
                 onChange={e => setTagline(e.target.value.trimStart())}
                 placeholder='Tagline'
                 aria-invalid={hasError && tagline.trim() === ''}
-                className={`w-full bg-transparent border-0 outline-none text-lg font-semibold 
+                className={`w-full bg-transparent border-0 outline-none text-base sm:text-lg font-semibold 
                          placeholder:text-base-content/50 transition-colors duration-300
                          ${
                            hasError && tagline.trim() === ''
@@ -351,7 +350,7 @@ const SearchBar: React.FC = () => {
               initial={{ scaleY: 0 }}
               animate={{ scaleY: 1 }}
               transition={{ delay: 0.5 }}
-              className='w-px h-8 bg-gradient-to-b from-transparent via-base-content/30 to-transparent'
+              className='hidden sm:block w-px h-6 sm:h-8 bg-gradient-to-b from-transparent via-base-content/30 to-transparent'
             />
             {/* Region Select */}
             <div className='flex-shrink-0'>
@@ -364,15 +363,15 @@ const SearchBar: React.FC = () => {
                 transition={{ delay: 0.6 }}
                 name='region'
                 id='region'
-                className='select select-ghost bg-transparent border-0 outline-none text-lg font-bold 
-                       cursor-pointer text-primary transition-colors duration-300 w-24'
+                className='select select-ghost bg-transparent border-0 outline-none text-sm sm:text-lg font-bold 
+                       cursor-pointer text-primary transition-colors duration-300 w-16 sm:w-24'
                 value={region}
                 onChange={e => setRegion(e.target.value as PlatformRegion)}
               >
                 {platformRegionOptions}
               </motion.select>
             </div>
-            {/* Search Button */}{' '}
+            {/* Search Button */}
             <motion.button
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
@@ -384,7 +383,7 @@ const SearchBar: React.FC = () => {
                 damping: 15,
               }}
               type='submit'
-              className='btn btn-circle btn-primary btn-lg shadow-lg 
+              className='btn btn-circle btn-primary btn-md sm:btn-lg shadow-lg 
                      shadow-primary/40 transition-all duration-300 group/btn flex-shrink-0'
             >
               <motion.div
@@ -396,13 +395,13 @@ const SearchBar: React.FC = () => {
                 }}
               >
                 <Search
-                  size={24}
+                  size={20}
                   strokeWidth={2.5}
-                  className='scale-110 transition-transform duration-200'
+                  className='sm:w-6 sm:h-6 scale-110 transition-transform duration-200'
                 />
               </motion.div>
             </motion.button>
-          </div>{' '}
+          </div>
           {/* Suggestions Dropdown */}
           <AnimatePresence mode='wait'>
             {showSuggestions && suggestions.length > 0 && (

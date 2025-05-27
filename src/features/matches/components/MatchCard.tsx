@@ -255,7 +255,6 @@ const MatchCardComponent: React.FC<{ match: UIMatch }> = ({ match }) => {
         className='relative flex flex-col lg:flex-row items-stretch gap-0 w-full px-4 lg:px-6 pt-6 pb-4 z-10 cursor-pointer transition-all duration-300 rounded-t-3xl'
         onClick={handleToggleOpen}
       >
-        {' '}
         {/* Header - Game Info */}
         <MatchCardHeader
           date={match.date}

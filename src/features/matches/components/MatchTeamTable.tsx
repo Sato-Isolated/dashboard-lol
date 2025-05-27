@@ -56,9 +56,8 @@ const PlayerRowComponent: React.FC<PlayerRowProps> = ({ player }) => {
     >
       <td className='p-3 pl-4 font-semibold text-base-content min-w-[120px] max-w-[220px]'>
         <div className='flex items-center gap-3'>
-          {/* Champion Avatar with hover effect */}{' '}
+          {/* Champion Avatar with hover effect */}
           <motion.div className='relative'>
-            {' '}
             <div className='w-12 h-12 rounded-2xl overflow-hidden shadow-lg border-2 border-primary/30 bg-base-100'>
               <Image
                 src={'/assets/champion/' + player.champion + '.png'}
@@ -94,7 +93,6 @@ const PlayerRowComponent: React.FC<PlayerRowProps> = ({ player }) => {
       </td>
 
       <td className='min-w-[70px] max-w-[120px]'>
-        {' '}
         <motion.span className='inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 font-mono text-sm font-bold rounded-full shadow-sm'>
           {player.kda}
         </motion.span>
@@ -107,14 +105,12 @@ const PlayerRowComponent: React.FC<PlayerRowProps> = ({ player }) => {
       </td>
 
       <td className='min-w-[60px] text-left'>
-        {' '}
         <motion.span className='inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-error/20 to-error/10 text-error border border-error/30 font-mono text-sm font-bold rounded-full shadow-sm'>
           {player.damage}
         </motion.span>
       </td>
 
       <td className='min-w-[60px] text-left'>
-        {' '}
         <motion.span className='inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-success/20 to-success/10 text-success border border-success/30 font-mono text-sm font-bold rounded-full shadow-sm'>
           {player.gold}
         </motion.span>
@@ -206,7 +202,6 @@ const TeamTableComponent: React.FC<{
             transition={{ delay: 0.3 }}
             className='flex items-center gap-3'
           >
-            {' '}
             <motion.span className='inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/30 font-bold text-sm rounded-full shadow-lg'>
               <svg
                 className='w-4 h-4'
@@ -222,7 +217,7 @@ const TeamTableComponent: React.FC<{
                 />
               </svg>
               {teamStats.kills} Kills
-            </motion.span>{' '}
+            </motion.span>
             <motion.span className='inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 font-bold text-sm rounded-full shadow-lg'>
               <svg
                 className='w-4 h-4'

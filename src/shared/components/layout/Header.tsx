@@ -17,19 +17,19 @@ const ReturnHomeButton = () => {
   return (
     <motion.button
       whileTap={{ scale: 0.98 }}
-      className='btn btn-ghost text-2xl font-bold normal-case transition-all duration-300'
+      className='btn btn-ghost text-xl sm:text-2xl font-bold normal-case transition-all duration-300'
       onClick={handleClick}
     >
       <motion.div
-        className='flex items-center gap-2'
+        className='flex items-center gap-1 sm:gap-2'
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className='w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center'>
-          <Zap className='w-5 h-5 text-white' />
+        <div className='w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center'>
+          <Zap className='w-4 h-4 sm:w-5 sm:h-5 text-white' />
         </div>
-        <span className='bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent'>
+        <span className='bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent text-sm sm:text-base lg:text-lg'>
           Dashboard
         </span>
       </motion.div>
@@ -50,12 +50,12 @@ const LeaderboardButton = () => {
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
-      className='btn btn-ghost text-lg font-semibold transition-all duration-300 relative group'
+      className='btn btn-ghost text-base sm:text-lg font-semibold transition-all duration-300 relative group'
       onClick={handleClick}
     >
-      <div className='flex items-center gap-2'>
-        <Trophy className='w-5 h-5 text-secondary transition-transform duration-300' />
-        <span className='text-secondary transition-colors duration-300'>
+      <div className='flex items-center gap-1 sm:gap-2'>
+        <Trophy className='w-4 h-4 sm:w-5 sm:h-5 text-secondary transition-transform duration-300' />
+        <span className='text-secondary transition-colors duration-300 text-sm sm:text-base'>
           Leaderboard
         </span>
       </div>
@@ -136,9 +136,9 @@ const Header: React.FC = () => {
         transition={{ duration: 0.3 }}
       >
         {/* Desktop Navigation */}
-        <div className='hidden md:flex flex-1 gap-4 items-center'>
+        <div className='hidden md:flex flex-1 gap-2 lg:gap-4 items-center'>
           <ReturnHomeButton />
-          <div className='w-px h-8 bg-base-300'></div>
+          <div className='w-px h-6 sm:h-8 bg-base-300'></div>
           <LeaderboardButton />
 
           {/* Stats indicator */}
@@ -146,7 +146,7 @@ const Header: React.FC = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className='ml-4 hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 border border-success/20'
+            className='ml-2 lg:ml-4 hidden lg:flex items-center gap-2 px-2 sm:px-3 py-1 rounded-full bg-success/10 border border-success/20'
           >
             <div className='w-2 h-2 bg-success rounded-full animate-pulse'></div>
             <span className='text-xs font-medium text-success'>
@@ -161,7 +161,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Search and Mobile Menu */}
-        <div className='flex-none flex items-center gap-2'>
+        <div className='flex-none flex items-center gap-1 sm:gap-2'>
           <motion.div
             className='hidden sm:block'
             initial={{ opacity: 0, x: 20 }}
@@ -188,7 +188,7 @@ const Header: React.FC = () => {
             transition={{ duration: 0.3 }}
             className='md:hidden bg-base-100/95 backdrop-blur-md border-b border-primary/10 shadow-lg'
           >
-            <div className='p-4 space-y-4'>
+            <div className='p-3 sm:p-4 space-y-3 sm:space-y-4'>
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -204,7 +204,9 @@ const Header: React.FC = () => {
                 transition={{ delay: 0.2 }}
                 className='space-y-2'
               >
-                <LeaderboardButton />
+                <div className='w-full'>
+                  <LeaderboardButton />
+                </div>
 
                 <div className='flex items-center gap-2 px-3 py-2 rounded-lg bg-success/10 border border-success/20 w-fit'>
                   <div className='w-2 h-2 bg-success rounded-full animate-pulse'></div>

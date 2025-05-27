@@ -1,0 +1,155 @@
+/* Mobile-specific improvements */
+
+/* Touch-friendly minimum sizes */
+.btn {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  .btn {
+    min-height: 48px;
+  }
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+  .navbar {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  /* Improve table readability on mobile */
+  .table {
+    font-size: 0.875rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  /* Better hero section padding on mobile */
+  .hero {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Improve form controls */
+  .form-control {
+    margin-bottom: 1rem;
+  }
+
+  .input,
+  .select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Enhanced table scrolling for mobile */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--p)) transparent;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--p));
+    border-radius: 2px;
+  }
+}
+
+/* Custom animations for mobile */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-bounce-subtle {
+    animation: none;
+  }
+}
+
+/* Better focus states for mobile */
+@media (max-width: 768px) {
+  .btn:focus,
+  .input:focus,
+  .select:focus {
+    outline: 2px solid hsl(var(--p));
+    outline-offset: 2px;
+  }
+}
+
+/* Improve badge visibility on mobile */
+@media (max-width: 640px) {
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .badge-lg {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* Better spacing for mobile cards */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .stats .stat {
+    padding: 1rem 0.5rem;
+  }
+
+  /* Improve modal responsiveness */
+  .modal-box {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+
+  /* Better dropdown positioning on mobile */
+  .dropdown-content {
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+  }
+
+  /* Improve avatar sizes in tables */
+  .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .avatar img {
+    border-radius: 50%;
+  }
+
+  /* Better text truncation on mobile */
+  .truncate-mobile {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  /* Improve loading states on mobile */
+  .loading {
+    min-height: 1.5rem;
+    min-width: 1.5rem;
+  }
+
+  /* Better tooltip positioning */
+  .tooltip {
+    --tooltip-offset: 0.5rem;
+  }
+}

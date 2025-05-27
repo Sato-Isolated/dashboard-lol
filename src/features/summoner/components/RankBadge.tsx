@@ -143,7 +143,6 @@ const RankItemComponent: React.FC<RankItemProps> = ({ rank }) => {
       <div className='card-body p-4'>
         <div className='flex items-center justify-between mb-3'>
           <div className='flex items-center gap-2'>
-            {' '}
             <motion.div className='text-base-content/40'>
               {isHighRank ? (
                 <Crown size={16} className='text-yellow-500' />
@@ -168,7 +167,6 @@ const RankItemComponent: React.FC<RankItemProps> = ({ rank }) => {
         </div>
 
         <div className='flex items-center justify-between mb-3'>
-          {' '}
           <motion.div
             className={`text-lg font-bold ${tierColor} flex items-center gap-2`}
           >
@@ -184,7 +182,6 @@ const RankItemComponent: React.FC<RankItemProps> = ({ rank }) => {
         </div>
 
         <div className='grid grid-cols-3 gap-2'>
-          {' '}
           <motion.div className='text-center p-2 bg-success/10 rounded-lg border border-success/20'>
             <div className='text-sm font-bold text-success flex items-center justify-center gap-1'>
               <Target size={14} />

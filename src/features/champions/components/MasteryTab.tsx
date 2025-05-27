@@ -130,7 +130,7 @@ const MasteryCard: React.FC<{
       whileTap={{ scale: 0.98 }}
       className='group relative overflow-hidden'
     >
-      {/* Background effects */}{' '}
+      {/* Background effects */}
       <div className='absolute inset-0 bg-gradient-to-br from-base-100 via-base-200 to-base-300 rounded-2xl'></div>
       {/* Card content */}
       <div className='relative p-6 border border-base-300/50 rounded-2xl backdrop-blur-sm bg-base-100/80 transition-all duration-300 shadow-lg'>
@@ -523,7 +523,6 @@ const MasteryTab: React.FC = React.memo(() => {
       transition={{ duration: 0.6 }}
       className='space-y-8'
     >
-      {' '}
       {/* Header with stats */}
       <motion.div
         variants={containerVariants}
@@ -719,7 +718,7 @@ const MasteryTab: React.FC = React.memo(() => {
         className='flex items-center justify-between text-sm text-base-content/60'
       >
         <span>
-          Showing {filteredAndSortedMasteries.length} of {masteries.length}{' '}
+          Showing {filteredAndSortedMasteries.length} of {masteries.length}
           champions
         </span>
         {searchTerm && (

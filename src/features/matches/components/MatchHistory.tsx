@@ -251,7 +251,7 @@ const MatchHistory: React.FC = React.memo(() => {
               </motion.div>
             ))}
           </motion.div>
-        </motion.div>{' '}
+        </motion.div>
         {/* Match List Skeleton */}
         <SectionCard title='Match History' loading={false} error={null}>
           <motion.div
@@ -277,7 +277,6 @@ const MatchHistory: React.FC = React.memo(() => {
       initial='hidden'
       animate='visible'
     >
-      {' '}
       {/* Enhanced Statistics Cards */}
       <motion.div
         variants={itemVariants}
@@ -312,7 +311,7 @@ const MatchHistory: React.FC = React.memo(() => {
                   <div>
                     <p className='text-sm text-base-content/70 font-medium'>
                       {card.label}
-                    </p>{' '}
+                    </p>
                     <motion.p
                       className={`text-xl font-bold ${card.valueColor}`}
                       transition={{ duration: 0.2 }}
@@ -399,7 +398,7 @@ const MatchHistory: React.FC = React.memo(() => {
                   className='text-base-content/70 text-center'
                 >
                   {errorMessage}
-                </motion.p>{' '}
+                </motion.p>
                 <motion.button
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

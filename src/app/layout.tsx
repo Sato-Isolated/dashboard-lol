@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description: 'Dashboard for League of Legends Aram',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

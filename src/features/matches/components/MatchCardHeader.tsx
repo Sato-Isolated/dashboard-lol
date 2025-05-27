@@ -34,7 +34,7 @@ const MatchCardHeaderComponent: React.FC<MatchCardHeaderProps> = ({
       {/* Background glow effect */}
 
       <div className='relative z-10 space-y-3'>
-        {/* Result - Now the main focus */}{' '}
+        {/* Result - Now the main focus */}
         <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}

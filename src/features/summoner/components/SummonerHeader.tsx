@@ -481,7 +481,7 @@ const HeaderSection: React.FC = () => {
                 transition={{ delay: 0.1, duration: 0.6 }}
               >
                 <div className='relative group'>
-                  {/* Avatar with glow effect */}{' '}
+                  {/* Avatar with glow effect */}
                   <div className='absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-full blur-lg opacity-60 transition-opacity duration-300'></div>
                   <motion.div
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -515,7 +515,6 @@ const HeaderSection: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    {' '}
                     <span className='bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent transition-all duration-500'>
                       {account.gameName}
                     </span>
