@@ -203,13 +203,13 @@ const Footer: React.FC = () => {
             >
               <div className='flex items-center gap-1 sm:gap-2'>
                 <SocialLink
-                  href='https://github.com'
+                  href='https://github.com/Sato-Isolated/dashboard-lol'
                   icon={Github}
                   label='GitHub'
                   color='text-base-content'
                 />
                 <SocialLink
-                  href='https://twitter.com'
+                  href='https://x.com/yoshinoeater'
                   icon={Twitter}
                   label='Twitter'
                   color='text-info'

@@ -235,20 +235,10 @@ const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues }) => {
                      shadow-lg border border-base-content/10'
         >
           <div className='card-body p-6 text-center'>
-            <motion.div
-              animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className='text-4xl mb-2 opacity-60'
-            >
-              🏆
-            </motion.div>
             <span className='badge badge-outline badge-lg text-base-content/50 gap-2'>
               <Medal size={16} />
               Unranked
             </span>
-            <p className='text-xs text-base-content/40 mt-2'>
-              Start your ranked journey!
-            </p>
           </div>
         </motion.div>
       );

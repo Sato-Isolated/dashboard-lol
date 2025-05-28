@@ -62,11 +62,6 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
                   duration: 0.5,
                   delay: Math.min(i * 0.05, 1), // Limite le délai maximum
                 }}
-                whileHover={{
-                  scale: 1.02,
-                  backgroundColor: 'rgba(var(--p), 0.1)',
-                  transition: { duration: 0.2 },
-                }}
                 className='transition-all duration-200'
               >
                 <LeaderboardRow

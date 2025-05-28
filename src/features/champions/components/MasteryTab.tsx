@@ -135,7 +135,7 @@ const MasteryCard: React.FC<{
       {/* Card content */}
       <div className='relative p-6 border border-base-300/50 rounded-2xl backdrop-blur-sm bg-base-100/80 transition-all duration-300 shadow-lg'>
         {/* Rank indicator */}
-        <div className='absolute -top-2 -right-2 z-10'>
+        <div className='absolute -top-0.5 -right-0.5 z-10'>
           <motion.div
             className={`badge badge-lg ${masteryStyle.badge} text-white font-bold px-3 py-2 shadow-lg ${masteryStyle.glow} border-0`}
             initial={{ scale: 0, rotate: -180 }}
