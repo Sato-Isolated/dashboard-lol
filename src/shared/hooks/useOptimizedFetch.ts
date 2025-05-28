@@ -1,7 +1,7 @@
+'use client';
 /**
  * Optimized API hooks with caching, memoization, and performance monitoring
  */
-
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { apiCache } from '@/shared/lib/cache/CacheManager';
 import { clientLogger } from '@/shared/lib/logger/client-logger';

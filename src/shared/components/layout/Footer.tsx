@@ -268,13 +268,6 @@ const Footer: React.FC = () => {
               >
                 Terms of Service
               </motion.a>
-              <motion.a
-                href='#api'
-                className='text-base-content/80 transition-colors hover:text-primary touch-manipulation'
-                whileTap={{ scale: 0.95 }}
-              >
-                API Docs
-              </motion.a>
             </div>
           </motion.div>
         </div>
