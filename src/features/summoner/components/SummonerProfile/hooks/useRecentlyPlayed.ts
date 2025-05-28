@@ -14,11 +14,11 @@ export const useRecentlyPlayed = ({
 }: UseRecentlyPlayedOptions): UseRecentlyPlayedReturn => {
   // Build URL for recently played data
   const recentlyPlayedUrl = useMemo(() => {
-    if (!effectiveName || !effectiveRegion || !effectiveTagline) return null;
+    if (!effectiveName || !effectiveRegion || !effectiveTagline) {return null;}
     return `/api/summoner/recently-played?name=${encodeURIComponent(
-      effectiveName
+      effectiveName,
     )}&region=${encodeURIComponent(
-      effectiveRegion
+      effectiveRegion,
     )}&tagline=${encodeURIComponent(effectiveTagline)}&limit=${limit}`;
   }, [effectiveName, effectiveRegion, effectiveTagline, limit]);
 
@@ -35,15 +35,15 @@ export const useRecentlyPlayed = ({
   // Process data
   const recentlyPlayed = useMemo(
     () => recentlyPlayedData?.data || [],
-    [recentlyPlayedData]
+    [recentlyPlayedData],
   );
 
   // Calculate average winrate
   const averageWinrate = useMemo(() => {
-    if (recentlyPlayed.length === 0) return 0;
+    if (recentlyPlayed.length === 0) {return 0;}
     return Math.round(
       recentlyPlayed.reduce((acc, p) => acc + p.winrate, 0) /
-        recentlyPlayed.length
+        recentlyPlayed.length,
     );
   }, [recentlyPlayed]);
 

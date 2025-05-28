@@ -5,7 +5,7 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../constants';
 export const useMatchPagination = (
   matches: UIMatch[],
   enablePagination: boolean,
-  maxInitialItems?: number
+  maxInitialItems?: number,
 ) => {
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +31,7 @@ export const useMatchPagination = (
   }, [matches, enablePagination, currentPage, maxInitialItems, showAll]);
 
   const totalPages = useMemo(() => {
-    if (!enablePagination || !matches.length) return 1;
+    if (!enablePagination || !matches.length) {return 1;}
     return Math.ceil(matches.length / DEFAULT_ITEMS_PER_PAGE);
   }, [enablePagination, matches.length]);
 

@@ -38,5 +38,5 @@ export const GET = withValidation(
     });
 
     return NextResponse.json(users);
-  }
+  },
 );

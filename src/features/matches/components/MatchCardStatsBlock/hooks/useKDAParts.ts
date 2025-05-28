@@ -8,6 +8,6 @@ export const useKDAParts = (kdaParts: string[]): KDAPartsHook => {
       deaths: kdaParts[1],
       assists: kdaParts[2],
     }),
-    [kdaParts]
+    [kdaParts],
   );
 };

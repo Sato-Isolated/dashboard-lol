@@ -30,7 +30,7 @@ import {
  */
 export function computeAramScore(
   participant: Participant,
-  teamParticipants: Participant[]
+  teamParticipants: Participant[],
 ): number {
   // Stricter base points
   const BASE_WIN = 15;
@@ -43,7 +43,7 @@ export function computeAramScore(
   const avgHeal =
     teamParticipants.reduce(
       (a, p) => a + (p.challenges?.effectiveHealAndShielding ?? 0),
-      0
+      0,
     ) / teamParticipants.length;
   const avgTank =
     teamParticipants.reduce((a, p) => a + p.totalDamageTaken, 0) /
@@ -57,7 +57,7 @@ export function computeAramScore(
   // Damage dealt (stricter)
   const damageScore = Math.min(
     7,
-    (participant.totalDamageDealtToChampions / (avgDamage || 1)) * 3
+    (participant.totalDamageDealtToChampions / (avgDamage || 1)) * 3,
   );
 
   // Kill participation (stricter)
@@ -71,7 +71,7 @@ export function computeAramScore(
           3,
           ((participant.challenges?.effectiveHealAndShielding ?? 0) /
             (avgHeal || 1)) *
-            2
+            2,
         )
       : 0;
   const tankScore =
@@ -86,8 +86,8 @@ export function computeAramScore(
     : BASE_LOSS + kdaScore + damageScore + kpScore + supportTankScore;
 
   // Clamp: never positive on loss, never more than 30 on win
-  if (participant.win) points = Math.min(points, 30);
-  else points = Math.max(Math.min(points, -1), -50);
+  if (participant.win) {points = Math.min(points, 30);}
+  else {points = Math.max(Math.min(points, -1), -50);}
 
   return Math.round(points);
 }
@@ -109,7 +109,7 @@ class AramScoreServiceImpl {
    */
   private async executeOperation<R>(
     operation: () => Promise<R>,
-    operationName: string
+    operationName: string,
   ): Promise<R> {
     return this.errorHandler.repository(operation, {
       collection: this.collectionName,
@@ -121,7 +121,7 @@ class AramScoreServiceImpl {
    * Check if ARAM score should be calculated for a summoner
    */
   async shouldCalculateAramScore(
-    summoner: SummonerCollection
+    summoner: SummonerCollection,
   ): Promise<boolean> {
     return this.executeOperation(async () => {
       // Validate input
@@ -139,7 +139,7 @@ class AramScoreServiceImpl {
   async calculateAramScore(
     region: string,
     name: string,
-    tagline: string
+    tagline: string,
   ): Promise<number> {
     return this.executeOperation(async () => {
       // Validate inputs
@@ -156,7 +156,7 @@ class AramScoreServiceImpl {
       const taglineValidation = ValidationHelper.validateString(
         tagline,
         'tagline',
-        1
+        1,
       );
       if (!taglineValidation.isValid) {
         throw new Error(taglineValidation.error || 'Invalid tagline');
@@ -171,7 +171,7 @@ class AramScoreServiceImpl {
       const puuid = summoner.puuid;
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.matchesCollectionName
+        this.matchesCollectionName,
       );
 
       // Find ARAM matches for this summoner
@@ -185,14 +185,14 @@ class AramScoreServiceImpl {
       let totalScore = 0;
       for (const match of matches) {
         const participant = match.info.participants.find(
-          (p: Participant) => p.puuid === puuid
+          (p: Participant) => p.puuid === puuid,
         );
-        if (!participant) continue;
+        if (!participant) {continue;}
 
         // Find the participant's team
         const teamId = participant.teamId;
         const teamParticipants = match.info.participants.filter(
-          (p: Participant) => p.teamId === teamId
+          (p: Participant) => p.teamId === teamId,
         );
 
         const score = computeAramScore(participant, teamParticipants);
@@ -210,7 +210,7 @@ class AramScoreServiceImpl {
     region: string,
     name: string,
     tagline: string,
-    score: number
+    score: number,
   ): Promise<void> {
     return this.executeOperation(async () => {
       // Validate inputs
@@ -227,7 +227,7 @@ class AramScoreServiceImpl {
       const taglineValidation = ValidationHelper.validateString(
         tagline,
         'tagline',
-        1
+        1,
       );
       if (!taglineValidation.isValid) {
         throw new Error(taglineValidation.error || 'Invalid tagline');
@@ -239,7 +239,7 @@ class AramScoreServiceImpl {
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
@@ -250,7 +250,7 @@ class AramScoreServiceImpl {
             aramScoreFirstCalculated: true,
             aramScoreLastCheck: Date.now(),
           },
-        }
+        },
       );
     }, 'updateAramScore');
   }
@@ -274,7 +274,7 @@ class AramScoreServiceImpl {
       const taglineValidation = ValidationHelper.validateString(
         tagline,
         'tagline',
-        1
+        1,
       );
       if (!taglineValidation.isValid) {
         throw new Error(taglineValidation.error || 'Invalid tagline');
@@ -283,7 +283,7 @@ class AramScoreServiceImpl {
       const summoner = (await getSummoner(
         region,
         name,
-        tagline
+        tagline,
       )) as SummonerCollection | null;
       if (!summoner) {
         throw new Error('Summoner not found');
@@ -315,7 +315,7 @@ const aramScoreService = new AramScoreServiceImpl();
 export class AramScoreService {
   // Legacy static methods for backward compatibility
   static async shouldCalculateAramScore(
-    summoner: SummonerCollection
+    summoner: SummonerCollection,
   ): Promise<boolean> {
     return aramScoreService.shouldCalculateAramScore(summoner);
   }
@@ -323,7 +323,7 @@ export class AramScoreService {
   static async calculateAramScore(
     region: string,
     name: string,
-    tagline: string
+    tagline: string,
   ): Promise<number> {
     return aramScoreService.calculateAramScore(region, name, tagline);
   }
@@ -332,7 +332,7 @@ export class AramScoreService {
     region: string,
     name: string,
     tagline: string,
-    score: number
+    score: number,
   ): Promise<void> {
     return aramScoreService.updateAramScore(region, name, tagline, score);
   }

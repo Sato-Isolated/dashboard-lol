@@ -45,6 +45,7 @@
     "daisyui": "^5.0.37",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "jest-environment-jsdom": "^29.7.0",
     "majestic": "^1.8.1",

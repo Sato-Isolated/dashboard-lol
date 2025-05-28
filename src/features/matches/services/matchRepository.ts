@@ -17,19 +17,19 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
       return collection.findOne({ _id: id });
     }, 'findById');
   }
 
   async create(
-    entity: Omit<MatchCollection, 'id' | 'createdAt' | 'updatedAt'>
+    entity: Omit<MatchCollection, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<MatchCollection> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const doc = entity as MatchCollection;
@@ -40,18 +40,18 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
   async update(
     id: string,
-    updates: Partial<MatchCollection>
+    updates: Partial<MatchCollection>,
   ): Promise<MatchCollection | null> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const result = await collection.findOneAndUpdate(
         { _id: id },
         { $set: updates },
-        { returnDocument: 'after' }
+        { returnDocument: 'after' },
       );
 
       return result || null;
@@ -62,7 +62,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const result = await collection.deleteOne({ _id: id });
@@ -81,11 +81,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           match.metadata.matchId,
           'matchId',
           10,
-          50
+          50,
         );
         if (!matchIdValidation.isValid) {
           throw new ValidationError(
-            matchIdValidation.error || 'Invalid match ID'
+            matchIdValidation.error || 'Invalid match ID',
           );
         }
 
@@ -97,7 +97,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         const matchDoc: MatchCollection = {
@@ -129,7 +129,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           }
         }
       },
-      { collection: this.collectionName, operation: 'insertMatch' }
+      { collection: this.collectionName, operation: 'insertMatch' },
     );
   }
 
@@ -144,11 +144,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           matchId,
           'matchId',
           10,
-          50
+          50,
         );
         if (!matchIdValidation.isValid) {
           throw new ValidationError(
-            matchIdValidation.error || 'Invalid match ID'
+            matchIdValidation.error || 'Invalid match ID',
           );
         }
 
@@ -156,7 +156,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
         const match = await collection.findOne({ _id: matchId });
 
@@ -168,7 +168,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         return match;
       },
-      { collection: this.collectionName, operation: 'getMatchById' }
+      { collection: this.collectionName, operation: 'getMatchById' },
     );
   }
 
@@ -181,7 +181,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const matches = await collection
@@ -204,7 +204,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
    */
   async getMatchesByPuuid(
     puuid: string,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.errorHandler.repository(
       async () => {
@@ -213,11 +213,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           puuid,
           'puuid',
           78,
-          78
+          78,
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            puuidValidation.error || 'Invalid PUUID format',
           );
         }
 
@@ -225,7 +225,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         // PHASE 2.1 OPTIMIZATION: Use optimized query pattern that leverages indexes
@@ -250,7 +250,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         return matches;
       },
-      { collection: this.collectionName, operation: 'getMatchesByPuuid' }
+      { collection: this.collectionName, operation: 'getMatchesByPuuid' },
     );
   }
 
@@ -260,7 +260,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
   async getMatchesByPuuidAndQueue(
     puuid: string,
     queueId: number,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.errorHandler.repository(
       async () => {
@@ -269,11 +269,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           puuid,
           'puuid',
           78,
-          78
+          78,
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            puuidValidation.error || 'Invalid PUUID format',
           );
         }
 
@@ -285,7 +285,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         // PHASE 2.1 OPTIMIZATION: Use optimized compound index
@@ -316,7 +316,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       {
         collection: this.collectionName,
         operation: 'getMatchesByPuuidAndQueue',
-      }
+      },
     );
   }
 
@@ -327,7 +327,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     puuid: string,
     startTimestamp?: number,
     endTimestamp?: number,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.errorHandler.repository(
       async () => {
@@ -336,11 +336,11 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           puuid,
           'puuid',
           78,
-          78
+          78,
         );
         if (!puuidValidation.isValid) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            puuidValidation.error || 'Invalid PUUID format',
           );
         }
 
@@ -353,7 +353,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         // Build optimized query
@@ -364,8 +364,8 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Add date range filter
         if (startTimestamp || endTimestamp) {
           const ts: Record<string, number> = {};
-          if (startTimestamp) ts.$gte = startTimestamp;
-          if (endTimestamp) ts.$lte = endTimestamp;
+          if (startTimestamp) {ts.$gte = startTimestamp;}
+          if (endTimestamp) {ts.$lte = endTimestamp;}
           filter['info.gameCreation'] = ts;
         }
 
@@ -390,7 +390,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         return matches;
       },
-      { collection: this.collectionName, operation: 'getRecentMatchesByPuuid' }
+      { collection: this.collectionName, operation: 'getRecentMatchesByPuuid' },
     );
   }
 
@@ -400,7 +400,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
   async getRecentMatches(
     startTimestamp?: number,
     endTimestamp?: number,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.executeOperation(async () => {
       logger.info('Fetching recent matches', {
@@ -411,7 +411,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
       const filter: Record<
         string,

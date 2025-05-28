@@ -218,7 +218,7 @@ export const matchDbSchema = z.object({
           z.object({
             championId: z.number(),
             pickTurn: z.number(),
-          })
+          }),
         ),
         objectives: z.object({
           baron: z.object({
@@ -248,7 +248,7 @@ export const matchDbSchema = z.object({
         }),
         teamId: z.number(),
         win: z.boolean(),
-      })
+      }),
     ),
     tournamentCode: z.string().optional(),
   }),

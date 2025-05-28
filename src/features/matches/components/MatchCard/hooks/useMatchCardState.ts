@@ -5,7 +5,7 @@ import { MatchCardState } from '../types';
 /**
  * Custom hook to manage MatchCard state (open/close and tab selection)
  */
-export const useMatchCardState = (initialTab: string = 'overview') => {
+export const useMatchCardState = (initialTab = 'overview') => {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(initialTab);
 

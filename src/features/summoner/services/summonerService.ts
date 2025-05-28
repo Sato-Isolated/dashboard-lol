@@ -30,13 +30,13 @@ export class SummonerService extends RiotApiClient {
   }
 
   public async getLeaguesBySummonerId(
-    summonerId: string
+    summonerId: string,
   ): Promise<LeagueEntry[]> {
     // Validate input
     const validation = ValidationHelper.validateString(
       summonerId,
       'summonerId',
-      1
+      1,
     );
     if (!validation.isValid) {
       throw new Error(validation.error || 'Invalid summoner ID');

@@ -71,5 +71,5 @@ export const GET = withValidation(
       .sort((a, b) => b.championPoints - a.championPoints);
 
     return NextResponse.json({ success: true, data: masteryArr });
-  }
+  },
 );

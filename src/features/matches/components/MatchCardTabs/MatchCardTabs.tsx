@@ -90,7 +90,7 @@ const MatchCardTabs = React.memo(
       prevProps.redTeam.length === nextProps.redTeam.length &&
       prevProps.blueTeam.length === nextProps.blueTeam.length
     );
-  }
+  },
 );
 
 MatchCardTabs.displayName = 'MatchCardTabs';

@@ -61,7 +61,7 @@ export class PerformanceMonitoringService {
   recordMetric(
     name: string,
     value: number,
-    tags?: Record<string, string>
+    tags?: Record<string, string>,
   ): void {
     const timestamp = Date.now();
     const metricKey = `${name}_${timestamp}`;
@@ -84,7 +84,7 @@ export class PerformanceMonitoringService {
     endpoint: string,
     method: string,
     duration: number,
-    statusCode: number
+    statusCode: number,
   ): void {
     this.recordMetric('api_response_time', duration, {
       endpoint,
@@ -99,7 +99,7 @@ export class PerformanceMonitoringService {
   trackDatabaseQuery(
     collection: string,
     operation: string,
-    duration: number
+    duration: number,
   ): void {
     this.recordMetric('db_query_time', duration, {
       collection,
@@ -112,7 +112,7 @@ export class PerformanceMonitoringService {
    */
   trackCacheOperation(
     operation: 'hit' | 'miss' | 'set' | 'delete',
-    cacheType: string
+    cacheType: string,
   ): void {
     this.recordMetric('cache_operation', 1, {
       operation,
@@ -165,7 +165,7 @@ export class PerformanceMonitoringService {
    */
   getMetricSummary(
     metricName: string,
-    timeWindow = 3600000
+    timeWindow = 3600000,
   ): {
     count: number;
     average: number;
@@ -176,7 +176,7 @@ export class PerformanceMonitoringService {
     const cutoff = Date.now() - timeWindow;
     const relevantMetrics = Array.from(this.metrics.values())
       .filter(
-        metric => metric.name === metricName && metric.timestamp >= cutoff
+        metric => metric.name === metricName && metric.timestamp >= cutoff,
       )
       .map(metric => metric.value)
       .sort((a, b) => a - b);
@@ -204,7 +204,7 @@ export class PerformanceMonitoringService {
     const oneHourAgo = now - 3600000;
 
     const recentMetrics = Array.from(this.metrics.values()).filter(
-      metric => metric.timestamp >= oneHourAgo
+      metric => metric.timestamp >= oneHourAgo,
     );
 
     const metricsByName = recentMetrics.reduce(
@@ -215,7 +215,7 @@ export class PerformanceMonitoringService {
         acc[metric.name].push(metric.value);
         return acc;
       },
-      {} as Record<string, number[]>
+      {} as Record<string, number[]>,
     );
 
     const dashboard: Record<string, MetricSummary> = {};
@@ -292,7 +292,7 @@ export class PerformanceMonitoringService {
     return <T extends (...args: unknown[]) => unknown>(
       target: unknown,
       propertyKey: string,
-      descriptor: TypedPropertyDescriptor<T>
+      descriptor: TypedPropertyDescriptor<T>,
     ) => {
       const originalMethod = descriptor.value;
 
@@ -316,7 +316,7 @@ export class PerformanceMonitoringService {
    * Monitor Core Web Vitals if in browser
    */
   monitorCoreWebVitals(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
 
     // Monitor Largest Contentful Paint (LCP)
     if ('web-vitals' in window) {
@@ -332,15 +332,15 @@ export class PerformanceMonitoringService {
             const navEntry = entry as PerformanceNavigationTiming;
             this.recordMetric(
               'page_load_time',
-              navEntry.loadEventEnd - navEntry.startTime
+              navEntry.loadEventEnd - navEntry.startTime,
             );
             this.recordMetric(
               'dom_content_loaded',
-              navEntry.domContentLoadedEventEnd - navEntry.startTime
+              navEntry.domContentLoadedEventEnd - navEntry.startTime,
             );
             this.recordMetric(
               'first_paint',
-              navEntry.fetchStart ? navEntry.fetchStart - navEntry.startTime : 0
+              navEntry.fetchStart ? navEntry.fetchStart - navEntry.startTime : 0,
             );
           }
         });

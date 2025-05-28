@@ -40,7 +40,7 @@ const ItemsGrid: React.FC<ItemsGridProps> = ({ items }) => {
             className='w-8 h-8 bg-gradient-to-br from-base-300/40 to-base-300/20 
                      rounded-lg shadow-inner border border-base-content/10'
           />
-        )
+        ),
       )}
     </motion.div>
   );

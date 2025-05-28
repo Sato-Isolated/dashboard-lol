@@ -19,7 +19,7 @@ export const useMatchHistoryData = () => {
     (isRefresh: boolean) => {
       fetchMatches(isRefresh);
     },
-    [fetchMatches]
+    [fetchMatches],
   );
 
   // Memoize load more callback
@@ -29,7 +29,7 @@ export const useMatchHistoryData = () => {
 
   // Memoize error message computation
   const errorMessage = useMemo(() => {
-    if (!parseError) return null;
+    if (!parseError) {return null;}
     return parseError.includes('Riot') || parseError.includes('base de données')
       ? "Impossible de récupérer les matchs. L'API Riot ou la base de données est peut-être indisponible. Réessayez plus tard."
       : parseError;

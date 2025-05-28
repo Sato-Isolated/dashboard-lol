@@ -7,7 +7,7 @@ import type { OverviewTabProps } from '../types';
 const MatchTeamTable = lazy(() =>
   import('../../MatchTeamTable/MatchTeamTable').then(module => ({
     default: module.MatchTeamTable,
-  }))
+  })),
 );
 
 const OverviewTabComponent: React.FC<OverviewTabProps> = ({

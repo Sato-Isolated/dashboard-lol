@@ -35,5 +35,5 @@ export const GET = withValidation(
       platform,
       count: leaderboard.length,
     });
-  }
+  },
 );

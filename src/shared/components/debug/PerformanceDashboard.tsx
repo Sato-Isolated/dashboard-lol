@@ -52,14 +52,14 @@ const PerformanceDashboard: React.FC = () => {
   }
 
   const formatDuration = (ms: number): string => {
-    if (ms < 1) return `${ms.toFixed(2)}ms`;
-    if (ms < 1000) return `${ms.toFixed(1)}ms`;
+    if (ms < 1) {return `${ms.toFixed(2)}ms`;}
+    if (ms < 1000) {return `${ms.toFixed(1)}ms`;}
     return `${(ms / 1000).toFixed(2)}s`;
   };
 
   const formatBytes = (bytes: number): string => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {return '0 Bytes';}
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
   };
@@ -200,7 +200,7 @@ const PerformanceDashboard: React.FC = () => {
                           <span>Average:</span>
                           <span className='font-mono'>
                             {formatDuration(
-                              metrics.component_render_time.average
+                              metrics.component_render_time.average,
                             )}
                           </span>
                         </div>
@@ -271,7 +271,7 @@ const PerformanceDashboard: React.FC = () => {
                             <span>DOM Ready:</span>
                             <span className='font-mono'>
                               {formatDuration(
-                                metrics.dom_content_loaded.average
+                                metrics.dom_content_loaded.average,
                               )}
                             </span>
                           </div>
@@ -294,7 +294,7 @@ const PerformanceDashboard: React.FC = () => {
                       [JSON.stringify(exportData, null, 2)],
                       {
                         type: 'application/json',
-                      }
+                      },
                     );
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');

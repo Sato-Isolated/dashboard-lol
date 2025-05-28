@@ -19,6 +19,6 @@ export const useTeamStats = (match: UIMatch): TeamStats => {
       match.details.gold.red,
       match.details.kills.blue,
       match.details.gold.blue,
-    ]
+    ],
   );
 };

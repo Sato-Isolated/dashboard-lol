@@ -96,14 +96,14 @@ export class MongoService {
     }
   }
   public async getCollection<T extends Document = Document>(
-    name: string
+    name: string,
   ): Promise<Collection<T>> {
     const db = await this.connect();
     return db.collection<T>(name);
   }
   public async withCollection<T extends Document, R>(
     name: string,
-    fn: (col: Collection<T>) => Promise<R>
+    fn: (col: Collection<T>) => Promise<R>,
   ): Promise<R> {
     const timerId = logger.startTimer('mongodb_operation', {
       method: 'withCollection',
@@ -121,7 +121,7 @@ export class MongoService {
         'withCollection',
         name,
         undefined,
-        Date.now() - startTime
+        Date.now() - startTime,
       );
 
       logger.endTimer(timerId);
@@ -143,7 +143,7 @@ export class MongoService {
       hint?: string | Document;
       maxTimeMS?: number;
       allowDiskUse?: boolean;
-    }
+    },
   ): Promise<T[]> {
     const timerId = logger.startTimer('mongodb_aggregate', {
       method: 'aggregateWithOptions',
@@ -164,7 +164,7 @@ export class MongoService {
         collectionName,
         { pipeline: pipeline.length + ' stages' },
         Date.now() - startTime,
-        results.length
+        results.length,
       );
 
       logger.endTimer(timerId);
@@ -179,7 +179,7 @@ export class MongoService {
           duration_ms: Date.now() - startTime,
           pipeline_stages: pipeline.length,
           hint: options?.hint,
-        }
+        },
       );
       throw error;
     }
@@ -207,7 +207,7 @@ export class MongoService {
   }
   // Get connection statistics
   public getConnectionStats(): { isConnected: boolean } | null {
-    if (!this.client) return null;
+    if (!this.client) {return null;}
 
     return {
       isConnected: !!this.db,
@@ -216,7 +216,7 @@ export class MongoService {
   }
 
   private setupMonitoring(): void {
-    if (!this.client || !config.isDevelopment()) return; // Monitor connection pool events
+    if (!this.client || !config.isDevelopment()) {return;} // Monitor connection pool events
     this.client.on('connectionPoolCreated', event => {
       logger.debug('Connection pool created', {
         address: event.address,

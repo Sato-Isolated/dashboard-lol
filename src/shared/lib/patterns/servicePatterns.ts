@@ -39,7 +39,7 @@ export abstract class BaseRepositoryImpl<T, ID = string>
    */
   protected async executeOperation<R>(
     operation: () => Promise<R>,
-    operationName: string
+    operationName: string,
   ): Promise<R> {
     return this.errorHandler.repository(operation, {
       collection: this.collectionName,
@@ -53,7 +53,7 @@ export abstract class BaseRepositoryImpl<T, ID = string>
   protected logOperation(
     operation: string,
     id?: ID,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     logger.info(`Repository operation: ${operation}`, {
       feature: this.featureName,
@@ -86,10 +86,10 @@ export abstract class BaseServiceImpl<T, ID = string>
    */
   protected async executeOperation<R>(
     operation: () => Promise<R>,
-    operationName: string
+    operationName: string,
   ): Promise<R> {
     const timerId = logger.startTimer(
-      `${this.featureName}_service_${operationName}`
+      `${this.featureName}_service_${operationName}`,
     );
     try {
       const result = await operation();
@@ -106,7 +106,7 @@ export abstract class BaseServiceImpl<T, ID = string>
    */
   protected logOperation(
     operation: string,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     logger.info(`Service operation: ${operation}`, {
       feature: this.featureName,
@@ -132,7 +132,7 @@ export abstract class BaseApiClient {
   protected async makeApiCall<R>(
     operation: () => Promise<R>,
     endpoint: string,
-    retryOptions?: { maxAttempts?: number; baseDelay?: number }
+    retryOptions?: { maxAttempts?: number; baseDelay?: number },
   ): Promise<R> {
     return this.errorHandler.api(
       operation,
@@ -140,7 +140,7 @@ export abstract class BaseApiClient {
         service: this.serviceName,
         endpoint,
       },
-      retryOptions
+      retryOptions,
     );
   }
 
@@ -152,7 +152,7 @@ export abstract class BaseApiClient {
     endpoint: string,
     statusCode?: number,
     duration?: number,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     logger.logApiCall(
       this.serviceName,
@@ -160,11 +160,11 @@ export abstract class BaseApiClient {
       method,
       statusCode,
       duration,
-      undefined // error will be logged separately if it occurs
+      undefined, // error will be logged separately if it occurs
     );
 
     if (metadata) {
-      logger.info(`API call metadata`, {
+      logger.info('API call metadata', {
         feature: this.featureName,
         service: this.serviceName,
         endpoint,
@@ -191,7 +191,7 @@ export class PaginationHelper {
     data: T[],
     page: number,
     limit: number,
-    total: number
+    total: number,
   ): PaginatedResponse<T> {
     const totalPages = this.calculateTotalPages(total, limit);
 
@@ -262,7 +262,7 @@ export class DataTransformationHelper {
    */
   static transformApiResponse<TApi, TInternal>(
     apiData: TApi,
-    transformer: (data: TApi) => TInternal
+    transformer: (data: TApi) => TInternal,
   ): TInternal {
     try {
       return transformer(apiData);
@@ -281,7 +281,7 @@ export class DataTransformationHelper {
    */
   static addTimestamps<T>(
     entity: T,
-    isUpdate = false
+    isUpdate = false,
   ): T & { createdAt: Date; updatedAt: Date } {
     const now = new Date();
     return {
@@ -298,7 +298,7 @@ export class DataTransformationHelper {
    */
   static sanitizeForClient<T>(
     entity: T,
-    sensitiveFields: (keyof T)[]
+    sensitiveFields: (keyof T)[],
   ): Omit<T, keyof T> {
     const sanitized = { ...entity };
 

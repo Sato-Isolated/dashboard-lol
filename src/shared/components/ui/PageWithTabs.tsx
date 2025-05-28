@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useCallback, useMemo, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Trophy, Star, Activity } from 'lucide-react';
+import { Trophy, Star, Activity } from 'lucide-react';
 
 const tabs = [
   {
@@ -216,7 +216,7 @@ export default function PageWithTabs({
                       <motion.div
                         className={`absolute -top-1 left-1/2 w-2 h-2 rounded-full ${tab.color.replace(
                           'text-',
-                          'bg-'
+                          'bg-',
                         )}`}
                         initial={{ scale: 0, x: '-50%' }}
                         animate={{ scale: 1, x: '-50%' }}

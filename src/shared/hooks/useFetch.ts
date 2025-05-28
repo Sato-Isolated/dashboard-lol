@@ -5,13 +5,13 @@ export function useFetch<T = unknown>(url: string | null, cacheKey: string) {
     const res = await fetch(url);
     const json = await res.json();
     if (!res.ok)
-      throw new Error(json?.error || 'Erreur lors du chargement des données');
+      {throw new Error(json?.error || 'Erreur lors du chargement des données');}
     return json;
   };
 
   const { data, error, isLoading, mutate } = useSWR<T>(
     url ? [url, cacheKey] : null,
-    ([url]) => fetcher(url)
+    ([url]) => fetcher(url),
   );
 
   return {

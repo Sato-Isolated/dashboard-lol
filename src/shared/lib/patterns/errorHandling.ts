@@ -29,10 +29,10 @@ export class StandardErrorHandler {
       collection: string;
       operation: string;
       feature: string;
-    }
+    },
   ): Promise<T> {
     const timerId = logger.startTimer(
-      `${context.feature}_${context.operation}`
+      `${context.feature}_${context.operation}`,
     );
     try {
       const result = await operation();
@@ -65,10 +65,10 @@ export class StandardErrorHandler {
     retryOptions?: {
       maxAttempts?: number;
       baseDelay?: number;
-    }
+    },
   ): Promise<T> {
     const timerId = logger.startTimer(
-      `${context.feature}_api_${context.service}`
+      `${context.feature}_api_${context.service}`,
     );
 
     try {
@@ -82,7 +82,7 @@ export class StandardErrorHandler {
           service: context.service,
           endpoint: context.endpoint,
           feature: context.feature,
-        }
+        },
       );
 
       logger.endTimer(timerId);
@@ -102,13 +102,13 @@ export class StandardErrorHandler {
       component: string;
       feature: string;
       operation: string;
-    }
+    },
   ): Promise<{ data: T | null; error: string | null }> {
     try {
       const data = await operation();
       return { data, error: null };
     } catch (error) {
-      logger.error(`Component operation failed`, error as Error, {
+      logger.error('Component operation failed', error as Error, {
         component: context.component,
         feature: context.feature,
         operation: context.operation,
@@ -138,7 +138,7 @@ export class StandardErrorHandler {
     return {
       repository: <T>(
         operation: () => Promise<T>,
-        context: { collection: string; operation: string }
+        context: { collection: string; operation: string },
       ) =>
         this.handleRepositoryOperation(operation, {
           ...context,
@@ -148,17 +148,17 @@ export class StandardErrorHandler {
       api: <T>(
         operation: () => Promise<T>,
         context: { service: string; endpoint: string },
-        retryOptions?: { maxAttempts?: number; baseDelay?: number }
+        retryOptions?: { maxAttempts?: number; baseDelay?: number },
       ) =>
         this.handleApiOperation(
           operation,
           { ...context, feature: featureName },
-          retryOptions
+          retryOptions,
         ),
 
       component: <T>(
         operation: () => Promise<T>,
-        context: { component: string; operation: string }
+        context: { component: string; operation: string },
       ) =>
         this.handleComponentOperation(operation, {
           ...context,
@@ -190,10 +190,10 @@ export class ValidationHelper {
     value: unknown,
     fieldName: string,
     minLength?: number,
-    maxLength?: number
+    maxLength?: number,
   ): ValidationResult {
     const requiredCheck = this.validateRequired(value, fieldName);
-    if (!requiredCheck.isValid) return requiredCheck;
+    if (!requiredCheck.isValid) {return requiredCheck;}
 
     if (typeof value !== 'string') {
       return this.error(`${fieldName} must be a string`, fieldName);
@@ -202,14 +202,14 @@ export class ValidationHelper {
     if (minLength && value.length < minLength) {
       return this.error(
         `${fieldName} must be at least ${minLength} characters long`,
-        fieldName
+        fieldName,
       );
     }
 
     if (maxLength && value.length > maxLength) {
       return this.error(
         `${fieldName} cannot exceed ${maxLength} characters`,
-        fieldName
+        fieldName,
       );
     }
 
@@ -220,10 +220,10 @@ export class ValidationHelper {
     value: unknown,
     fieldName: string,
     min?: number,
-    max?: number
+    max?: number,
   ): ValidationResult {
     const requiredCheck = this.validateRequired(value, fieldName);
-    if (!requiredCheck.isValid) return requiredCheck;
+    if (!requiredCheck.isValid) {return requiredCheck;}
 
     const numValue = Number(value);
     if (isNaN(numValue)) {

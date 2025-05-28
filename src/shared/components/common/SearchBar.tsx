@@ -24,7 +24,7 @@ const SearchBar: React.FC = () => {
   const router = useRouter();
   const [hasError, setHasError] = useState<boolean>(false);
   const [region, setRegion] = useState<PlatformRegion | ''>(
-    (effectiveRegion as PlatformRegion) || ''
+    (effectiveRegion as PlatformRegion) || '',
   );
   const [tagline, setTagline] = useState<string>(effectiveTagline || '');
   const [summonerName, setSummonerName] = useState<string>(effectiveName || '');
@@ -78,12 +78,12 @@ const SearchBar: React.FC = () => {
         signal: controller.signal,
       })
         .then(res => {
-          if (!res.ok) throw new Error('Error while searching for players.');
+          if (!res.ok) {throw new Error('Error while searching for players.');}
           return res.json();
         })
         .then(data => setSuggestions(data))
         .catch(e => {
-          if (e.name === 'AbortError') return;
+          if (e.name === 'AbortError') {return;}
           setSuggestionError(e.message || 'Error while searching for players.');
           setSuggestions([]);
         });
@@ -124,11 +124,11 @@ const SearchBar: React.FC = () => {
       setUser({ region, tagline, summonerName });
       router.push(
         `/${region}/summoner/${encodeURIComponent(
-          summonerName
-        )}/${encodeURIComponent(tagline)}`
+          summonerName,
+        )}/${encodeURIComponent(tagline)}`,
       );
     },
-    [summonerName, tagline, region, setUser, router]
+    [summonerName, tagline, region, setUser, router],
   );
 
   // Memoize suggestion selection handler
@@ -139,13 +139,13 @@ const SearchBar: React.FC = () => {
       setRegion(suggestion.region as PlatformRegion);
       setShowSuggestions(false);
     },
-    []
+    [],
   );
 
   // Memoize keyboard navigation handlers
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (!showSuggestions || suggestions.length === 0) return;
+      if (!showSuggestions || suggestions.length === 0) {return;}
 
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -153,7 +153,7 @@ const SearchBar: React.FC = () => {
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setHighlightedIndex(prev =>
-          prev <= 0 ? suggestions.length - 1 : prev - 1
+          prev <= 0 ? suggestions.length - 1 : prev - 1,
         );
       } else if (e.key === 'Enter' && highlightedIndex >= 0) {
         e.preventDefault();
@@ -163,7 +163,7 @@ const SearchBar: React.FC = () => {
         setShowSuggestions(false);
       }
     },
-    [showSuggestions, suggestions, highlightedIndex, handleSuggestionSelect]
+    [showSuggestions, suggestions, highlightedIndex, handleSuggestionSelect],
   );
 
   // Add SuggestionList subcomponent
@@ -215,7 +215,7 @@ const SearchBar: React.FC = () => {
           </motion.li>
         ))}
       </motion.ul>
-    )
+    ),
   );
 
   SuggestionList.displayName = 'SuggestionList';
@@ -228,7 +228,7 @@ const SearchBar: React.FC = () => {
           {value}
         </option>
       )),
-    []
+    [],
   );
   return (
     <div className='w-full'>

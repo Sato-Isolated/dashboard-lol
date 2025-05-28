@@ -47,7 +47,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
           </div>
         ) : (
           <MatchCardSkeleton key={i} />
-        )
+        ),
       )}
     </div>
   </div>

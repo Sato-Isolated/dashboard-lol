@@ -102,7 +102,7 @@ const MemoizedMatchCard = React.memo(
       prevProps.match.result === nextProps.match.result &&
       prevProps.match.players.length === nextProps.match.players.length
     );
-  }
+  },
 );
 
 MemoizedMatchCard.displayName = 'MemoizedMatchCard';

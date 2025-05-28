@@ -16,7 +16,7 @@ const MatchCardChampionBlockComponent: React.FC<ChampionBlockProps> = ({
 }) => {
   const { championIcon, spellData, runeData, itemsToRender } = useChampionData(
     champion,
-    mainPlayer
+    mainPlayer,
   );
 
   return (

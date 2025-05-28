@@ -9,7 +9,7 @@ import type { LeagueEntry } from '@/shared/types/api/summoners.types';
 export async function fetchSummonerFull(
   platformRegion: string,
   name: string,
-  tagline: string
+  tagline: string,
 ) {
   const accountApi = createAccountService(platformRegion);
 
@@ -39,7 +39,7 @@ export async function fetchSummonerFull(
   const dbSummoner = await getSummoner(
     platformRegion,
     account.gameName,
-    tagline
+    tagline,
   );
   const aramScore = dbSummoner?.aramScore ?? 0;
   // Ajout : update le profileIconId en base si différent ou manquant
@@ -54,7 +54,7 @@ export async function fetchSummonerFull(
     const collection = await mongo.getCollection('summoners');
     await collection.updateOne(
       { region: platformRegion, name: account.gameName, tagline },
-      { $set: { profileIconId: summonerDto.profileIconId } }
+      { $set: { profileIconId: summonerDto.profileIconId } },
     );
   }
 
@@ -62,7 +62,7 @@ export async function fetchSummonerFull(
   let version = 'latest';
   try {
     const res = await fetch(
-      'https://ddragon.leagueoflegends.com/api/versions.json'
+      'https://ddragon.leagueoflegends.com/api/versions.json',
     );
     if (res.ok) {
       const versions = await res.json();

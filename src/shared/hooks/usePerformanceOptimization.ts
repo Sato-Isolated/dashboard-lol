@@ -24,7 +24,7 @@ if (typeof window === 'undefined') {
       })
       .catch(() => {
         console.warn(
-          'DatabaseOptimizationService not available on client side'
+          'DatabaseOptimizationService not available on client side',
         );
       });
   } catch {
@@ -39,7 +39,7 @@ if (typeof window === 'undefined') {
 export function usePerformanceOptimization() {
   const performanceMonitor = useMemo(
     () => PerformanceMonitoringService.getInstance(),
-    []
+    [],
   );
 
   // Use the exported cache instances directly
@@ -55,7 +55,7 @@ export function usePerformanceOptimization() {
   const withPerformanceTracking = useCallback(
     <T extends (...args: unknown[]) => Promise<unknown>>(
       fn: T,
-      operationName: string
+      operationName: string,
     ): T => {
       return (async (...args: unknown[]) => {
         const startTime = performance.now();
@@ -72,13 +72,13 @@ export function usePerformanceOptimization() {
               operationName,
               'GET',
               duration,
-              200
+              200,
             );
           } else if (operationName.includes('db')) {
             performanceMonitor.trackDatabaseQuery(
               'unknown',
               operationName,
-              duration
+              duration,
             );
           }
 
@@ -92,7 +92,7 @@ export function usePerformanceOptimization() {
               operationName,
               'GET',
               duration,
-              500
+              500,
             );
           }
 
@@ -100,7 +100,7 @@ export function usePerformanceOptimization() {
         }
       }) as T;
     },
-    [performanceMonitor]
+    [performanceMonitor],
   );
   // Optimized fetch with caching and performance tracking
   const optimizedFetch = useCallback(
@@ -111,7 +111,7 @@ export function usePerformanceOptimization() {
         cacheTTL?: number;
         cacheType?: 'api' | 'static' | 'user';
         trackPerformance?: boolean;
-      } = {}
+      } = {},
     ): Promise<T> => {
       const {
         cacheKey = url,
@@ -176,7 +176,7 @@ export function usePerformanceOptimization() {
       staticDataCacheInstance,
       userDataCacheInstance,
       performanceMonitor,
-    ]
+    ],
   );
 
   // Component render tracking
@@ -189,7 +189,7 @@ export function usePerformanceOptimization() {
         performanceMonitor.trackComponentRender(componentName, duration);
       };
     },
-    [performanceMonitor]
+    [performanceMonitor],
   );
 
   // User interaction tracking
@@ -202,7 +202,7 @@ export function usePerformanceOptimization() {
         performanceMonitor.trackUserInteraction(interactionType, duration);
       };
     },
-    [performanceMonitor]
+    [performanceMonitor],
   );
   // Database optimization utilities
   const initializeDatabaseOptimization = useCallback(async () => {
@@ -241,7 +241,7 @@ export function usePerformanceOptimization() {
         userDataCacheInstance.invalidatePattern(pattern);
       },
     }),
-    [apiCacheInstance, staticDataCacheInstance, userDataCacheInstance]
+    [apiCacheInstance, staticDataCacheInstance, userDataCacheInstance],
   );
 
   // Performance metrics

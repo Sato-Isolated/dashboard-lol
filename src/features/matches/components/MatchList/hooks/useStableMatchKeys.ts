@@ -7,7 +7,7 @@ import type { UIMatch } from '@/features/matches/types/ui-match.types';
  */
 export const useStableMatchKeys = (matches: UIMatch[]) => {
   return useMemo(() => {
-    if (!matches || matches.length === 0) return [];
+    if (!matches || matches.length === 0) {return [];}
 
     return matches.map((match, index) => {
       // Create a more robust stable key using multiple properties
@@ -32,7 +32,7 @@ export const useStableMatchKeys = (matches: UIMatch[]) => {
             champion: match.champion,
             result: match.result,
             kda: match.kda,
-          })
+          }),
         ).slice(0, 8),
       };
     });

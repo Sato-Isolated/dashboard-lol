@@ -29,7 +29,7 @@ export const calculateKDA = (kda: string, teamKills?: number) => {
   let participation = '--';
   if (teamKills && teamKills > 0) {
     participation = Math.round(
-      ((kills + assists) / teamKills) * 100
+      ((kills + assists) / teamKills) * 100,
     ).toString();
   }
 
@@ -44,9 +44,9 @@ export const calculateKDA = (kda: string, teamKills?: number) => {
  * Calculates player achievement badges based on performance
  */
 export const calculatePlayerBadges = (
-  player: UIPlayer | undefined
+  player: UIPlayer | undefined,
 ): PlayerBadge[] => {
-  if (!player) return [];
+  if (!player) {return [];}
 
   const badges: PlayerBadge[] = [];
 
@@ -72,7 +72,7 @@ export const calculatePlayerBadges = (
  */
 export const findMainPlayer = (
   players: UIPlayer[],
-  champion: string
+  champion: string,
 ): UIPlayer | undefined => {
   return players.find(p => p.champion === champion);
 };

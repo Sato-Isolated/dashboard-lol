@@ -60,10 +60,10 @@ export const isHighWinrate = (winrate: number): boolean => {
  * Get winrate category for styling
  */
 export const getWinrateCategory = (
-  winrate: number
+  winrate: number,
 ): 'high' | 'medium' | 'low' => {
-  if (winrate >= 60) return 'high';
-  if (winrate >= 45) return 'medium';
+  if (winrate >= 60) {return 'high';}
+  if (winrate >= 45) {return 'medium';}
   return 'low';
 };
 
@@ -71,8 +71,8 @@ export const getWinrateCategory = (
  * Get games category for styling
  */
 export const getGamesCategory = (games: number): 'many' | 'some' | 'few' => {
-  if (games >= 5) return 'many';
-  if (games >= 3) return 'some';
+  if (games >= 5) {return 'many';}
+  if (games >= 3) {return 'some';}
   return 'few';
 };
 
@@ -80,10 +80,10 @@ export const getGamesCategory = (games: number): 'many' | 'some' | 'few' => {
  * Calculate average winrate from an array of players
  */
 export const calculateAverageWinrate = (
-  players: UIRecentlyPlayed[]
+  players: UIRecentlyPlayed[],
 ): number => {
-  if (players.length === 0) return 0;
+  if (players.length === 0) {return 0;}
   return Math.round(
-    players.reduce((acc, p) => acc + p.winrate, 0) / players.length
+    players.reduce((acc, p) => acc + p.winrate, 0) / players.length,
   );
 };

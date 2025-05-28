@@ -30,7 +30,7 @@ const RankItemComponent: React.FC<RankItemProps> = ({ rank }) => {
       : 0;
 
   const isHighRank = ['MASTER', 'GRANDMASTER', 'CHALLENGER'].includes(
-    rank.tier
+    rank.tier,
   );
   const isGoodWinrate = winRate >= 60;
 

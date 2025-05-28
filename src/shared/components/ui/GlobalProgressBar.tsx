@@ -3,7 +3,7 @@ import { useGlobalLoading } from '@/shared/hooks/useGlobalLoading';
 
 const GlobalProgressBar: React.FC = () => {
   const { loading } = useGlobalLoading();
-  if (!loading) return null;
+  if (!loading) {return null;}
   return (
     <div className='fixed top-0 left-0 w-full z-[100]'>
       <div

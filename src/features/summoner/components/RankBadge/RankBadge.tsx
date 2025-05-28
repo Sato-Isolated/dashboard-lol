@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Crown, Medal, Sparkles, Zap, Award, Trophy } from 'lucide-react';
+import { Star, Medal, Zap, Award, Trophy } from 'lucide-react';
 import { containerVariants, cardVariants, rankItemVariants } from './constants';
 import { useAramRank, useRankedLeagues } from './hooks';
 import { RankItem } from './components';
@@ -130,8 +130,8 @@ const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues }) => {
                         Math.round(
                           ((aramScore - aramRank.min) /
                             (aramRank.max - aramRank.min)) *
-                            100
-                        )
+                            100,
+                        ),
                       )}%`,
                     }}
                     transition={{ duration: 1, delay: 0.5 }}

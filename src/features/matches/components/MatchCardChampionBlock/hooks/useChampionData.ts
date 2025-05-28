@@ -10,14 +10,14 @@ import type { ChampionDataHook } from '../types';
 
 export const useChampionData = (
   champion: string,
-  mainPlayer?: UIPlayer
+  mainPlayer?: UIPlayer,
 ): ChampionDataHook => {
   const championIcon = useMemo(() => getChampionIcon(champion), [champion]);
   const spellData = useMemo(() => {
-    if (!mainPlayer) return null;
+    if (!mainPlayer) {return null;}
     const spell1 = getSummonerSpellImage(mainPlayer.spell1);
     const spell2 = getSummonerSpellImage(mainPlayer.spell2);
-    if (!spell1 || !spell2) return null;
+    if (!spell1 || !spell2) {return null;}
     return {
       spell1,
       spell2,
@@ -25,10 +25,10 @@ export const useChampionData = (
   }, [mainPlayer]);
 
   const runeData = useMemo(() => {
-    if (!mainPlayer || !mainPlayer.rune1 || !mainPlayer.rune2) return null;
+    if (!mainPlayer || !mainPlayer.rune1 || !mainPlayer.rune2) {return null;}
     const rune1 = getRuneIcon(mainPlayer.rune1);
     const rune2 = getRuneIcon(mainPlayer.rune2);
-    if (!rune1 || !rune2) return null;
+    if (!rune1 || !rune2) {return null;}
     return {
       rune1,
       rune2,

@@ -42,17 +42,17 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
   const [leaderboard] = useState(initialLeaderboard);
 
   const selectedPlatformData = platforms.find(
-    p => p.value === selectedPlatform
+    p => p.value === selectedPlatform,
   );
 
   // Statistiques calculées
   const stats = useMemo(() => {
-    if (leaderboard.length === 0) return null;
+    if (leaderboard.length === 0) {return null;}
 
     const topScore = leaderboard[0]?.aramScore || 0;
     const averageScore = Math.round(
       leaderboard.reduce((sum, entry) => sum + entry.aramScore, 0) /
-        leaderboard.length
+        leaderboard.length,
     );
     const totalPlayers = leaderboard.length;
 

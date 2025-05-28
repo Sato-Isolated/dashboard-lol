@@ -19,7 +19,7 @@ interface AccountSummonerResult {
 export function useAccountSummoner(
   region?: string,
   name?: string,
-  tagline?: string
+  tagline?: string,
 ): AccountSummonerResult {
   // If not provided, fallback to effective user
   const effective = useEffectiveUser();
@@ -31,7 +31,7 @@ export function useAccountSummoner(
   const url =
     r && n && t
       ? `/api/summoner?region=${encodeURIComponent(
-          r
+          r,
         )}&name=${encodeURIComponent(n)}&tagline=${encodeURIComponent(t)}`
       : null;
   const { data, loading, error, refetch } = useApiResource<{

@@ -71,7 +71,7 @@ export class DatabaseOptimizationService {
         unique: true,
         name: 'summoner_identity_unique',
         background: true,
-      }
+      },
     );
 
     // Index for PUUID lookups
@@ -81,7 +81,7 @@ export class DatabaseOptimizationService {
         unique: true,
         name: 'summoner_puuid_unique',
         background: true,
-      }
+      },
     );
 
     // Index for fetching summoners that need updates
@@ -90,7 +90,7 @@ export class DatabaseOptimizationService {
       {
         name: 'summoner_last_update',
         background: true,
-      }
+      },
     );
 
     // Index for ARAM score leaderboard
@@ -99,7 +99,7 @@ export class DatabaseOptimizationService {
       {
         name: 'summoner_aram_score_desc',
         background: true,
-      }
+      },
     );
 
     logger.info('Summoner collection indexes created');
@@ -118,7 +118,7 @@ export class DatabaseOptimizationService {
         unique: true,
         name: 'match_id_unique',
         background: true,
-      }
+      },
     );
 
     // Compound index for participant queries (puuid + gameEndTimestamp)
@@ -127,7 +127,7 @@ export class DatabaseOptimizationService {
       {
         name: 'match_participant_timestamp',
         background: true,
-      }
+      },
     );
 
     // Index for game mode filtering
@@ -136,7 +136,7 @@ export class DatabaseOptimizationService {
       {
         name: 'match_gamemode_timestamp',
         background: true,
-      }
+      },
     );
 
     // Index for match duration queries
@@ -145,7 +145,7 @@ export class DatabaseOptimizationService {
       {
         name: 'match_duration',
         background: true,
-      }
+      },
     );
 
     // Sparse index for queue type (only for ranked games)
@@ -155,7 +155,7 @@ export class DatabaseOptimizationService {
         name: 'match_queue_id',
         background: true,
         sparse: true,
-      }
+      },
     );
 
     logger.info('Match collection indexes created');
@@ -165,7 +165,7 @@ export class DatabaseOptimizationService {
    * Create indexes for champion mastery optimization
    */
   private async createChampionMasteryIndexes(
-    mongo: MongoService
+    mongo: MongoService,
   ): Promise<void> {
     const collection = await mongo.getCollection('summoners');
 
@@ -176,7 +176,7 @@ export class DatabaseOptimizationService {
         name: 'summoner_champion_mastery',
         background: true,
         sparse: true,
-      }
+      },
     );
 
     logger.info('Champion mastery indexes created');

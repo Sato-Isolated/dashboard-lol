@@ -65,12 +65,12 @@ const createClientLogger = (): ClientLogger => {
     performance: (
       operation: string,
       duration: number,
-      metadata?: LogContext
+      metadata?: LogContext,
     ) => {
       log(
         'info',
         `Performance: ${operation} completed in ${duration}ms`,
-        metadata
+        metadata,
       );
     },
     startTimer: (operation: string, metadata?: LogContext): string => {
@@ -89,7 +89,7 @@ const createClientLogger = (): ClientLogger => {
         log(
           'info',
           `Timer: ${timer.operation} completed in ${duration.toFixed(2)}ms`,
-          timer.metadata
+          timer.metadata,
         );
         timers.delete(timerId);
       }

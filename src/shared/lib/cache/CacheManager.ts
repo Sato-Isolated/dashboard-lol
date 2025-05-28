@@ -139,7 +139,7 @@ export class CacheManager {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    ttl?: number
+    ttl?: number,
   ): Promise<T> {
     const cached = this.get<T>(key);
 
@@ -207,5 +207,5 @@ setInterval(
     staticDataCache.cleanup();
     userDataCache.cleanup();
   },
-  10 * 60 * 1000
+  10 * 60 * 1000,
 );

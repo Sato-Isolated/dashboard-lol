@@ -13,11 +13,11 @@ export type ValidatedApiHandler<T = Record<string, unknown>> = (
 // Create validation middleware
 export function withValidation<T = Record<string, unknown>>(
   schema: z.ZodSchema<T>,
-  handler: ValidatedApiHandler<T>
+  handler: ValidatedApiHandler<T>,
 ) {
   return async function validatedHandler(
     req: NextRequest,
-    context: { params: Promise<Record<string, string>> }
+    context: { params: Promise<Record<string, string>> },
   ): Promise<NextResponse> {
     const startTime = Date.now();
     const requestId = crypto.randomUUID();
@@ -95,7 +95,7 @@ export function withValidation<T = Record<string, unknown>>(
         const validationError = new ValidationError(
           `Validation failed: ${error.errors
             .map(e => `${e.path.join('.')}: ${e.message}`)
-            .join(', ')}`
+            .join(', ')}`,
         );
 
         logger.warn('Request validation failed', {
@@ -116,7 +116,7 @@ export function withValidation<T = Record<string, unknown>>(
           {
             status: 400,
             headers: { 'X-Request-ID': requestId },
-          }
+          },
         );
       }
 
@@ -138,7 +138,7 @@ export function withValidation<T = Record<string, unknown>>(
           {
             status: error.statusCode,
             headers: { 'X-Request-ID': requestId },
-          }
+          },
         );
       }
 
@@ -159,7 +159,7 @@ export function withValidation<T = Record<string, unknown>>(
         {
           status: 500,
           headers: { 'X-Request-ID': requestId },
-        }
+        },
       );
     }
   };
@@ -168,8 +168,8 @@ export function withValidation<T = Record<string, unknown>>(
 // Helper function to create API response with logging
 export function createApiResponse<T>(
   data: T,
-  status: number = 200,
-  requestId?: string
+  status = 200,
+  requestId?: string,
 ): NextResponse {
   const response = NextResponse.json(data, { status });
 
@@ -181,7 +181,7 @@ export function createApiResponse<T>(
   if (status === 200) {
     response.headers.set(
       'Cache-Control',
-      'public, max-age=60, stale-while-revalidate=120'
+      'public, max-age=60, stale-while-revalidate=120',
     );
   }
 
@@ -199,7 +199,7 @@ const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 export function withRateLimit(options: RateLimitOptions) {
   return function rateLimitMiddleware<T>(
-    handler: ValidatedApiHandler<T>
+    handler: ValidatedApiHandler<T>,
   ): ValidatedApiHandler<T> {
     return async function rateLimitedHandler(req, validatedData, context) {
       const clientId = getClientId(req);
@@ -245,7 +245,7 @@ export function withRateLimit(options: RateLimitOptions) {
               'X-RateLimit-Remaining': '0',
               'X-RateLimit-Reset': clientData.resetTime.toString(),
             },
-          }
+          },
         );
       } else {
         // Increment counter
@@ -257,14 +257,14 @@ export function withRateLimit(options: RateLimitOptions) {
       // Add rate limit headers
       const remaining = Math.max(
         0,
-        options.maxRequests - (clientData?.count || 0)
+        options.maxRequests - (clientData?.count || 0),
       );
       response.headers.set('X-RateLimit-Limit', options.maxRequests.toString());
       response.headers.set('X-RateLimit-Remaining', remaining.toString());
       if (clientData) {
         response.headers.set(
           'X-RateLimit-Reset',
-          clientData.resetTime.toString()
+          clientData.resetTime.toString(),
         );
       }
 
@@ -276,7 +276,7 @@ export function withRateLimit(options: RateLimitOptions) {
 function getClientId(req: NextRequest): string {
   // Try to get user ID from headers or use IP
   const userId = req.headers.get('x-user-id');
-  if (userId) return `user:${userId}`;
+  if (userId) {return `user:${userId}`;}
 
   const forwarded = req.headers.get('x-forwarded-for');
   const ip = forwarded
@@ -290,7 +290,7 @@ export function withMiddleware<T>(
   validationSchema: z.ZodSchema<T>,
   options: {
     rateLimit?: RateLimitOptions;
-  } = {}
+  } = {},
 ) {
   return function middlewareComposer(handler: ValidatedApiHandler<T>) {
     let composedHandler = handler;

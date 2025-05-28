@@ -15,13 +15,13 @@ export const useMatchCalculations = (match: UIMatch): CalculatedMatchData => {
   // Memoize team calculations
   const { redTeam, blueTeam } = useMemo(
     () => calculateTeams(match.players),
-    [match.players]
+    [match.players],
   );
 
   // Memoize KDA calculations
   const { kdaParts, kdaValue, pKill } = useMemo(
     () => calculateKDA(match.kda, match.teamKills),
-    [match.kda, match.teamKills]
+    [match.kda, match.teamKills],
   );
 
   // Memoize main player and special badges

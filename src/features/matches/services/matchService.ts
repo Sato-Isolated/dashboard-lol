@@ -37,7 +37,7 @@ export class MatchService extends RiotApiClient {
       type?: string;
       start?: number;
       count?: number;
-    }
+    },
   ): Promise<string[]> {
     // Validate input
     const validation = ValidationHelper.validateString(puuid, 'puuid', 78, 78);
@@ -47,16 +47,16 @@ export class MatchService extends RiotApiClient {
 
     const params = new URLSearchParams();
     if (options?.startTime !== undefined)
-      params.append('startTime', options.startTime.toString());
+      {params.append('startTime', options.startTime.toString());}
     if (options?.endTime !== undefined)
-      params.append('endTime', options.endTime.toString());
+      {params.append('endTime', options.endTime.toString());}
     if (options?.queue !== undefined)
-      params.append('queue', options.queue.toString());
-    if (options?.type !== undefined) params.append('type', options.type);
+      {params.append('queue', options.queue.toString());}
+    if (options?.type !== undefined) {params.append('type', options.type);}
     if (options?.start !== undefined)
-      params.append('start', options.start.toString());
+      {params.append('start', options.start.toString());}
     if (options?.count !== undefined)
-      params.append('count', options.count.toString());
+      {params.append('count', options.count.toString());}
 
     const query = params.toString() ? `?${params.toString()}` : '';
     const endpoint = `/lol/match/v5/matches/by-puuid/${puuid}/ids${query}`;

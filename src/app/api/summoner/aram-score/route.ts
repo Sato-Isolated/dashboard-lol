@@ -23,13 +23,13 @@ export const GET = withValidation(
     const summoner = (await getSummoner(
       region,
       name,
-      tagline
+      tagline,
     )) as SummonerCollection | null;
 
     if (!summoner) {
       return NextResponse.json(
         { error: 'Summoner not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -39,7 +39,7 @@ export const GET = withValidation(
       aramScoreFirstCalculated: !!summoner.aramScoreFirstCalculated,
       aramScoreLastCheck: summoner.aramScoreLastCheck ?? null,
     });
-  }
+  },
 );
 
 // POST /api/summoner/aram-score { region, name, tagline }
@@ -59,5 +59,5 @@ export const POST = withValidation(
     const result = await AramScoreService.syncAramScore(region, name, tagline);
 
     return NextResponse.json({ success: true, ...result });
-  }
+  },
 );

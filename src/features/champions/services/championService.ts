@@ -7,6 +7,6 @@ export class ChampionService extends RiotApiClient {
   }
 
   public async getChampionInfo() {
-    return this.fetch<ChampionInfoDto>(`/lol/platform/v3/champion-rotations`);
+    return this.fetch<ChampionInfoDto>('/lol/platform/v3/champion-rotations');
   }
 }

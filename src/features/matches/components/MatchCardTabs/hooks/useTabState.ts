@@ -5,7 +5,7 @@ export const useTabState = (match: UIMatch, setTab: (tab: string) => void) => {
   // Use a unique group name for each match card (use gameId)
   const groupId = useMemo(
     () => `match_tabs_${match.gameId || 'default'}`,
-    [match.gameId]
+    [match.gameId],
   );
 
   // Memoize event handlers
@@ -13,7 +13,7 @@ export const useTabState = (match: UIMatch, setTab: (tab: string) => void) => {
     (newTab: string) => {
       setTab(newTab);
     },
-    [setTab]
+    [setTab],
   );
 
   return {

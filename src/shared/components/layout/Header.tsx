@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Trophy, Menu, X, Zap } from 'lucide-react';
+import { Trophy, Menu, X, Zap } from 'lucide-react';
 import SearchBar from '@/shared/components/common/SearchBar';
 
 const ReturnHomeButton = () => {

@@ -19,20 +19,20 @@ export function useMatchHistory(): {
 
   const getKey = (
     pageIndex: number,
-    previousPageData: { data: Match[] } | null
+    previousPageData: { data: Match[] } | null,
   ) => {
-    if (!effectiveName || !effectiveRegion || !effectiveTagline) return null;
+    if (!effectiveName || !effectiveRegion || !effectiveTagline) {return null;}
     if (
       previousPageData &&
       previousPageData.data &&
       previousPageData.data.length === 0
     )
-      return null; // no more pages
+      {return null;} // no more pages
     return [
       `/api/summoner/matches?name=${encodeURIComponent(
-        effectiveName
+        effectiveName,
       )}&region=${encodeURIComponent(
-        effectiveRegion
+        effectiveRegion,
       )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${
         pageIndex * PAGE_SIZE
       }&count=${PAGE_SIZE}`,
@@ -45,7 +45,7 @@ export function useMatchHistory(): {
   const fetcher = async (url: string) => {
     const res = await fetch(url);
     const json = await res.json();
-    if (!res.ok) throw new Error(json?.error || 'Error loading data');
+    if (!res.ok) {throw new Error(json?.error || 'Error loading data');}
     return json;
   };
 
@@ -55,7 +55,7 @@ export function useMatchHistory(): {
   // Concatenate all match pages
   const matches: UIMatch[] =
     data?.flatMap(page =>
-      (page.data || []).map(m => mapRiotMatchToUIMatch(m, effectiveName))
+      (page.data || []).map(m => mapRiotMatchToUIMatch(m, effectiveName)),
     ) || [];
 
   const hasMore = data
@@ -72,7 +72,7 @@ export function useMatchHistory(): {
         setSize(size + 1);
       }
     },
-    [setSize, size, mutate]
+    [setSize, size, mutate],
   );
 
   return {

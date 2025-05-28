@@ -77,10 +77,10 @@ class ConfigService {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const missingFields = error.errors.map(
-          e => `${e.path.join('.')}: ${e.message}`
+          e => `${e.path.join('.')}: ${e.message}`,
         );
         throw new Error(
-          `Configuration validation failed:\n${missingFields.join('\n')}`
+          `Configuration validation failed:\n${missingFields.join('\n')}`,
         );
       }
       throw error;

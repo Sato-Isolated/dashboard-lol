@@ -15,7 +15,7 @@ const ChampionsTab = dynamic(
         <div className='loading loading-spinner loading-lg' />
       </div>
     ),
-  }
+  },
 );
 
 const MasteryTab = dynamic(
@@ -26,7 +26,7 @@ const MasteryTab = dynamic(
         <div className='loading loading-spinner loading-lg' />
       </div>
     ),
-  }
+  },
 );
 
 interface PageParams {
@@ -82,7 +82,7 @@ export default async function Page(props: { params: Promise<PageParams> }) {
   const data = await fetchSummonerFull(region, decodedName, decodedTagline);
 
   if (!data)
-    return <div className='text-center text-error mt-8'>Account not found</div>;
+    {return <div className='text-center text-error mt-8'>Account not found</div>;}
 
   return (
     <PageWithTabs

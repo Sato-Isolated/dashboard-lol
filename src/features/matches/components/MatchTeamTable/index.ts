@@ -1,4 +1,3 @@
-import { PlayerRow } from './components/PlayerRow';
 export { MatchTeamTable } from './MatchTeamTable';
 export type { MatchTeamTableProps } from './MatchTeamTable';
 

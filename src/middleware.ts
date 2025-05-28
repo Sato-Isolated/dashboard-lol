@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
 
   // Check summoner route pattern specifically
   const summonerRouteMatch = pathname.match(
-    /^\/([^\/]+)\/summoner\/([^\/]+)\/([^\/]+)$/
+    /^\/([^\/]+)\/summoner\/([^\/]+)\/([^\/]+)$/,
   );
   if (summonerRouteMatch) {
     const [, region, rawName, rawTagline] = summonerRouteMatch;

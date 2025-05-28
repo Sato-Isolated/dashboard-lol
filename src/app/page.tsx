@@ -22,7 +22,7 @@ export default function Home() {
     const animateCounter = (
       target: number,
       setter: (value: number) => void,
-      duration: number = 2000
+      duration = 2000,
     ) => {
       const increment = target / (duration / 50);
       let current = 0;
@@ -43,11 +43,11 @@ export default function Home() {
     // Délai pour démarrer les animations
     const timeoutPlayers = setTimeout(
       () => animateCounter(playersTarget, setPlayersCount),
-      500
+      500,
     );
     const timeoutMatches = setTimeout(
       () => animateCounter(matchesTarget, setMatchesCount),
-      800
+      800,
     );
 
     return () => {
@@ -378,7 +378,7 @@ export default function Home() {
                   onClick={() =>
                     window.open(
                       'https://github.com/Sato-Isolated/dashboard-lol',
-                      '_blank'
+                      '_blank',
                     )
                   }
                 >

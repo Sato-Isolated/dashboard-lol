@@ -16,9 +16,9 @@ export class AppError extends Error {
 
   constructor(
     message: string,
-    statusCode: number = 500,
-    errorCode: string = 'INTERNAL_ERROR',
-    isOperational: boolean = true
+    statusCode = 500,
+    errorCode = 'INTERNAL_ERROR',
+    isOperational = true,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -55,7 +55,7 @@ export class NotFoundError extends AppError {
 export class RateLimitError extends AppError {
   public readonly retryAfter?: number;
 
-  constructor(message: string = 'Rate limit exceeded', retryAfter?: number) {
+  constructor(message = 'Rate limit exceeded', retryAfter?: number) {
     super(message, 429, 'RATE_LIMIT_EXCEEDED');
     this.name = 'RateLimitError';
     this.retryAfter = retryAfter;
@@ -70,9 +70,9 @@ export class ExternalAPIError extends AppError {
   constructor(
     service: string,
     message: string,
-    statusCode: number = 503,
+    statusCode = 503,
     endpoint?: string,
-    originalError?: Error
+    originalError?: Error,
   ) {
     super(`${service} API error: ${message}`, statusCode, 'EXTERNAL_API_ERROR');
     this.name = 'ExternalAPIError';
@@ -109,7 +109,7 @@ export class ErrorHandler {
       const dbError = new DatabaseError(
         'operation',
         error.message,
-        context?.collection as string
+        context?.collection as string,
       );
 
       logger.error('Database error occurred', error, context);
@@ -126,7 +126,7 @@ export class ErrorHandler {
         'Network connection failed',
         503,
         context?.endpoint,
-        error
+        error,
       );
 
       logger.error('Network error occurred', error, context);
@@ -140,7 +140,7 @@ export class ErrorHandler {
         'Request timeout',
         504,
         context?.endpoint,
-        error
+        error,
       );
 
       logger.error('Timeout error occurred', error, context);
@@ -153,7 +153,7 @@ export class ErrorHandler {
       'An unexpected error occurred',
       500,
       'INTERNAL_ERROR',
-      false
+      false,
     );
   }
 
@@ -193,7 +193,7 @@ export class RetryHandler {
   public static async execute<T>(
     operation: () => Promise<T>,
     options: RetryOptions = {},
-    context?: ErrorContext
+    context?: ErrorContext,
   ): Promise<T> {
     const opts = { ...this.defaultOptions, ...options };
     let lastError: Error;
@@ -232,7 +232,7 @@ export class RetryHandler {
         // Calculate delay with exponential backoff
         const delay = Math.min(
           opts.baseDelay * Math.pow(opts.backoffMultiplier, attempt - 1),
-          opts.maxDelay
+          opts.maxDelay,
         );
 
         logger.warn('Operation failed, retrying', {
@@ -261,7 +261,7 @@ export class RetryHandler {
 
 // Async error wrapper for better error handling
 export function asyncErrorHandler<T extends unknown[], R>(
-  fn: (...args: T) => Promise<R>
+  fn: (...args: T) => Promise<R>,
 ) {
   return async (...args: T): Promise<R> => {
     try {
@@ -279,9 +279,9 @@ export class CircuitBreaker {
   private state: 'CLOSED' | 'OPEN' | 'HALF_OPEN' = 'CLOSED';
 
   constructor(
-    private readonly maxFailures: number = 5,
-    private readonly resetTimeout: number = 60000, // 1 minute
-    private readonly name: string = 'CircuitBreaker'
+    private readonly maxFailures = 5,
+    private readonly resetTimeout = 60000, // 1 minute
+    private readonly name = 'CircuitBreaker',
   ) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
@@ -290,12 +290,12 @@ export class CircuitBreaker {
         throw new AppError(
           `Circuit breaker is OPEN for ${this.name}`,
           503,
-          'CIRCUIT_BREAKER_OPEN'
+          'CIRCUIT_BREAKER_OPEN',
         );
       }
 
       this.state = 'HALF_OPEN';
-      logger.info(`Circuit breaker transitioning to HALF_OPEN`, {
+      logger.info('Circuit breaker transitioning to HALF_OPEN', {
         name: this.name,
       });
     }
@@ -305,7 +305,7 @@ export class CircuitBreaker {
 
       if (this.state === 'HALF_OPEN') {
         this.reset();
-        logger.info(`Circuit breaker reset to CLOSED`, { name: this.name });
+        logger.info('Circuit breaker reset to CLOSED', { name: this.name });
       }
 
       return result;
@@ -322,7 +322,7 @@ export class CircuitBreaker {
       this.state = 'OPEN';
       this.nextAttempt = Date.now() + this.resetTimeout;
 
-      logger.warn(`Circuit breaker opened`, {
+      logger.warn('Circuit breaker opened', {
         name: this.name,
         failures: this.failures,
         resetTime: new Date(this.nextAttempt).toISOString(),

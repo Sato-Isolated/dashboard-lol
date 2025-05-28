@@ -31,7 +31,7 @@ const computeMatchStats = (matches: UIMatch[]): MatchStats => {
     assists += a || 0;
 
     // Count wins using the result field
-    if (match.result === 'Win') wins++;
+    if (match.result === 'Win') {wins++;}
 
     // Get CS from player data
     const playerCs =

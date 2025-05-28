@@ -21,7 +21,7 @@ export const GET = withValidation(
 
     const mongo = MongoService.getInstance();
     const collection = await mongo.getCollection<{ puuid: string }>(
-      'summoners'
+      'summoners',
     );
 
     // Find summoner's puuid
@@ -104,5 +104,5 @@ export const GET = withValidation(
       totalChampions: result.length,
       totalGames: result.reduce((sum, champion) => sum + champion.games, 0),
     });
-  }
+  },
 );

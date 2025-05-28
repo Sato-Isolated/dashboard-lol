@@ -60,7 +60,7 @@ export const StableMatchCard = React.memo(
       prevProps.index === nextProps.index &&
       prevProps.isVisible === nextProps.isVisible
     );
-  }
+  },
 );
 
 StableMatchCard.displayName = 'StableMatchCard';

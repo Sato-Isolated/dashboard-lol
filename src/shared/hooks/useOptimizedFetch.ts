@@ -29,7 +29,7 @@ export interface UseOptimizedFetchResult<T> {
  */
 export function useOptimizedFetch<T>(
   url: string | null,
-  options: UseOptimizedFetchOptions = {}
+  options: UseOptimizedFetchOptions = {},
 ): UseOptimizedFetchResult<T> {
   const {
     cacheKey = url || '',
@@ -113,7 +113,7 @@ export function useOptimizedFetch<T>(
 
             if (!response.ok) {
               throw new Error(
-                `HTTP ${response.status}: ${response.statusText}`
+                `HTTP ${response.status}: ${response.statusText}`,
               );
             }
 
@@ -144,7 +144,7 @@ export function useOptimizedFetch<T>(
 
             if (attempt < retryCount) {
               await new Promise(resolve =>
-                setTimeout(resolve, retryDelay * attempt)
+                setTimeout(resolve, retryDelay * attempt),
               );
             }
           }
@@ -180,7 +180,7 @@ export function useOptimizedFetch<T>(
       dedupe,
       retryCount,
       retryDelay,
-    ]
+    ],
   );
 
   const refetch = useCallback(async () => {
@@ -197,7 +197,7 @@ export function useOptimizedFetch<T>(
         apiCache.set(cacheKey, newData, cacheTTL);
       }
     },
-    [cacheKey, cacheTTL]
+    [cacheKey, cacheTTL],
   );
   // Reset state when URL changes or becomes null
   useEffect(() => {
@@ -264,7 +264,7 @@ export function useOptimizedFetch<T>(
       refetch,
       mutate,
     }),
-    [data, loading, error, refetch, mutate]
+    [data, loading, error, refetch, mutate],
   );
 }
 
@@ -274,23 +274,23 @@ export function useOptimizedFetch<T>(
 export function useOptimizedSummoner(
   region: string,
   name: string,
-  tagline: string
+  tagline: string,
 ) {
   const cacheKey = `summoner:${region}:${name}:${tagline}`;
 
   return useOptimizedFetch(
     region && name && tagline
       ? `/api/summoner?region=${encodeURIComponent(
-          region
+          region,
         )}&name=${encodeURIComponent(name)}&tagline=${encodeURIComponent(
-          tagline
+          tagline,
         )}`
       : null,
     {
       cacheKey,
       cacheTTL: 5 * 60 * 1000, // 5 minutes
       staleWhileRevalidate: true,
-    }
+    },
   );
 }
 
@@ -301,24 +301,24 @@ export function useOptimizedMatchHistory(
   region: string,
   name: string,
   tagline: string,
-  page: number = 0,
-  pageSize: number = 10
+  page = 0,
+  pageSize = 10,
 ) {
   const cacheKey = `matches:${region}:${name}:${tagline}:${page}:${pageSize}`;
 
   return useOptimizedFetch(
     region && name && tagline
       ? `/api/summoner/matches?region=${encodeURIComponent(
-          region
+          region,
         )}&name=${encodeURIComponent(name)}&tagline=${encodeURIComponent(
-          tagline
+          tagline,
         )}&start=${page * pageSize}&count=${pageSize}`
       : null,
     {
       cacheKey,
       cacheTTL: 2 * 60 * 1000, // 2 minutes
       staleWhileRevalidate: true,
-    }
+    },
   );
 }
 
@@ -328,16 +328,16 @@ export function useOptimizedMatchHistory(
 export function useOptimizedChampionStats(
   region: string,
   name: string,
-  tagline: string
+  tagline: string,
 ) {
   const cacheKey = `champion-stats:${region}:${name}:${tagline}`;
 
   const url =
     region && name && tagline && region.trim() && name.trim() && tagline.trim()
       ? `/api/stats/champions?region=${encodeURIComponent(
-          region
+          region,
         )}&name=${encodeURIComponent(name)}&tagline=${encodeURIComponent(
-          tagline
+          tagline,
         )}`
       : null;
 
@@ -354,21 +354,21 @@ export function useOptimizedChampionStats(
 export function useOptimizedMasteries(
   region: string,
   name: string,
-  tagline: string
+  tagline: string,
 ) {
   const cacheKey = `masteries:${region}:${name}:${tagline}`;
   return useOptimizedFetch(
     region && name && tagline && region.trim() && name.trim() && tagline.trim()
       ? `/api/summoner/masteries?region=${encodeURIComponent(
-          region
+          region,
         )}&name=${encodeURIComponent(name)}&tagline=${encodeURIComponent(
-          tagline
+          tagline,
         )}`
       : null,
     {
       cacheKey,
       cacheTTL: 15 * 60 * 1000, // 15 minutes
       staleWhileRevalidate: true,
-    }
+    },
   );
 }

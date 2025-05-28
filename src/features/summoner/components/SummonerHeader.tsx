@@ -104,7 +104,7 @@ FavoriteButton.displayName = 'FavoriteButton';
 const FAVORITES_KEY = 'lol-favorites';
 
 function getFavorites(): Favorite[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === 'undefined') {return [];}
   try {
     return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
   } catch {
@@ -113,7 +113,7 @@ function getFavorites(): Favorite[] {
 }
 
 function saveFavorites(favs: Favorite[]) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
 }
 
@@ -149,13 +149,13 @@ const HeaderSection: React.FC = () => {
         f =>
           f.region === effectiveRegion &&
           f.tagline === effectiveTagline &&
-          f.name === effectiveName
-      )
+          f.name === effectiveName,
+      ),
     );
   }, [effectiveRegion, effectiveTagline, effectiveName]);
 
   React.useEffect(() => {
-    if (updateUserDataError) setGlobalError(updateUserDataError);
+    if (updateUserDataError) {setGlobalError(updateUserDataError);}
   }, [updateUserDataError, setGlobalError]);
 
   const handleToggleFavorite = () => {
@@ -164,7 +164,7 @@ const HeaderSection: React.FC = () => {
       f =>
         f.region === effectiveRegion &&
         f.tagline === effectiveTagline &&
-        f.name === effectiveName
+        f.name === effectiveName,
     );
     if (idx !== -1) {
       favs.splice(idx, 1);
@@ -185,7 +185,7 @@ const HeaderSection: React.FC = () => {
       const url = `${
         window.location.origin
       }/${effectiveRegion}/summoner/${encodeURIComponent(
-        effectiveName
+        effectiveName,
       )}/${encodeURIComponent(effectiveTagline)}`;
       if (
         navigator.clipboard &&
@@ -209,10 +209,10 @@ const HeaderSection: React.FC = () => {
         summonerName: fav.name,
       });
       window.location.href = `/${fav.region}/summoner/${encodeURIComponent(
-        fav.name
+        fav.name,
       )}/${encodeURIComponent(fav.tagline)}`;
     },
-    [setUser]
+    [setUser],
   );
 
   const handleUpdateAndRank = async () => {
@@ -233,7 +233,7 @@ const HeaderSection: React.FC = () => {
         const aramScore = (summoner as { aramScore?: number }).aramScore ?? 0;
         const aramRank = getAramRank(aramScore);
         setRankMsg(
-          `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`
+          `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`,
         );
         setTimeout(() => setRankMsg(''), 2500);
       }

@@ -203,7 +203,7 @@ const ChampionsTab: React.FC = React.memo(() => {
       name: effectiveName,
       tagline: effectiveTagline,
     }),
-    [effectiveRegion, effectiveName, effectiveTagline]
+    [effectiveRegion, effectiveName, effectiveTagline],
   );
 
   const [sortKey, setSortKey] = useState<string>('games');
@@ -219,7 +219,7 @@ const ChampionsTab: React.FC = React.memo(() => {
   } = useOptimizedChampionStats(
     memoizedParams.region,
     memoizedParams.name,
-    memoizedParams.tagline
+    memoizedParams.tagline,
   ) as UseOptimizedFetchResult<{ success: boolean; data: ChampionStats[] }>;
 
   const stats = useMemo<ChampionStats[]>(() => {
@@ -247,7 +247,7 @@ const ChampionsTab: React.FC = React.memo(() => {
   const getWinrate = useCallback(
     (champ: ChampionStats) =>
       champ.games > 0 ? (champ.wins / champ.games) * 100 : 0,
-    []
+    [],
   );
 
   // Memoized champion data lookup for performance
@@ -259,7 +259,7 @@ const ChampionsTab: React.FC = React.memo(() => {
   const sortedStats = useMemo(() => {
     return [...stats]
       .filter(champ => {
-        if (!searchTerm) return true;
+        if (!searchTerm) {return true;}
         const championInfo =
           championDataLookup[champ.champion as keyof typeof championDataLookup];
         const name = championInfo ? championInfo.name : champ.champion;
@@ -293,7 +293,7 @@ const ChampionsTab: React.FC = React.memo(() => {
         setSortDir(key === 'champion' ? 'asc' : 'desc');
       }
     },
-    [sortKey]
+    [sortKey],
   );
 
   // Memoized stats calculations
@@ -311,23 +311,23 @@ const ChampionsTab: React.FC = React.memo(() => {
 
     const totalGames = filteredStats.reduce(
       (acc: number, champ: ChampionStats) => acc + champ.games,
-      0
+      0,
     );
     const totalWins = filteredStats.reduce(
       (acc: number, champ: ChampionStats) => acc + champ.wins,
-      0
+      0,
     );
     const totalKills = filteredStats.reduce(
       (acc: number, champ: ChampionStats) => acc + champ.kills,
-      0
+      0,
     );
     const totalDeaths = filteredStats.reduce(
       (acc: number, champ: ChampionStats) => acc + champ.deaths,
-      0
+      0,
     );
     const totalAssists = filteredStats.reduce(
       (acc: number, champ: ChampionStats) => acc + champ.assists,
-      0
+      0,
     );
     const globalWinrate = totalGames > 0 ? (totalWins / totalGames) * 100 : 0;
     const globalKda =
@@ -335,7 +335,7 @@ const ChampionsTab: React.FC = React.memo(() => {
         ? filteredStats.reduce(
             (acc: number, champ: ChampionStats) =>
               acc + champ.kda * champ.games,
-            0
+            0,
           ) / totalGames
         : 0;
 
@@ -353,13 +353,13 @@ const ChampionsTab: React.FC = React.memo(() => {
   // Memoized sort icon function
   const sortIcon = useCallback(
     (key: string) => {
-      if (sortKey !== key) return <span className='opacity-30'>⇅</span>;
+      if (sortKey !== key) {return <span className='opacity-30'>⇅</span>;}
       return sortDir === 'asc' ? <span>▲</span> : <span>▼</span>;
     },
-    [sortKey, sortDir]
+    [sortKey, sortDir],
   );
   if (loading)
-    return (
+    {return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -375,10 +375,10 @@ const ChampionsTab: React.FC = React.memo(() => {
           Loading champion statistics...
         </p>
       </motion.div>
-    );
+    );}
 
   if (error)
-    return (
+    {return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -412,10 +412,10 @@ const ChampionsTab: React.FC = React.memo(() => {
           Clear Cache & Retry
         </motion.button>
       </motion.div>
-    );
+    );}
 
   if (!stats || stats.length === 0)
-    return (
+    {return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -451,7 +451,7 @@ const ChampionsTab: React.FC = React.memo(() => {
           Clear Cache & Retry
         </motion.button>
       </motion.div>
-    );
+    );}
   return (
     <motion.div
       initial={{ opacity: 0 }}

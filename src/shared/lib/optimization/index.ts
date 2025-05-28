@@ -61,26 +61,26 @@ export const PerformanceUtils = {
   // Quick cache instances
   getApiCache: () =>
     import('@/shared/lib/cache/CacheManager').then(m =>
-      m.CacheManager.getApiCache()
+      m.CacheManager.getApiCache(),
     ),
   getStaticDataCache: () =>
     import('@/shared/lib/cache/CacheManager').then(m =>
-      m.CacheManager.getStaticDataCache()
+      m.CacheManager.getStaticDataCache(),
     ),
   getUserDataCache: () =>
     import('@/shared/lib/cache/CacheManager').then(m =>
-      m.CacheManager.getUserDataCache()
+      m.CacheManager.getUserDataCache(),
     ),
 
   // Quick performance monitoring
   getPerformanceMonitor: () =>
     import('@/shared/services/monitoring/PerformanceMonitoringService').then(
-      m => m.default.getInstance()
+      m => m.default.getInstance(),
     ),
 
   // Quick database optimization
   getDatabaseOptimizer: () =>
     import('@/shared/services/database/DatabaseOptimizationService').then(m =>
-      m.default.getInstance()
+      m.default.getInstance(),
     ),
 };

@@ -8,7 +8,7 @@ import type { UIMatch } from '@/features/matches/types/ui-match.types';
 export const useMatchVisibility = (
   matches: UIMatch[],
   loading: boolean,
-  error: string | null
+  error: string | null,
 ) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastValidMatches, setLastValidMatches] = useState<UIMatch[]>(matches);

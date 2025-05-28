@@ -27,7 +27,7 @@ export const aramRankTiers: AramRankInfo[] = [
 ];
 
 export function getAramRank(
-  score: number
+  score: number,
 ): AramRankInfo & { displayName: string } {
   const rank =
     aramRankTiers.find(tier => score >= tier.min && score <= tier.max) ||

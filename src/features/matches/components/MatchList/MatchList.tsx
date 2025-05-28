@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { default as MatchCard } from '../MatchCard';
 import {
   MatchStatsCard,
   LoadingState,
@@ -33,7 +32,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
   const { displayMatches, shouldShowContent } = useMatchVisibility(
     matches,
     loading,
-    error
+    error,
   );
 
   const stats = useMatchStats(displayMatches);
@@ -49,7 +48,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
 
   // Memoize stable matches to prevent rerender issues
   const stableMatches = React.useMemo(() => {
-    if (!displayedMatches || displayedMatches.length === 0) return [];
+    if (!displayedMatches || displayedMatches.length === 0) {return [];}
 
     return displayedMatches.map((match, idx) => ({
       ...match,

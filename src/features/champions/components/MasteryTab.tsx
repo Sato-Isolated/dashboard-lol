@@ -3,14 +3,12 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
 import { useOptimizedMasteries } from '@/shared/hooks/useOptimizedFetch';
-import { apiCache } from '@/shared/lib/cache/CacheManager';
 import championData from '@/../public/assets/data/en_US/champion.json';
 import { getChampionIcon } from '@/shared/lib/utils/helpers';
 import Image from 'next/image';
 import type { UseOptimizedFetchResult } from '@/shared/hooks/useOptimizedFetch';
 import {
   Trophy,
-  Flame,
   Star,
   BarChart3,
   Search,
@@ -87,26 +85,26 @@ const statsCardVariants = {
 // Helper function to get mastery level badge style
 const getMasteryLevelStyle = (level: number) => {
   if (level >= 7)
-    return {
+    {return {
       badge: 'badge-warning',
       gradient: 'from-yellow-400 to-orange-500',
       icon: Crown,
       glow: 'shadow-yellow-500/50',
-    };
+    };}
   if (level >= 5)
-    return {
+    {return {
       badge: 'badge-info',
       gradient: 'from-blue-400 to-purple-500',
       icon: Medal,
       glow: 'shadow-blue-500/50',
-    };
+    };}
   if (level >= 3)
-    return {
+    {return {
       badge: 'badge-success',
       gradient: 'from-green-400 to-emerald-500',
       icon: Trophy,
       glow: 'shadow-green-500/50',
-    };
+    };}
   return {
     badge: 'badge-neutral',
     gradient: 'from-gray-400 to-gray-500',
@@ -159,7 +157,7 @@ const MasteryCard: React.FC<{
 
             <Image
               src={getChampionIcon(
-                mastery.champ ? mastery.champ.id : String(mastery.championId)
+                mastery.champ ? mastery.champ.id : String(mastery.championId),
               )}
               alt={
                 mastery.champ ? mastery.champ.name : String(mastery.championId)
@@ -212,7 +210,7 @@ const MasteryCard: React.FC<{
                   animate={{
                     width: `${Math.min(
                       ((mastery.championPoints % 1800) / 1800) * 100,
-                      100
+                      100,
                     )}%`,
                   }}
                   transition={{
@@ -251,7 +249,7 @@ const MasteryListRow: React.FC<{
           <motion.div className='relative' transition={{ duration: 0.2 }}>
             <Image
               src={getChampionIcon(
-                mastery.champ ? mastery.champ.id : String(mastery.championId)
+                mastery.champ ? mastery.champ.id : String(mastery.championId),
               )}
               alt={
                 mastery.champ ? mastery.champ.name : String(mastery.championId)
@@ -319,11 +317,11 @@ const MasteryTab: React.FC = React.memo(() => {
   } = useOptimizedMasteries(
     effectiveRegion,
     effectiveName,
-    effectiveTagline
+    effectiveTagline,
   ) as UseOptimizedFetchResult<{ success: boolean; data: Mastery[] }>;
 
   const masteries = useMemo(() => {
-    if (!masteriesResponse || typeof masteriesResponse !== 'object') return [];
+    if (!masteriesResponse || typeof masteriesResponse !== 'object') {return [];}
     return (masteriesResponse as MasteriesResponse)?.data || [];
   }, [masteriesResponse]);
 
@@ -336,7 +334,7 @@ const MasteryTab: React.FC = React.memo(() => {
   const masteriesWithChampions = useMemo(() => {
     return masteries.map((m: Mastery) => {
       const champ = championDataLookup.find(
-        (c: ChampionData) => parseInt(c.key) === m.championId
+        (c: ChampionData) => parseInt(c.key) === m.championId,
       );
       return { ...m, champ };
     });
@@ -351,7 +349,7 @@ const MasteryTab: React.FC = React.memo(() => {
       filtered = filtered.filter(m =>
         (m.champ?.name || String(m.championId))
           .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -376,7 +374,7 @@ const MasteryTab: React.FC = React.memo(() => {
   const masteryStats = useMemo(() => {
     const totalPoints = masteries.reduce(
       (acc: number, m: Mastery) => acc + m.championPoints,
-      0
+      0,
     );
     const totalChampions = masteries.length;
     const level7Champions = masteries.filter(m => m.championLevel >= 7).length;
@@ -385,7 +383,7 @@ const MasteryTab: React.FC = React.memo(() => {
       totalChampions > 0
         ? masteries.reduce(
             (acc: number, m: Mastery) => acc + m.championLevel,
-            0
+            0,
           ) / totalChampions
         : 0;
 

@@ -7,9 +7,9 @@ export const usePlayerProfile = (name: string, tagline?: string) => {
   const profileUrl = useMemo(
     () =>
       `/${region}/summoner/${encodeURIComponent(
-        name
+        name,
       )}/${encodeURIComponent(tagline || 'EUW')}`,
-    [region, name, tagline]
+    [region, name, tagline],
   );
 
   return { region, profileUrl };

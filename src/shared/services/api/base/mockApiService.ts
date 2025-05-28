@@ -2,7 +2,7 @@ import { logger } from '@/shared/lib/logger/logger';
 export class MockApiService {
   static async mockMatchIds(
     puuid: string,
-    count: number = 20
+    count = 20,
   ): Promise<string[]> {
     logger.warn('Using mock data for match IDs', { puuid, count });
 
@@ -12,7 +12,7 @@ export class MockApiService {
       matchIds.push(
         `EUW1_${Date.now() - i * 300000}_${Math.random()
           .toString(36)
-          .substring(7)}`
+          .substring(7)}`,
       );
     }
 
@@ -20,7 +20,7 @@ export class MockApiService {
   }
 
   static async mockMatchData(
-    matchId: string
+    matchId: string,
   ): Promise<Record<string, unknown>> {
     logger.warn('Using mock data for match details', { matchId });
 
@@ -57,7 +57,7 @@ export class MockApiService {
   }
 
   static async mockChampionMasteries(
-    summonerId: string
+    summonerId: string,
   ): Promise<Array<Record<string, unknown>>> {
     logger.warn('Using mock data for champion masteries', { summonerId });
 
@@ -79,7 +79,7 @@ export class MockApiService {
   static async simulateApiDelay(): Promise<void> {
     // Simulate realistic API delay
     await new Promise(resolve =>
-      setTimeout(resolve, 100 + Math.random() * 200)
+      setTimeout(resolve, 100 + Math.random() * 200),
     );
   }
 }

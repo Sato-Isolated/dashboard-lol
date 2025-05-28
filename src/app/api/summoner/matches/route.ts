@@ -60,8 +60,8 @@ export const GET = withValidation(
 
     if (from || to) {
       const ts: Record<string, number> = {};
-      if (from) ts.$gte = from;
-      if (to) ts.$lt = to;
+      if (from) {ts.$gte = from;}
+      if (to) {ts.$lt = to;}
       query['info.gameEndTimestamp'] = ts;
     }
 
@@ -74,5 +74,5 @@ export const GET = withValidation(
       .toArray();
 
     return NextResponse.json({ success: true, data: matches });
-  }
+  },
 );

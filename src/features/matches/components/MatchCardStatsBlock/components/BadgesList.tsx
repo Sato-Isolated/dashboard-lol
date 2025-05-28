@@ -21,7 +21,7 @@ const BadgesList: React.FC<BadgesListProps> = ({ badges }) => {
           <span>{badge.label}</span>
         </motion.span>
       )),
-    [badges]
+    [badges],
   );
 
   return (

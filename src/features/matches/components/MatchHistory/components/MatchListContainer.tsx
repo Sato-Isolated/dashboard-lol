@@ -37,7 +37,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
   const { displayMatches, shouldShowContent } = useMatchVisibility(
     matches,
     loading,
-    errorMessage
+    errorMessage,
   );
 
   // Memoize content condition to prevent unnecessary re-evaluations
@@ -47,7 +47,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
 
   // Memoize matches with stable keys to prevent rerender issues
   const stableMatches = React.useMemo(() => {
-    if (!displayMatches || displayMatches.length === 0) return [];
+    if (!displayMatches || displayMatches.length === 0) {return [];}
 
     return displayMatches.map((match, idx) => ({
       ...match,
@@ -125,7 +125,7 @@ const MatchListContainer = React.memo(
       JSON.stringify(prevProps.matches.slice(0, 3)) ===
         JSON.stringify(nextProps.matches.slice(0, 3))
     );
-  }
+  },
 );
 MatchListContainer.displayName = 'MatchListContainer';
 

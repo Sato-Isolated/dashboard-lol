@@ -31,7 +31,7 @@ export const PlayerItems: React.FC<PlayerItemsProps> = ({ items }) => {
         ))}
       </div>
     ),
-    [items]
+    [items],
   );
 
   return (

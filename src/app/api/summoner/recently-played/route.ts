@@ -99,7 +99,7 @@ export const GET = withValidation(
     });
 
     return NextResponse.json({ success: true, data: result });
-  }
+  },
 );
 
 // POST /api/summoner/recently-played (triggers a real update)
@@ -128,5 +128,5 @@ export const POST = withValidation(
       message: `Update successful (${totalFetched} matches fetched)`,
       totalFetched,
     });
-  }
+  },
 );
