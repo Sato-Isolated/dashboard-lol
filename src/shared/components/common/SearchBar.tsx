@@ -14,7 +14,6 @@ import { useUserStore } from '@/shared/store/userStore';
 import { PlatformRegion } from '@/shared/types/api/platformregion.types';
 import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
 import { mapLangToRegion } from '@/shared/lib/utils/langToRegion';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 // Explicit typing for SearchBar props
 const SearchBar: React.FC = () => {
@@ -442,4 +441,4 @@ const SearchBar: React.FC = () => {
   );
 };
 
-export default withPerformanceTracking(SearchBar, 'SearchBar');
+export default SearchBar;

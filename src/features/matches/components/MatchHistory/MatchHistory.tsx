@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 import { StatsOverview, LoadingState, MatchListContainer } from './components';
 import { useMatchStats } from './hooks/useMatchStats';
 import { useMatchHistoryData } from './hooks/useMatchHistoryData';
@@ -61,4 +60,4 @@ const MatchHistoryComponent: React.FC = () => {
 const MatchHistory = React.memo(MatchHistoryComponent);
 MatchHistory.displayName = 'MatchHistory';
 
-export default withPerformanceTracking(MatchHistory, 'MatchHistory');
+export default MatchHistory;

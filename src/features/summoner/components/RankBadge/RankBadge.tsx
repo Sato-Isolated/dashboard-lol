@@ -2,7 +2,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Crown, Medal, Sparkles, Zap, Award, Trophy } from 'lucide-react';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 import { containerVariants, cardVariants, rankItemVariants } from './constants';
 import { useAramRank, useRankedLeagues } from './hooks';
 import { RankItem } from './components';
@@ -168,8 +167,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues }) => {
           </AnimatePresence>
         </div>
       </motion.div>
-    </motion.div>
-  );
+    </motion.div>  );
 };
 
-export default withPerformanceTracking(RankBadge, 'RankBadge');
+export default RankBadge;

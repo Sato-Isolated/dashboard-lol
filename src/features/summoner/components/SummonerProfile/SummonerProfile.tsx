@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
 import { useAccountSummoner } from '@/features/summoner/hooks/useAccountSummoner';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 import { containerVariants } from './constants';
 import { useRecentlyPlayed } from './hooks';
 import {
@@ -102,8 +101,4 @@ const SummonerProfile: React.FC = React.memo(() => {
 
 SummonerProfile.displayName = 'SummonerProfile';
 
-// Export with performance tracking
-export default withPerformanceTracking(
-  React.memo(SummonerProfile),
-  'SummonerProfile'
-);
+export default React.memo(SummonerProfile);

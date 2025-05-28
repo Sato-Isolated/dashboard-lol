@@ -61,11 +61,6 @@ jest.mock('../MatchCardTabs', () => ({
   ),
 }));
 
-// Mock performance wrapper
-jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
-  withPerformanceTracking: (component: any) => component,
-}));
-
 describe('MatchCard Component', () => {
   const mockPlayer: UIPlayer = {
     name: 'TestPlayer',

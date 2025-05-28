@@ -10,8 +10,6 @@ export {
   useOptimizedMasteries,
 } from '@/shared/hooks/useOptimizedFetch';
 
-export { default as usePerformanceOptimization } from '@/shared/hooks/usePerformanceOptimization';
-
 // Performance Monitoring
 export { default as PerformanceMonitoringService } from '@/shared/services/monitoring/PerformanceMonitoringService';
 
@@ -24,13 +22,6 @@ export {
   AsyncErrorBoundary,
   withErrorBoundary,
 } from '@/shared/components/error/ErrorBoundary';
-
-// Performance Components
-export {
-  withPerformanceTracking,
-  PerformanceWrapper,
-  useComponentPerformanceTracking,
-} from '@/shared/components/performance/PerformanceWrapper';
 
 export { default as PerformanceDashboard } from '@/shared/components/debug/PerformanceDashboard';
 

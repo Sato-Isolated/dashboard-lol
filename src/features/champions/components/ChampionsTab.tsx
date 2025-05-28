@@ -15,7 +15,6 @@ import championData from '@/../public/assets/data/en_US/champion.json';
 import { getChampionIcon } from '@/shared/lib/utils/helpers';
 import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
 import { useOptimizedChampionStats } from '@/shared/hooks/useOptimizedFetch';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 import { apiCache } from '@/shared/lib/cache/CacheManager';
 import Image from 'next/image';
 import { ChampionData } from '@/shared/types/data/champion';
@@ -711,5 +710,5 @@ const ChampionsTab: React.FC = React.memo(() => {
 
 ChampionsTab.displayName = 'ChampionsTab';
 
-// Export with performance tracking
-export default withPerformanceTracking(ChampionsTab, 'ChampionsTab');
+// Export the component
+export default ChampionsTab;

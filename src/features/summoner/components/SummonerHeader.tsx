@@ -23,7 +23,6 @@ import { useUpdateUserData } from '@/features/summoner/hooks/useUpdateUserData';
 import { getAramRank } from '@/features/aram/utils/aramRankSystem';
 import { useGlobalError } from '@/shared/hooks/useGlobalError';
 import { useGlobalLoading } from '@/shared/hooks/useGlobalLoading';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 interface Favorite {
   region: string;
@@ -656,4 +655,4 @@ const HeaderSection: React.FC = () => {
   );
 };
 
-export default withPerformanceTracking(HeaderSection, 'SummonerHeader');
+export default HeaderSection;

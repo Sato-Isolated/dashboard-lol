@@ -60,12 +60,6 @@ jest.mock('@/shared/lib/utils/helpers', () => ({
   getRegion: jest.fn(() => 'euw1'),
 }));
 
-// Mock performance tracking
-jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
-  withPerformanceTracking: (Component: React.ComponentType, name: string) =>
-    Component,
-}));
-
 const createMockPlayer = (overrides: Partial<UIPlayer> = {}): UIPlayer => ({
   name: 'TestPlayer',
   tagline: 'EUW',

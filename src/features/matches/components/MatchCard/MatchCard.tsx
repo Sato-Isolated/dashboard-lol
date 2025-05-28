@@ -6,7 +6,6 @@ import { cardVariants } from './constants';
 import { isMatchWin, getMatchResultStyles } from './utils';
 import { useMatchCardState } from './hooks/useMatchCardState';
 import { useMatchCalculations } from './hooks/useMatchCalculations';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 // Components
 import AnimatedBackgroundEffects from './components/AnimatedBackgroundEffects';
@@ -107,7 +106,4 @@ const MemoizedMatchCard = React.memo(
 
 MemoizedMatchCard.displayName = 'MemoizedMatchCard';
 
-// Apply performance tracking wrapper
-const MatchCard = withPerformanceTracking(MemoizedMatchCard, 'MatchCard');
-
-export default MatchCard;
+export default MemoizedMatchCard;

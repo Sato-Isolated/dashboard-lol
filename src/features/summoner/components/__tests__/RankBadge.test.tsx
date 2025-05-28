@@ -9,12 +9,6 @@ jest.mock('@/features/aram/utils/aramRankSystem', () => ({
   getAramRank: jest.fn(),
 }));
 
-// Mock the performance wrapper
-jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
-  withPerformanceTracking: (Component: React.ComponentType, _name: string) =>
-    Component,
-}));
-
 // Type the mocked function
 const mockGetAramRank = getAramRank as jest.MockedFunction<typeof getAramRank>;
 
@@ -392,13 +386,12 @@ describe('RankBadge', () => {
     });
   });
 
-  describe('Performance Tracking Integration', () => {
-    it('is wrapped with performance tracking', () => {
-      // The component should be wrapped with withPerformanceTracking
-      // This is tested by verifying the mock is called correctly
+  describe('Performance', () => {
+    it('renders without performance issues', () => {
+      // Component should render normally
       render(<RankBadge {...defaultProps} />);
 
-      // Component should render normally when wrapped
+      // Component should render without performance issues
       expect(screen.getByText('Yeti')).toBeInTheDocument();
     });
   });

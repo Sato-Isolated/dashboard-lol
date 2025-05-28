@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 import {
   TabNavigation,
   OverviewTab,
@@ -96,10 +95,4 @@ const MatchCardTabs = React.memo(
 
 MatchCardTabs.displayName = 'MatchCardTabs';
 
-// Apply performance tracking
-const TrackedMatchCardTabs = withPerformanceTracking(
-  MatchCardTabs,
-  'MatchCardTabs'
-);
-
-export default TrackedMatchCardTabs;
+export default MatchCardTabs;

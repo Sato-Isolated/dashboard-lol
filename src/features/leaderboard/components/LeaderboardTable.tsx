@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import LeaderboardRow from './LeaderboardRow';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 interface LeaderboardTableProps {
   leaderboard: Array<{
@@ -80,10 +79,7 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
   );
 };
 
-export const LeaderboardTable = withPerformanceTracking(
-  React.memo(LeaderboardTableComponent),
-  'LeaderboardTable'
-);
+export const LeaderboardTable = React.memo(LeaderboardTableComponent);
 
 LeaderboardTable.displayName = 'LeaderboardTable';
 

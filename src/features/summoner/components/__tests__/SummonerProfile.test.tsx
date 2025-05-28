@@ -20,11 +20,6 @@ jest.mock('../RankBadge', () => {
   };
 });
 
-// Mock performance wrapper
-jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
-  withPerformanceTracking: (Component: any) => Component,
-}));
-
 describe('SummonerProfile', () => {
   const mockUseEffectiveUser = jest.requireMock(
     '@/shared/hooks/useEffectiveUser'

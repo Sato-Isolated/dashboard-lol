@@ -3,7 +3,6 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
 import { useOptimizedMasteries } from '@/shared/hooks/useOptimizedFetch';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 import { apiCache } from '@/shared/lib/cache/CacheManager';
 import championData from '@/../public/assets/data/en_US/champion.json';
 import { getChampionIcon } from '@/shared/lib/utils/helpers';
@@ -812,4 +811,4 @@ const MasteryTab: React.FC = React.memo(() => {
 
 MasteryTab.displayName = 'MasteryTab';
 
-export default withPerformanceTracking(MasteryTab, 'MasteryTab');
+export default MasteryTab;

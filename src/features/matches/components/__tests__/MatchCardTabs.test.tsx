@@ -31,12 +31,6 @@ jest.mock('../MatchTeamTable', () => {
   };
 });
 
-// Mock performance tracking wrapper
-jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
-  withPerformanceTracking: (Component: React.ComponentType, name: string) =>
-    Component,
-}));
-
 const createMockMatch = (): UIMatch => ({
   champion: 'Ahri',
   gameId: 'test-game-123',

@@ -38,11 +38,6 @@ jest.mock('@/shared/hooks/useEffectiveUser', () => ({
   useEffectiveUser: () => mockEffectiveUser,
 }));
 
-// Mock performance tracking
-jest.mock('@/shared/components/performance/SimplePerformanceWrapper', () => ({
-  withPerformanceTracking: (component: any) => component,
-}));
-
 // Mock region mapping
 jest.mock('@/shared/lib/utils/langToRegion', () => ({
   mapLangToRegion: () => 'euw1',

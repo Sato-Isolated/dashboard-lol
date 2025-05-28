@@ -12,7 +12,6 @@ import {
   Award,
 } from 'lucide-react';
 import { LeaderboardTable } from './LeaderboardTable';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 export interface LeaderboardEntry {
   name: string;
@@ -344,9 +343,6 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
   );
 };
 
-export const LeaderboardClient = withPerformanceTracking(
-  React.memo(LeaderboardClientComponent),
-  'LeaderboardClient'
-);
+export const LeaderboardClient = React.memo(LeaderboardClientComponent);
 
 LeaderboardClient.displayName = 'LeaderboardClient';

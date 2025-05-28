@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { UIPlayer } from '@/features/matches/types/ui-match.types';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 import { PlayerRow, BackgroundEffects, TableHeader , TeamHeader} from './components';
 
@@ -66,9 +65,6 @@ const TeamTableComponent: React.FC<MatchTeamTableProps> = ({
   );
 };
 
-export const MatchTeamTable = withPerformanceTracking(
-  React.memo(TeamTableComponent),
-  'MatchTeamTable'
-);
+export const MatchTeamTable = React.memo(TeamTableComponent);
 
 MatchTeamTable.displayName = 'MatchTeamTable';
