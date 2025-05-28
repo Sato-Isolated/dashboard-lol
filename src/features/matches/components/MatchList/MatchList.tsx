@@ -35,7 +35,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
     loading,
     error
   );
-  
+
   const stats = useMatchStats(displayMatches);
   const {
     displayedMatches,
@@ -50,11 +50,13 @@ const MatchListComponent: React.FC<MatchListProps> = ({
   // Memoize stable matches to prevent rerender issues
   const stableMatches = React.useMemo(() => {
     if (!displayedMatches || displayedMatches.length === 0) return [];
-    
+
     return displayedMatches.map((match, idx) => ({
       ...match,
       // Create composite stable key
-      stableKey: match.gameId || `${match.champion}-${match.result}-${idx}-${match.date}`,
+      stableKey:
+        match.gameId ||
+        `${match.champion}-${match.result}-${idx}-${match.date}`,
     }));
   }, [displayedMatches]);
 
@@ -92,7 +94,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
 
       <div className='space-y-4 min-h-[200px]'>
         {variant === 'minimal'
-          ? stableMatches.map((match) => (
+          ? stableMatches.map(match => (
               <MinimalMatchItem key={match.stableKey} match={match} />
             ))
           : variant === 'compact'
@@ -104,14 +106,14 @@ const MatchListComponent: React.FC<MatchListProps> = ({
                 />
               ))
             : stableMatches.map((match, index) => (
-                <StableMatchCard 
-                  key={match.stableKey} 
-                  match={match} 
+                <StableMatchCard
+                  key={match.stableKey}
+                  match={match}
                   index={index}
                   isVisible={!loading}
                 />
               ))}
-        
+
         {loading && stableMatches.length > 0 && (
           <div className='text-center py-4'>
             <div className='loading loading-spinner loading-md'></div>

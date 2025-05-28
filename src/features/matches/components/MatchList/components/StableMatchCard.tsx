@@ -10,14 +10,16 @@ interface StableMatchCardProps {
   isVisible: boolean;
 }
 
-const StableMatchCardComponent: React.FC<StableMatchCardProps> = ({ 
-  match, 
-  index, 
-  isVisible 
+const StableMatchCardComponent: React.FC<StableMatchCardProps> = ({
+  match,
+  index,
+  isVisible,
 }) => {
   // Generate stable key for the match
   const stableKey = React.useMemo(() => {
-    return match.gameId || `${match.champion}-${match.result}-${index}-${match.date}`;
+    return (
+      match.gameId || `${match.champion}-${match.result}-${index}-${match.date}`
+    );
   }, [match.gameId, match.champion, match.result, index, match.date]);
 
   return (
@@ -26,20 +28,20 @@ const StableMatchCardComponent: React.FC<StableMatchCardProps> = ({
       layout='position'
       layoutId={stableKey}
       initial={{ opacity: 0, y: 20 }}
-      animate={{ 
-        opacity: isVisible ? 1 : 0.7, 
+      animate={{
+        opacity: isVisible ? 1 : 0.7,
         y: 0,
-        scale: isVisible ? 1 : 0.98
+        scale: isVisible ? 1 : 0.98,
       }}
       exit={{ opacity: 0, y: -10 }}
-      transition={{ 
-        duration: 0.3, 
+      transition={{
+        duration: 0.3,
         ease: 'easeOut',
-        layout: { duration: 0.2 }
+        layout: { duration: 0.2 },
       }}
       style={{
         transformOrigin: 'center',
-        willChange: 'transform, opacity'
+        willChange: 'transform, opacity',
       }}
     >
       <MatchCard match={match} />

@@ -45,7 +45,7 @@ const MatchCardHeaderComponent: React.FC<MatchCardHeaderProps> = ({
           <span className='text-2xl'>{isWin ? '🏆' : '💀'}</span>
           <span className='text-center'>{displayResult}</span>
         </motion.div>
-        
+
         {/* Game Mode */}
         <div className='flex items-center justify-center'>
           <span className='px-2 py-1 text-xs font-medium bg-primary/20 text-primary rounded-full w-fit'>

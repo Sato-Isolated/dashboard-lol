@@ -48,11 +48,13 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
   // Memoize matches with stable keys to prevent rerender issues
   const stableMatches = React.useMemo(() => {
     if (!displayMatches || displayMatches.length === 0) return [];
-    
+
     return displayMatches.map((match, idx) => ({
       ...match,
       // Ensure stable key by creating composite key
-      stableKey: match.gameId || `match-${idx}-${match.champion}-${match.result}-${match.date}`,
+      stableKey:
+        match.gameId ||
+        `match-${idx}-${match.champion}-${match.result}-${match.date}`,
     }));
   }, [displayMatches]);
 
@@ -74,15 +76,15 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
             {stableMatches.length === 0 && !loading ? (
               <EmptyState type='no-matches' />
             ) : (
-              <motion.div 
-                className='space-y-2' 
+              <motion.div
+                className='space-y-2'
                 variants={containerVariants}
                 initial='hidden'
                 animate='visible'
                 style={{ minHeight: loading ? '400px' : 'auto' }}
               >
                 {stableMatches.map((match, index) => (
-                  <StableMatchCard 
+                  <StableMatchCard
                     key={match.stableKey}
                     match={match}
                     index={index}
@@ -120,8 +122,8 @@ const MatchListContainer = React.memo(
       prevProps.effectiveTagline === nextProps.effectiveTagline &&
       prevProps.matches.length === nextProps.matches.length &&
       // Compare first few matches for deep equality check
-      JSON.stringify(prevProps.matches.slice(0, 3)) === 
-      JSON.stringify(nextProps.matches.slice(0, 3))
+      JSON.stringify(prevProps.matches.slice(0, 3)) ===
+        JSON.stringify(nextProps.matches.slice(0, 3))
     );
   }
 );

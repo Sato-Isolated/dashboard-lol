@@ -8,7 +8,7 @@ import type { UIMatch } from '@/features/matches/types/ui-match.types';
 export const useStableMatchKeys = (matches: UIMatch[]) => {
   return useMemo(() => {
     if (!matches || matches.length === 0) return [];
-    
+
     return matches.map((match, index) => {
       // Create a more robust stable key using multiple properties
       const keyParts = [
@@ -17,21 +17,23 @@ export const useStableMatchKeys = (matches: UIMatch[]) => {
         match.result || 'unknown',
         match.date || 'unknown',
         match.kda || 'unknown',
-        index.toString()
+        index.toString(),
       ];
-      
+
       const stableKey = keyParts.join('-');
-      
+
       return {
         ...match,
         stableKey,
         // Add a hash for quick comparison
-        matchHash: btoa(JSON.stringify({
-          gameId: match.gameId,
-          champion: match.champion,
-          result: match.result,
-          kda: match.kda
-        })).slice(0, 8)
+        matchHash: btoa(
+          JSON.stringify({
+            gameId: match.gameId,
+            champion: match.champion,
+            result: match.result,
+            kda: match.kda,
+          })
+        ).slice(0, 8),
       };
     });
   }, [matches]);
@@ -51,17 +53,19 @@ export const useMatchChangeDetection = (matches: UIMatch[]) => {
     const significantMatches = matches.slice(0, 5);
     const changeData = {
       count: matches.length,
-      firstMatchIds: significantMatches.map(m => m.gameId || m.champion).join(','),
-      lastUpdate: Date.now()
+      firstMatchIds: significantMatches
+        .map(m => m.gameId || m.champion)
+        .join(','),
+      lastUpdate: Date.now(),
     };
-    
+
     const changeId = btoa(JSON.stringify(changeData)).slice(0, 12);
-    
+
     return {
       hasMatches: true,
       changeId,
       matchCount: matches.length,
-      significantMatches
+      significantMatches,
     };
   }, [matches]);
 };

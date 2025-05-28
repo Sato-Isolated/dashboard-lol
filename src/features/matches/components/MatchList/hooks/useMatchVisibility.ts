@@ -9,7 +9,8 @@ export const useMatchVisibility = (
   matches: UIMatch[],
   loading: boolean,
   error: string | null
-) => {  const [isVisible, setIsVisible] = useState(true);
+) => {
+  const [isVisible, setIsVisible] = useState(true);
   const [lastValidMatches, setLastValidMatches] = useState<UIMatch[]>(matches);
   const prevMatchesRef = useRef<UIMatch[]>(matches);
   const visibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,7 +66,8 @@ export const useMatchVisibility = (
 
   return {
     isVisible,
-    displayMatches: isVisible && matches?.length > 0 ? matches : lastValidMatches,
+    displayMatches:
+      isVisible && matches?.length > 0 ? matches : lastValidMatches,
     shouldShowContent: isVisible || loading,
   };
 };

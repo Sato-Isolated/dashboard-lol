@@ -3,7 +3,14 @@
 
 export { default } from './MatchHistory';
 
-export { StatsOverview, LoadingState, ErrorState, EmptyState, LoadMoreButton, MatchListContainer } from './components';
+export {
+  StatsOverview,
+  LoadingState,
+  ErrorState,
+  EmptyState,
+  LoadMoreButton,
+  MatchListContainer,
+} from './components';
 
 // Export hooks
 export * from './hooks';
