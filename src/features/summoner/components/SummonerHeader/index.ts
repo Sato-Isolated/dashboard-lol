@@ -14,8 +14,4 @@ export { useFavorites } from './hooks/useFavorites';
 export { useToastMessages } from './hooks/useToastMessages';
 
 // Types exports (re-export from types folder)
-export type {
-  Favorite,
-  FavoriteButtonProps,
-  ToastMessage,
-} from './types';
+export type { Favorite, FavoriteButtonProps, ToastMessage } from './types';
