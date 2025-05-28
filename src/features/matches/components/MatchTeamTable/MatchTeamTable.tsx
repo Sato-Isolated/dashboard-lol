@@ -2,7 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { UIPlayer } from '@/features/matches/types/ui-match.types';
 
-import { PlayerRow, BackgroundEffects, TableHeader , TeamHeader} from './components';
+import {
+  PlayerRow,
+  BackgroundEffects,
+  TableHeader,
+  TeamHeader,
+} from './components';
 
 import { TEAM_COLORS, COLUMN_STYLES, TeamColorType } from './constants';
 

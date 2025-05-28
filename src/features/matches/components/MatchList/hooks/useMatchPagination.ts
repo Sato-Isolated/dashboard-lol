@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { UIMatch } from '@/features/matches/types/ui-match.types';
 import { DEFAULT_ITEMS_PER_PAGE } from '../constants';
 
@@ -10,10 +10,17 @@ export const useMatchPagination = (
   const [showAll, setShowAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Memoize displayed matches to prevent unnecessary recalculations
   const displayedMatches = useMemo(() => {
+    // Ensure matches is valid array
+    if (!Array.isArray(matches) || matches.length === 0) {
+      return [];
+    }
+
     if (enablePagination) {
       const startIndex = (currentPage - 1) * DEFAULT_ITEMS_PER_PAGE;
-      return matches.slice(startIndex, startIndex + DEFAULT_ITEMS_PER_PAGE);
+      const endIndex = startIndex + DEFAULT_ITEMS_PER_PAGE;
+      return matches.slice(startIndex, endIndex);
     }
 
     if (maxInitialItems && !showAll) {
@@ -23,17 +30,23 @@ export const useMatchPagination = (
     return matches;
   }, [matches, enablePagination, currentPage, maxInitialItems, showAll]);
 
-  const totalPages = enablePagination
-    ? Math.ceil(matches.length / DEFAULT_ITEMS_PER_PAGE)
-    : 1;
+  const totalPages = useMemo(() => {
+    if (!enablePagination || !matches.length) return 1;
+    return Math.ceil(matches.length / DEFAULT_ITEMS_PER_PAGE);
+  }, [enablePagination, matches.length]);
 
-  const goToNextPage = () => {
+  const goToNextPage = useCallback(() => {
     setCurrentPage(p => Math.min(totalPages, p + 1));
-  };
+  }, [totalPages]);
 
-  const goToPrevPage = () => {
+  const goToPrevPage = useCallback(() => {
     setCurrentPage(p => Math.max(1, p - 1));
-  };
+  }, []);
+
+  // Reset page when matches change significantly
+  const resetPage = useCallback(() => {
+    setCurrentPage(1);
+  }, []);
 
   return {
     displayedMatches,
@@ -43,5 +56,6 @@ export const useMatchPagination = (
     setShowAll,
     goToNextPage,
     goToPrevPage,
+    resetPage,
   };
 };

@@ -60,6 +60,7 @@ const MatchCardComponent: React.FC<MatchCardProps> = ({ match }) => {
           date={match.date}
           result={match.result}
           duration={match.duration}
+          mode={match.mode}
         />
 
         {/* Champion Block - Center */}

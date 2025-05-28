@@ -10,9 +10,9 @@ import {
   CompactMatchItem,
   PaginationControls,
   LoadMoreControls,
+  StableMatchCard,
 } from './components';
-import { useMatchStats } from './hooks/useMatchStats';
-import { useMatchPagination } from './hooks/useMatchPagination';
+import { useMatchStats, useMatchPagination, useMatchVisibility } from './hooks';
 import type { MatchListProps } from './types';
 
 const MatchListComponent: React.FC<MatchListProps> = ({
@@ -30,7 +30,13 @@ const MatchListComponent: React.FC<MatchListProps> = ({
   emptyStateMessage = 'No matches found',
   title = 'Match History',
 }) => {
-  const stats = useMatchStats(matches);
+  const { displayMatches, shouldShowContent } = useMatchVisibility(
+    matches,
+    loading,
+    error
+  );
+  
+  const stats = useMatchStats(displayMatches);
   const {
     displayedMatches,
     currentPage,
@@ -39,10 +45,21 @@ const MatchListComponent: React.FC<MatchListProps> = ({
     setShowAll,
     goToNextPage,
     goToPrevPage,
-  } = useMatchPagination(matches, enablePagination, maxInitialItems);
+  } = useMatchPagination(displayMatches, enablePagination, maxInitialItems);
+
+  // Memoize stable matches to prevent rerender issues
+  const stableMatches = React.useMemo(() => {
+    if (!displayedMatches || displayedMatches.length === 0) return [];
+    
+    return displayedMatches.map((match, idx) => ({
+      ...match,
+      // Create composite stable key
+      stableKey: match.gameId || `${match.champion}-${match.result}-${idx}-${match.date}`,
+    }));
+  }, [displayedMatches]);
 
   // Loading state
-  if (loading) {
+  if (loading && (!displayMatches || displayMatches.length === 0)) {
     return (
       <LoadingState
         variant={variant}
@@ -53,13 +70,13 @@ const MatchListComponent: React.FC<MatchListProps> = ({
     );
   }
 
-  // Error state
-  if (error) {
+  // Error state (only show if no cached matches to display)
+  if (error && !shouldShowContent) {
     return <ErrorState error={error} className={className} />;
   }
 
-  // Empty state
-  if (!matches || matches.length === 0) {
+  // Empty state (only if we're sure there are no matches and not loading)
+  if (!shouldShowContent && !loading) {
     return <EmptyState message={emptyStateMessage} className={className} />;
   }
 
@@ -69,24 +86,37 @@ const MatchListComponent: React.FC<MatchListProps> = ({
         <h2 className='text-2xl font-bold text-base-content'>{title}</h2>
       )}
 
-      {showStats && variant !== 'minimal' && <MatchStatsCard stats={stats} />}
+      {showStats && variant !== 'minimal' && stableMatches.length > 0 && (
+        <MatchStatsCard stats={stats} />
+      )}
 
-      <div className='space-y-4'>
+      <div className='space-y-4 min-h-[200px]'>
         {variant === 'minimal'
-          ? displayedMatches.map((match, index) => (
-              <MinimalMatchItem key={match.gameId || index} match={match} />
+          ? stableMatches.map((match) => (
+              <MinimalMatchItem key={match.stableKey} match={match} />
             ))
           : variant === 'compact'
-            ? displayedMatches.map((match, index) => (
+            ? stableMatches.map((match, index) => (
                 <CompactMatchItem
-                  key={match.gameId || index}
+                  key={match.stableKey}
                   match={match}
                   index={index}
                 />
               ))
-            : displayedMatches.map((match, index) => (
-                <MatchCard key={match.gameId || index} match={match} />
+            : stableMatches.map((match, index) => (
+                <StableMatchCard 
+                  key={match.stableKey} 
+                  match={match} 
+                  index={index}
+                  isVisible={!loading}
+                />
               ))}
+        
+        {loading && stableMatches.length > 0 && (
+          <div className='text-center py-4'>
+            <div className='loading loading-spinner loading-md'></div>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}

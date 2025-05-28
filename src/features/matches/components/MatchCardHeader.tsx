@@ -5,12 +5,14 @@ interface MatchCardHeaderProps {
   date: string;
   result: string;
   duration: string;
+  mode: string;
 }
 
 const MatchCardHeaderComponent: React.FC<MatchCardHeaderProps> = ({
   date,
   result,
   duration,
+  mode,
 }) => {
   // Memoize computed values to avoid recalculations
   const isWin = result.toLowerCase() === 'win';
@@ -43,6 +45,13 @@ const MatchCardHeaderComponent: React.FC<MatchCardHeaderProps> = ({
           <span className='text-2xl'>{isWin ? '🏆' : '💀'}</span>
           <span className='text-center'>{displayResult}</span>
         </motion.div>
+        
+        {/* Game Mode */}
+        <div className='flex items-center justify-center'>
+          <span className='px-2 py-1 text-xs font-medium bg-primary/20 text-primary rounded-full w-fit'>
+            {mode}
+          </span>
+        </div>
         {/* Date */}
         <div className='flex items-center justify-center gap-2 text-xs text-base-content/70 font-mono'>
           <svg

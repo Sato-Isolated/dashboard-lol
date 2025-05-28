@@ -167,7 +167,8 @@ const RankBadge: React.FC<RankBadgeProps> = ({ aramScore, leagues }) => {
           </AnimatePresence>
         </div>
       </motion.div>
-    </motion.div>  );
+    </motion.div>
+  );
 };
 
 export default RankBadge;
