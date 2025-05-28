@@ -7,7 +7,7 @@ export const useSearchSuggestions = (summonerName: string) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    
+
     if (summonerName.length >= 2) {
       setSuggestionError(null);
       fetch(`/api/summoner/search?q=${encodeURIComponent(summonerName)}`, {
@@ -29,7 +29,7 @@ export const useSearchSuggestions = (summonerName: string) => {
       setSuggestions([]);
       setSuggestionError(null);
     }
-    
+
     return () => controller.abort();
   }, [summonerName]);
 

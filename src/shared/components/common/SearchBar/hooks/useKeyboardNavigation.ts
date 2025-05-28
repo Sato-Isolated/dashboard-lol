@@ -3,7 +3,7 @@ import type { Suggestion } from '../types';
 
 export const useKeyboardNavigation = (
   suggestions: Suggestion[],
-  onSuggestionSelect: (suggestion: Suggestion) => void,
+  onSuggestionSelect: (suggestion: Suggestion) => void
 ) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -21,7 +21,7 @@ export const useKeyboardNavigation = (
         setShowSuggestions(false);
       }
     }
-    
+
     if (showSuggestions) {
       document.addEventListener('mousedown', handleClick);
       return () => document.removeEventListener('mousedown', handleClick);
@@ -38,7 +38,7 @@ export const useKeyboardNavigation = (
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setHighlightedIndex(prev =>
-          prev <= 0 ? suggestions.length - 1 : prev - 1,
+          prev <= 0 ? suggestions.length - 1 : prev - 1
         );
       } else if (e.key === 'Enter' && highlightedIndex >= 0) {
         e.preventDefault();
@@ -49,7 +49,7 @@ export const useKeyboardNavigation = (
         setShowSuggestions(false);
       }
     },
-    [showSuggestions, suggestions, highlightedIndex, onSuggestionSelect],
+    [showSuggestions, suggestions, highlightedIndex, onSuggestionSelect]
   );
 
   return {

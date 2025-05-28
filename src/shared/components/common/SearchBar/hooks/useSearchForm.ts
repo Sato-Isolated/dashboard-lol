@@ -6,10 +6,11 @@ import { validateSearchForm } from '../utils/validationUtils';
 import type { SearchFormData, Suggestion } from '../types';
 
 export const useSearchForm = () => {
-  const { effectiveRegion, effectiveTagline, effectiveName } = useEffectiveUser();
+  const { effectiveRegion, effectiveTagline, effectiveName } =
+    useEffectiveUser();
   const { setUser } = useUserStore();
   const router = useRouter();
-  
+
   const [summonerName, setSummonerName] = useState<string>(effectiveName || '');
   const [tagline, setTagline] = useState<string>(effectiveTagline || '');
   const [hasError, setHasError] = useState<boolean>(false);
@@ -28,23 +29,23 @@ export const useSearchForm = () => {
         tagline,
         region: region as any,
       };
-      
+
       const isValid = validateSearchForm(formData);
-      
+
       if (!isValid) {
         setHasError(true);
         return;
       }
-      
+
       setHasError(false);
       setUser({ region, tagline, summonerName });
       router.push(
         `/${region}/summoner/${encodeURIComponent(
-          summonerName,
-        )}/${encodeURIComponent(tagline)}`,
+          summonerName
+        )}/${encodeURIComponent(tagline)}`
       );
     },
-    [summonerName, tagline, setUser, router],
+    [summonerName, tagline, setUser, router]
   );
 
   const handleSuggestionSelect = useCallback(
@@ -53,7 +54,7 @@ export const useSearchForm = () => {
       setTagline(suggestion.tagline);
       setRegion(suggestion.region);
     },
-    [],
+    []
   );
 
   return {

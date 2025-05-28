@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { suggestionListVariants, suggestionItemVariants } from '../utils/animations';
+import {
+  suggestionListVariants,
+  suggestionItemVariants,
+} from '../utils/animations';
 import type { SuggestionListProps } from '../types';
 
 export const SuggestionList: React.FC<SuggestionListProps> = React.memo(
@@ -41,7 +44,7 @@ export const SuggestionList: React.FC<SuggestionListProps> = React.memo(
         ))}
       </motion.ul>
     );
-  },
+  }
 );
 
 SuggestionList.displayName = 'SuggestionList';

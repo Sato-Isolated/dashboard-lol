@@ -17,14 +17,16 @@ export const getBrowserDefaultRegion = (): PlatformRegion => {
   return mapLangToRegion(browserLang) as PlatformRegion;
 };
 
-export const getInitialRegion = (currentRegion?: PlatformRegion | ''): PlatformRegion => {
+export const getInitialRegion = (
+  currentRegion?: PlatformRegion | ''
+): PlatformRegion => {
   // Si on a déjà une région, la garder
   if (currentRegion) return currentRegion;
-  
+
   // Essayer de récupérer depuis le stockage local
   const stored = getStoredRegion();
   if (stored) return stored;
-  
+
   // Sinon, utiliser la région par défaut du navigateur
   const defaultRegion = getBrowserDefaultRegion();
   setStoredRegion(defaultRegion);

@@ -28,7 +28,7 @@ const SearchBar: React.FC = () => {
 
   const { region, setRegion } = useRegionPreference();
   const { suggestions, suggestionError } = useSearchSuggestions(summonerName);
-  
+
   const {
     showSuggestions,
     setShowSuggestions,
@@ -36,7 +36,7 @@ const SearchBar: React.FC = () => {
     setHighlightedIndex,
     inputRef,
     handleKeyDown,
-  } = useKeyboardNavigation(suggestions, (suggestion) => {
+  } = useKeyboardNavigation(suggestions, suggestion => {
     handleSuggestionSelect(suggestion, setRegion);
     setShowSuggestions(false);
   });
@@ -67,10 +67,12 @@ const SearchBar: React.FC = () => {
                    }`}
         >
           {/* Main input container */}
-          <div className='relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full'>            {/* Summoner Name Input */}
+          <div className='relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full'>
+            {' '}
+            {/* Summoner Name Input */}
             <SearchInput
               value={summonerName}
-              onChange={(value) => {
+              onChange={value => {
                 setSummonerName(value);
                 setShowSuggestions(true);
               }}
@@ -81,10 +83,8 @@ const SearchBar: React.FC = () => {
               id='summonerName'
               inputRef={inputRef}
             />
-
             {/* Separator */}
             <Separator delay={0.3} />
-
             {/* Tagline Input */}
             <TaglineInput
               value={tagline}
@@ -93,13 +93,10 @@ const SearchBar: React.FC = () => {
               placeholder='Tagline'
               id='tagline'
             />
-
             {/* Separator */}
             <Separator delay={0.5} />
-
             {/* Region Select */}
             <RegionSelect value={region} onChange={setRegion} />
-
             {/* Search Button */}
             <SearchButton onSubmit={() => {}} />
           </div>
@@ -110,7 +107,7 @@ const SearchBar: React.FC = () => {
               <SuggestionList
                 suggestions={suggestions}
                 highlightedIndex={highlightedIndex}
-                onSelect={(suggestion) => {
+                onSelect={suggestion => {
                   handleSuggestionSelect(suggestion, setRegion);
                   setShowSuggestions(false);
                 }}

@@ -16,7 +16,7 @@ export const RegionSelect: React.FC<RegionSelectProps> = ({
           {value}
         </option>
       )),
-    [],
+    []
   );
 
   return (
