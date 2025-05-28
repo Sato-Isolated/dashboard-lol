@@ -3,4 +3,4 @@
 
 export { default as SummonerProfile } from './SummonerProfile';
 export { default as RankBadge } from './RankBadge';
-export * from './SummonerHeader';
+export { default as SummonerHeader } from './SummonerHeader';
