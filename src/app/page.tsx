@@ -76,14 +76,14 @@ export default function Home() {
   const stats = [
     {
       label: 'Players Tracked',
-      value: playersCount.toLocaleString(),
+      value: playersCount.toLocaleString('en-US'),
       icon: Users,
       color: 'text-primary',
       isLive: true,
     },
     {
       label: 'ARAM Matches',
-      value: matchesCount.toLocaleString(),
+      value: matchesCount.toLocaleString('en-US'),
       icon: Gamepad2,
       color: 'text-secondary',
       isLive: true,
@@ -376,7 +376,10 @@ export default function Home() {
                   whileTap={{ scale: 0.95 }}
                   className='btn btn-outline btn-md sm:btn-lg w-full sm:w-auto'
                   onClick={() =>
-                    window.open('https://github.com/Sato-Isolated/dashboard-lol', '_blank')
+                    window.open(
+                      'https://github.com/Sato-Isolated/dashboard-lol',
+                      '_blank'
+                    )
                   }
                 >
                   <Trophy className='w-4 h-4 sm:w-5 sm:h-5 mr-2' />

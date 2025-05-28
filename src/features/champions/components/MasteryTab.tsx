@@ -200,7 +200,7 @@ const MasteryCard: React.FC<{
             <div className='flex items-center justify-center gap-2 text-sm text-base-content/70'>
               <Target size={14} />
               <span className='font-semibold'>
-                {mastery.championPoints.toLocaleString()} points
+                {mastery.championPoints.toLocaleString('en-US')} points
               </span>
             </div>
 
@@ -291,7 +291,7 @@ const MasteryListRow: React.FC<{
       <td className='py-4 px-6 text-center'>
         <div className='flex flex-col items-center gap-1'>
           <span className='text-lg font-bold text-base-content'>
-            {mastery.championPoints.toLocaleString()}
+            {mastery.championPoints.toLocaleString('en-US')}
           </span>
           <span className='text-xs text-base-content/50 flex items-center gap-1'>
             <Target size={12} />
@@ -574,7 +574,7 @@ const MasteryTab: React.FC = React.memo(() => {
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: 'spring' }}
               >
-                {masteryStats.totalPoints.toLocaleString()}
+                {masteryStats.totalPoints.toLocaleString('en-US')}
               </motion.div>
             </div>
           </div>

@@ -161,7 +161,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Search and Mobile Menu */}
-        <div className='flex-none flex items-center gap-1 sm:gap-2'>
+        <div className='flex-none flex items-center pr-2 gap-1 sm:gap-2'>
           <motion.div
             className='hidden sm:block'
             initial={{ opacity: 0, x: 20 }}

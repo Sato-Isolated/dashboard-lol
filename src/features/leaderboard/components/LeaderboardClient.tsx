@@ -163,7 +163,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
               <div className='card-body items-center text-center p-4 sm:p-6'>
                 <Crown className='w-6 h-6 sm:w-8 sm:h-8 text-warning mb-2' />
                 <h3 className='text-2xl sm:text-3xl font-bold text-warning'>
-                  {stats.topScore.toLocaleString()}
+                  {stats.topScore.toLocaleString('en-US')}
                 </h3>
                 <p className='text-sm sm:text-base text-base-content/70 font-medium'>
                   Highest Score
@@ -180,7 +180,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
               <div className='card-body items-center text-center p-4 sm:p-6'>
                 <TrendingUp className='w-6 h-6 sm:w-8 sm:h-8 text-primary mb-2' />
                 <h3 className='text-2xl sm:text-3xl font-bold text-primary'>
-                  {stats.averageScore.toLocaleString()}
+                  {stats.averageScore.toLocaleString('en-US')}
                 </h3>
                 <p className='text-sm sm:text-base text-base-content/70 font-medium'>
                   Average Score
@@ -197,7 +197,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
               <div className='card-body items-center text-center p-4 sm:p-6'>
                 <Users className='w-6 h-6 sm:w-8 sm:h-8 text-secondary mb-2' />
                 <h3 className='text-2xl sm:text-3xl font-bold text-secondary'>
-                  {stats.totalPlayers.toLocaleString()}
+                  {stats.totalPlayers.toLocaleString('en-US')}
                 </h3>
                 <p className='text-sm sm:text-base text-base-content/70 font-medium'>
                   Ranked Players
@@ -214,7 +214,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
               <div className='card-body items-center text-center p-4 sm:p-6'>
                 <Target className='w-6 h-6 sm:w-8 sm:h-8 text-accent mb-2' />
                 <h3 className='text-2xl sm:text-3xl font-bold text-accent'>
-                  {stats.competitiveThreshold.toLocaleString()}
+                  {stats.competitiveThreshold.toLocaleString('en-US')}
                 </h3>
                 <p className='text-sm sm:text-base text-base-content/70 font-medium'>
                   Competitive Threshold
@@ -262,7 +262,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
                     {leaderboard[1].name}
                   </h3>
                   <p className='text-xs sm:text-sm text-base-content/70'>
-                    {leaderboard[1].aramScore.toLocaleString()}
+                    {leaderboard[1].aramScore.toLocaleString('en-US')}
                   </p>
                 </div>
               </div>
@@ -285,7 +285,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
                     {leaderboard[0].name}
                   </h3>
                   <p className='text-sm sm:text-base text-base-content/70'>
-                    {leaderboard[0].aramScore.toLocaleString()}
+                    {leaderboard[0].aramScore.toLocaleString('en-US')}
                   </p>
                 </div>
               </div>
@@ -306,7 +306,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
                     {leaderboard[2].name}
                   </h3>
                   <p className='text-xs sm:text-sm text-base-content/70'>
-                    {leaderboard[2].aramScore.toLocaleString()}
+                    {leaderboard[2].aramScore.toLocaleString('en-US')}
                   </p>
                 </div>
               </div>

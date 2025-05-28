@@ -115,7 +115,7 @@ const LeaderboardRowComponent: React.FC<LeaderboardRowProps> = ({
       </td>
       <td className='text-sm sm:text-base md:text-lg font-semibold text-center'>
         <span className='hidden sm:inline'>
-          {entry.aramScore.toLocaleString()}
+          {entry.aramScore.toLocaleString('en-US')}
         </span>
         <span className='sm:hidden'>
           {entry.aramScore > 999
