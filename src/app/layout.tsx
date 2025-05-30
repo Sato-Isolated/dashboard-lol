@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import GlobalErrorAlert from '@/components/common/ui/GlobalErrorAlert';
 import GlobalProgressBar from '@/components/common/ui/GlobalProgressBar';
 import ErrorBoundary from '@/components/common/error/ErrorBoundary';
+import QueryProvider from '@/components/common/providers/QueryProvider';
 import { getDatabaseCounts } from '@/lib/utils/databaseStats';
 import './globals.css';
 
@@ -38,30 +39,31 @@ export default async function RootLayout({
 
   return (
     <html lang='en'>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ErrorBoundary>
-          <ThemeProvider>
-            <Header />
-            <GlobalProgressBar />
-            <GlobalErrorAlert />
-            <ErrorBoundary
-              fallback={
-                <div className='min-h-screen flex items-center justify-center'>
-                  <div className='alert alert-error max-w-md'>
-                    <div>
-                      <div className='font-semibold'>Application Error</div>
-                      <div className='text-sm'>
-                        The main content failed to load. Please refresh the page.
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>        <ErrorBoundary>
+          <QueryProvider>
+            <ThemeProvider>
+              <Header />
+              <GlobalProgressBar />
+              <GlobalErrorAlert />
+              <ErrorBoundary
+                fallback={
+                  <div className='min-h-screen flex items-center justify-center'>
+                    <div className='alert alert-error max-w-md'>
+                      <div>
+                        <div className='font-semibold'>Application Error</div>
+                        <div className='text-sm'>
+                          The main content failed to load. Please refresh the page.
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              }
-            >
-              {children}
-            </ErrorBoundary>
-            <Footer playersCount={databaseCounts.playersCount} matchesCount={databaseCounts.matchesCount} />
-          </ThemeProvider>
+                }
+              >
+                {children}
+              </ErrorBoundary>
+              <Footer playersCount={databaseCounts.playersCount} matchesCount={databaseCounts.matchesCount} />
+            </ThemeProvider>
+          </QueryProvider>
         </ErrorBoundary>
       </body>
     </html>

@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { useOptimizedChampionStats } from '../../../hooks/useOptimizedChampionStats';
+import { useChampionStats as useChampionStatsQuery } from '@/hooks/useTanStackQueries';
 import { apiCache } from '@/lib/cache/CacheManager';
 import {
   ChampionStats,
@@ -16,13 +16,13 @@ export const useChampionStats = (params: UseChampionStatsParams) => {
     }),
     [params.region, params.name, params.tagline],
   );
-  // Use optimized fetch for champion stats
+  // Use TanStack Query for champion stats
   const {
     data: statsResponse,
-    loading,
+    isLoading: loading,
     error,
     refetch,
-  } = useOptimizedChampionStats(
+  } = useChampionStatsQuery(
     memoizedParams.region,
     memoizedParams.name,
     memoizedParams.tagline,
@@ -52,7 +52,7 @@ export const useChampionStats = (params: UseChampionStatsParams) => {
   return {
     stats,
     loading,
-    error,
+    error: error as Error | null,
     refetch: clearCacheAndRefetch,
   };
 };

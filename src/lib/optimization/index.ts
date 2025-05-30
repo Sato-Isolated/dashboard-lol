@@ -1,14 +1,13 @@
 // Cache Management
 export { CacheManager } from '@/lib/cache/CacheManager';
 
-// Optimized Hooks - use useAsyncData directly for unified hook approach
-export { useAsyncData } from '@/hooks';
+// TanStack Query Hooks - New standardized hooks
 export {
-  useOptimizedSummoner,
-  useOptimizedMatchHistory,
-} from '@/features/summoner/hooks/useOptimizedSummoner';
-export { useOptimizedChampionStats } from '@/features/champions/hooks/useOptimizedChampionStats';
-export { useOptimizedMasteries } from '@/features/champions/hooks/useOptimizedMasteries';
+  useSummoner,
+  useMatchHistory,
+  useChampionStats,
+  useMasteries,
+} from '@/hooks/useTanStackQueries';
 
 // Database Optimization
 export { default as DatabaseOptimizationService } from '@/lib/api/database/DatabaseOptimizationService';

@@ -1,48 +1,41 @@
 'use client';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useEffectiveUser } from './useEffectiveUser';
-import { useAsyncData } from './useAsyncData';
 
 /**
- * Hook that combines useEffectiveUser with async operations
+ * Hook that combines useEffectiveUser with async operations using TanStack Query mutations
  * Perfect for operations that need user context (region, name, tagline)
  */
 export function useUserDataOperation<T = void>() {
   const { effectiveRegion, effectiveName, effectiveTagline } =
     useEffectiveUser();
 
-  const [currentOperation, setCurrentOperation] = useState<
-    (() => Promise<T>) | null
-  >(null);
-
-  const { loading, error, data, execute, reset } = useAsyncData<T>({
-    operation: currentOperation || undefined,
-    immediate: false,
+  const mutation = useMutation<T, Error, (region: string, name: string, tagline: string) => Promise<T>>({
+    mutationFn: async (operation) => {
+      if (!effectiveRegion || !effectiveName || !effectiveTagline) {
+        throw new Error('User data not available');
+      }
+      return await operation(effectiveRegion, effectiveName, effectiveTagline);
+    },
+    retry: 1,
   });
 
   const executeWithUserData = useCallback(
     async (
       operation: (region: string, name: string, tagline: string) => Promise<T>,
     ) => {
-      if (!effectiveRegion || !effectiveName || !effectiveTagline) {
-        throw new Error('User data not available');
-      }
-
-      // Set the operation and execute it
-      setCurrentOperation(
-        () => () => operation(effectiveRegion, effectiveName, effectiveTagline),
-      );
-      await execute();
+      return mutation.mutateAsync(operation);
     },
-    [execute, effectiveRegion, effectiveName, effectiveTagline],
+    [mutation]
   );
 
   return {
-    loading,
-    error,
-    data,
+    loading: mutation.isPending,
+    error: mutation.error?.message || null,
+    data: mutation.data,
     executeWithUserData,
-    reset,
+    reset: mutation.reset,
     // Also expose the user data for convenience
     effectiveRegion,
     effectiveName,
@@ -58,36 +51,30 @@ export function useUserDataAction() {
   const { effectiveRegion, effectiveName, effectiveTagline } =
     useEffectiveUser();
 
-  const [currentAction, setCurrentAction] = useState<
-    (() => Promise<void>) | null
-  >(null);
-
-  const { loading, error, execute, reset } = useAsyncData<void>({
-    operation: currentAction || undefined,
-    immediate: false,
+  const mutation = useMutation<void, Error, (region: string, name: string, tagline: string) => Promise<void>>({
+    mutationFn: async (action) => {
+      if (!effectiveRegion || !effectiveName || !effectiveTagline) {
+        throw new Error('User data not available');
+      }
+      return await action(effectiveRegion, effectiveName, effectiveTagline);
+    },
+    retry: 1,
   });
 
   const executeUserAction = useCallback(
     async (
       action: (region: string, name: string, tagline: string) => Promise<void>,
     ) => {
-      if (!effectiveRegion || !effectiveName || !effectiveTagline) {
-        throw new Error('User data not available');
-      }
-
-      setCurrentAction(
-        () => () => action(effectiveRegion, effectiveName, effectiveTagline),
-      );
-      await execute();
+      return mutation.mutateAsync(action);
     },
-    [execute, effectiveRegion, effectiveName, effectiveTagline],
+    [mutation]
   );
 
   return {
-    loading,
-    error,
+    loading: mutation.isPending,
+    error: mutation.error?.message || null,
     executeUserAction,
-    reset,
+    reset: mutation.reset,
     effectiveRegion,
     effectiveName,
     effectiveTagline,

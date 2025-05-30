@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { UIMatch } from '@/features/matches/types/uiMatchTypes';
 import { mapRiotMatchToUIMatch } from '@/lib/utils/helpers';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
-import { useInfiniteApiCall } from '@/hooks/useInfiniteApiCall';
+import { useMatchHistoryInfinite } from '@/hooks/useTanStackQueries';
 import type { Match } from '@/types/api/matchTypes';
 
 const PAGE_SIZE = 10;
@@ -18,58 +18,44 @@ export function useMatchHistory(): {
   const { effectiveName, effectiveRegion, effectiveTagline } =
     useEffectiveUser();
 
-  const getUrl = useCallback(
-    (pageIndex: number, previousPageData: { data: Match[] } | null) => {
-      if (!effectiveName || !effectiveRegion || !effectiveTagline) {
-        return null;
-      }
-
-      if (
-        previousPageData &&
-        previousPageData.data &&
-        previousPageData.data.length === 0
-      ) {
-        return null; // no more pages
-      }
-
-      return `/api/summoner/matches?name=${encodeURIComponent(
-        effectiveName,
-      )}&region=${encodeURIComponent(
-        effectiveRegion,
-      )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${
-        pageIndex * PAGE_SIZE
-      }&count=${PAGE_SIZE}`;
-    },
-    [effectiveName, effectiveRegion, effectiveTagline],
+  const { 
+    data, 
+    error, 
+    isLoading, 
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch
+  } = useMatchHistoryInfinite(
+    effectiveRegion, 
+    effectiveName, 
+    effectiveTagline,
+    PAGE_SIZE
   );
-  const { data, error, loading, loadingMore, hasMore, loadMore, reset } =
-    useInfiniteApiCall<Match>(getUrl, {
-      pageSize: PAGE_SIZE,
-      enabled: !!(effectiveName && effectiveRegion && effectiveTagline),
-    });
 
-  // Map raw Match data to UIMatch
-  const matches: UIMatch[] = data.map(match =>
-    mapRiotMatchToUIMatch(match, effectiveName),
-  );
+  // Map raw Match data to UIMatch - flatten all pages
+  const matches: UIMatch[] = data?.pages?.flatMap(page => 
+    page.data.map((match: Match) => mapRiotMatchToUIMatch(match, effectiveName))
+  ) || [];
 
   const fetchMatches = useCallback(
     (resetPagination = false) => {
       console.log('fetchMatches called with reset:', resetPagination);
       if (resetPagination) {
-        reset();
+        refetch();
       } else {
-        loadMore();
+        fetchNextPage();
       }
     },
-    [reset, loadMore],
+    [refetch, fetchNextPage],
   );
+  
   return {
     matches,
-    error,
-    loading,
-    loadingMore,
-    hasMore,
+    error: error?.message || null,
+    loading: isLoading,
+    loadingMore: isFetchingNextPage,
+    hasMore: !!hasNextPage,
     fetchMatches,
   };
 }

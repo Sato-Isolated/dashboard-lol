@@ -1,4 +1,4 @@
-import { useAsyncData } from '@/hooks';
+import { useSummonerQuery } from '@/hooks/useTanStackQueries';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 import type { RiotAccountDto } from '@/types/api/accountTypes';
 import type { SummonerDto, LeagueEntry } from '@/types/api/summonerTypes';
@@ -24,26 +24,13 @@ export function useAccountSummoner(
   const n = name || effective.effectiveName;
   const t = tagline || effective.effectiveTagline;
 
-  // API endpoint expected to return { success, data: { account, summoner, leagues, aramScore } }
-  const url =
-    r && n && t
-      ? `/api/summoner?region=${encodeURIComponent(
-          r,
-        )}&name=${encodeURIComponent(n)}&tagline=${encodeURIComponent(t)}`
-      : null;
-  const { data, loading, error, refetch } = useAsyncData<{
-    success: boolean;
-    data: {
-      account: RiotAccountDto;
-      summoner: SummonerDto;
-      leagues: LeagueEntry[];
-      aramScore?: number;
-    };
-  }>({
-    url,
-    cacheKey: `account-summoner-${r}-${n}-${t}`,
-    useSWR: true,
-  });
+  // Use TanStack Query hook
+  const { 
+    data, 
+    isLoading: loading, 
+    error, 
+    refetch 
+  } = useSummonerQuery(r, n, t);
 
   return {
     account: data?.data?.account || null,
@@ -51,7 +38,7 @@ export function useAccountSummoner(
     leagues: data?.data?.leagues || [],
     aramScore: data?.data?.aramScore ?? 0,
     loading,
-    error,
+    error: error?.message || null,
     refetch,
   };
 }

@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Trophy } from 'lucide-react';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
-import { useOptimizedMasteries } from '../../hooks/useOptimizedMasteries';
+import { useMasteries } from '@/hooks/useTanStackQueries';
 import { AsyncStateContainer } from '@/components/common/ui/states';
 import { useMasteryStats } from './hooks/useMasteryStats';
 import { useMasteryFiltering } from './hooks/useMasteryFiltering';
@@ -28,12 +28,12 @@ const MasteryTab: React.FC = React.memo(() => {
     clearSearch,
   } = useMasteryControls();
 
-  // Use optimized fetch for masteries
+  // Use TanStack Query for masteries
   const {
     data: masteriesResponse,
-    loading,
+    isLoading: loading,
     error,
-  } = useOptimizedMasteries(effectiveRegion, effectiveName, effectiveTagline);
+  } = useMasteries(effectiveRegion, effectiveName, effectiveTagline);
 
   const masteries = useMemo(() => {
     if (!masteriesResponse || typeof masteriesResponse !== 'object') {
@@ -52,7 +52,7 @@ const MasteryTab: React.FC = React.memo(() => {
   return (
     <AsyncStateContainer
       loading={loading}
-      error={error}
+      error={error instanceof Error ? error : error ? String(error) : null}
       data={masteries}
       loadingProps={{
         message: 'Fetching your champion mastery progression...',

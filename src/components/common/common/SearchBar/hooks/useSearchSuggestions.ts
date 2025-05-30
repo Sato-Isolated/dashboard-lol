@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
-import { useAsyncData } from '@/hooks/useAsyncData';
+import { useState, useEffect } from 'react';
+import { useSummonerSearchQuery } from '@/hooks/useTanStackQueries';
 import type { Suggestion } from '../types';
 
 export const useSearchSuggestions = (summonerName: string) => {
@@ -14,27 +14,27 @@ export const useSearchSuggestions = (summonerName: string) => {
     return () => clearTimeout(timer);
   }, [summonerName]);
 
-  // Using useAsyncData instead of manual useEffect for better management
-  const searchUrl = useMemo(() => {
-    return debouncedSummonerName.length >= 2
-      ? `/api/summoner/search?q=${encodeURIComponent(debouncedSummonerName)}`
-      : null;
-  }, [debouncedSummonerName]);
+  // Use the existing summoner search endpoint
+  const { 
+    data, 
+    isLoading: loading, 
+    error 
+  } = useSummonerSearchQuery(
+    debouncedSummonerName, 
+    debouncedSummonerName.length >= 2
+  );
 
-  const {
-    data: suggestions = [],
-    error: suggestionError,
-    loading,
-  } = useAsyncData<Suggestion[]>({
-    url: searchUrl,
-    enabled: !!searchUrl,
-    immediate: true,
-    retryCount: 1, // Reduce retry for searches
-    cacheTTL: 30000, // Cache 30s to avoid repeated requests
-  });
+  // Transform the API response to match our Suggestion interface
+  const suggestions: Suggestion[] = (data || []).map((user: any) => ({
+    name: user.name,
+    tagline: user.tagline,
+    region: user.region,
+  }));
+
+  const suggestionError: string | null = error?.message || null;
 
   return {
-    suggestions: searchUrl ? suggestions : [],
+    suggestions: debouncedSummonerName.length >= 2 ? suggestions : [],
     suggestionError,
     loading,
   };

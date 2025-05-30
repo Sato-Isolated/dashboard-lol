@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { UIRecentlyPlayed } from '@/types/sidebarTypes';
-import { useAsyncData } from '@/hooks';
+import { useRecentlyPlayedQuery } from '@/hooks/useTanStackQueries';
 import type {
   UseRecentlyPlayedOptions,
   UseRecentlyPlayedReturn,
@@ -12,27 +12,12 @@ export const useRecentlyPlayed = ({
   effectiveTagline,
   limit = 5,
 }: UseRecentlyPlayedOptions): UseRecentlyPlayedReturn => {
-  // Build URL for recently played data
-  const recentlyPlayedUrl = useMemo(() => {
-    if (!effectiveName || !effectiveRegion || !effectiveTagline) {
-      return null;
-    }
-    return `/api/summoner/recently-played?name=${encodeURIComponent(
-      effectiveName,
-    )}&region=${encodeURIComponent(
-      effectiveRegion,
-    )}&tagline=${encodeURIComponent(effectiveTagline)}&limit=${limit}`;
-  }, [effectiveName, effectiveRegion, effectiveTagline, limit]);
-  // Fetch recently played data
+  // Fetch recently played data using TanStack Query
   const {
     data: recentlyPlayedData,
-    loading,
+    isLoading: loading,
     error,
-  } = useAsyncData<{ data: UIRecentlyPlayed[] }>({
-    url: recentlyPlayedUrl,
-    cacheKey: `recently-played:${effectiveRegion}:${effectiveName}:${effectiveTagline}`,
-    cacheTTL: 2 * 60 * 1000, // 2 minutes
-  });
+  } = useRecentlyPlayedQuery(effectiveRegion, effectiveName, effectiveTagline, limit);
 
   // Process data
   const recentlyPlayed = useMemo(
@@ -56,7 +41,7 @@ export const useRecentlyPlayed = ({
   return {
     recentlyPlayed,
     loading,
-    error,
+    error: error?.message || null,
     averageWinrate,
   };
 };
