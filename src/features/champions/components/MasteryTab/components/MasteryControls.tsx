@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Search, Grid3X3, List, Target, Star, BarChart3 } from 'lucide-react';
-import type { ViewMode, SortOption } from '../types';
+import type { ViewMode, SortOption } from '../masteryTabTypes';
 
 interface MasteryControlsProps {
   searchTerm: string;

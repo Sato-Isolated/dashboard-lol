@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { spellsContainerVariants, spellVariants } from '../constants';
-import type { SummonerSpellsProps } from '../types';
+import type { SummonerSpellsProps } from '../matchCardChampionTypes';
 
 const SummonerSpells: React.FC<SummonerSpellsProps> = ({ spell1, spell2 }) => {
   return (

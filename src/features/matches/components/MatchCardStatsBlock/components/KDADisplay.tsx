@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { kdaDisplayVariants } from '../constants';
-import type { KDADisplayProps } from '../types';
+import type { KDADisplayProps } from '../matchCardStatsTypes';
 
 const KDADisplay: React.FC<KDADisplayProps> = ({ kills, deaths, assists }) => {
   return (

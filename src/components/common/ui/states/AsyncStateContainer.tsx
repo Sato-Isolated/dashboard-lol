@@ -56,9 +56,15 @@ interface AsyncStateProps {
  * Utility function to check if data is empty
  */
 const isDataEmpty = (data: any): boolean => {
-  if (data === null || data === undefined) {return true;}
-  if (Array.isArray(data)) {return data.length === 0;}
-  if (typeof data === 'object') {return Object.keys(data).length === 0;}
+  if (data === null || data === undefined) {
+    return true;
+  }
+  if (Array.isArray(data)) {
+    return data.length === 0;
+  }
+  if (typeof data === 'object') {
+    return Object.keys(data).length === 0;
+  }
   return false;
 };
 

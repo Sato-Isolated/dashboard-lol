@@ -40,4 +40,3 @@ export const RegionSelect: React.FC<RegionSelectProps> = ({
     </div>
   );
 };
-

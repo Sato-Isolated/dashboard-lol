@@ -74,7 +74,9 @@ interface SearchEmptyStateProps {
 export const SearchEmptyState: React.FC<SearchEmptyStateProps> = ({
   searchTerm,
 }) => {
-  if (!searchTerm) {return null;}
+  if (!searchTerm) {
+    return null;
+  }
 
   return (
     <SharedEmptyState

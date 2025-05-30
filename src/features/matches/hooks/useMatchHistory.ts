@@ -33,14 +33,14 @@ export function useMatchHistory(): {
       }
 
       return `/api/summoner/matches?name=${encodeURIComponent(
-        effectiveName
+        effectiveName,
       )}&region=${encodeURIComponent(
-        effectiveRegion
+        effectiveRegion,
       )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${
         pageIndex * PAGE_SIZE
       }&count=${PAGE_SIZE}`;
     },
-    [effectiveName, effectiveRegion, effectiveTagline]
+    [effectiveName, effectiveRegion, effectiveTagline],
   );
   const { data, error, loading, loadingMore, hasMore, loadMore, reset } =
     useInfiniteApiCall<Match>(getUrl, {
@@ -50,7 +50,7 @@ export function useMatchHistory(): {
 
   // Map raw Match data to UIMatch
   const matches: UIMatch[] = data.map(match =>
-    mapRiotMatchToUIMatch(match, effectiveName)
+    mapRiotMatchToUIMatch(match, effectiveName),
   );
 
   const fetchMatches = useCallback(
@@ -62,7 +62,7 @@ export function useMatchHistory(): {
         loadMore();
       }
     },
-    [reset, loadMore]
+    [reset, loadMore],
   );
   return {
     matches,

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MatchItemProps } from '../types';
+import type { MatchItemProps } from '../matchListTypes';
 
 export const MinimalMatchItem: React.FC<MatchItemProps> = ({ match }) => (
   <div className='flex items-center justify-between p-2 rounded-lg transition-colors'>

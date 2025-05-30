@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { useMatchResult } from '../hooks/useMatchResult';
 import { resultVariants, WIN_EMOJI, DEFEAT_EMOJI } from '../constants';
-import type { MatchResultProps } from '../types';
+import type { MatchResultProps } from '../matchCardHeaderTypes';
 
 const MatchResult: React.FC<MatchResultProps> = ({ result }) => {
   const { isWin, displayResult, resultClass } = useMatchResult(result);

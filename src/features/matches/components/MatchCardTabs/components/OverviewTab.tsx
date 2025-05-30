@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { motion } from 'motion/react';
 import TableSkeleton from './TableSkeleton';
-import type { OverviewTabProps } from '../types';
+import type { OverviewTabProps } from '../matchCardTabsTypes';
 
 // Lazy load heavy table component - direct import from MatchTeamTable component
 const MatchTeamTable = lazy(() =>

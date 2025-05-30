@@ -21,4 +21,3 @@ const GlobalErrorAlert: React.FC = () => {
 };
 
 export default GlobalErrorAlert;
-

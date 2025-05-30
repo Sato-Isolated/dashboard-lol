@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { TrendingUp, Trophy, Target, Sword, User } from 'lucide-react';
 import { getChampionIcon } from '@/lib/utils/helpers';
-import { ChampionRowProps } from '../types';
+import { ChampionRowProps } from '../championsTabTypes';
 import { rowVariants } from '../utils/animations';
 
 export const ChampionRow: React.FC<ChampionRowProps> = React.memo(
@@ -131,4 +131,3 @@ export const ChampionRow: React.FC<ChampionRowProps> = React.memo(
 );
 
 ChampionRow.displayName = 'ChampionRow';
-

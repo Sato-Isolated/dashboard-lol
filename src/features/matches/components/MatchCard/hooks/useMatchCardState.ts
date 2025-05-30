@@ -1,6 +1,6 @@
 'use client';
 import { useState, useCallback } from 'react';
-import { MatchCardState } from '../types';
+import { MatchCardState } from '../matchCardTypes';
 
 /**
  * Custom hook to manage MatchCard state (open/close and tab selection)

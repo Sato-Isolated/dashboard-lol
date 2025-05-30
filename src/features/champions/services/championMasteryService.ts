@@ -12,4 +12,3 @@ export class ChampionMasteryService extends RiotApiClient {
     );
   }
 }
-

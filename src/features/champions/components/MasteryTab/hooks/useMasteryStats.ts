@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Mastery } from '../types';
+import type { Mastery } from '../masteryTabTypes';
 
 export interface MasteryStats {
   totalPoints: number;

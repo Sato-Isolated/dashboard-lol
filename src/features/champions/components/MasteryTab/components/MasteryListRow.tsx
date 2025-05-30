@@ -5,7 +5,7 @@ import { Target } from 'lucide-react';
 import { getChampionIcon } from '@/lib/utils/helpers';
 import { getMasteryLevelStyle } from '../utils/masteryLevelStyle';
 import { itemVariants } from '../utils/animations';
-import type { MasteryWithChampion } from '../types';
+import type { MasteryWithChampion } from '../masteryTabTypes';
 
 interface MasteryListRowProps {
   mastery: MasteryWithChampion;
@@ -83,4 +83,3 @@ export const MasteryListRow: React.FC<MasteryListRowProps> = React.memo(
 );
 
 MasteryListRow.displayName = 'MasteryListRow';
-

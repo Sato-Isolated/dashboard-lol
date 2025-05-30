@@ -1,6 +1,6 @@
 'use client';
 import { useState, useMemo, useCallback } from 'react';
-import { ChampionStats, SortConfig } from '../types';
+import { ChampionStats, SortConfig } from '../championsTabTypes';
 import { getWinrate } from '../utils/calculations';
 
 export const useChampionSorting = (
@@ -15,7 +15,9 @@ export const useChampionSorting = (
   const sortedStats = useMemo(() => {
     return [...stats]
       .filter(champ => {
-        if (!searchTerm) {return true;}
+        if (!searchTerm) {
+          return true;
+        }
         const championInfo = championDataLookup[champ.champion];
         const name = championInfo ? championInfo.name : champ.champion;
         return name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -54,7 +56,9 @@ export const useChampionSorting = (
   // Memoized sort icon function
   const sortIcon = useCallback(
     (key: string) => {
-      if (sortKey !== key) {return '⇅';}
+      if (sortKey !== key) {
+        return '⇅';
+      }
       return sortDir === 'asc' ? '▲' : '▼';
     },
     [sortKey, sortDir],

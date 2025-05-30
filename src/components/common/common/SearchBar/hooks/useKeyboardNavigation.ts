@@ -30,7 +30,9 @@ export const useKeyboardNavigation = (
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (!showSuggestions || suggestions.length === 0) {return;}
+      if (!showSuggestions || suggestions.length === 0) {
+        return;
+      }
 
       if (e.key === 'ArrowDown') {
         e.preventDefault();

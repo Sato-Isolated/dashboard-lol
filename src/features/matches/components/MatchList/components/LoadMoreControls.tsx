@@ -43,4 +43,3 @@ export const LoadMoreControls: React.FC<LoadMoreControlsProps> = ({
     )}
   </>
 );
-

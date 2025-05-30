@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { User, TrendingUp, Trophy, Target, Sword } from 'lucide-react';
-import { ChampionStats, GlobalStats } from '../types';
+import { ChampionStats, GlobalStats } from '../championsTabTypes';
 import { ChampionRow } from './ChampionRow';
 import { containerVariants } from '../utils/animations';
 

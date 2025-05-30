@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { collapsibleContentVariants, innerContentVariants } from '../constants';
-import { CollapsibleContentProps } from '../types';
+import { CollapsibleContentProps } from '../matchCardTypes';
 import MatchCardTabs from '../../MatchCardTabs';
 
 const CollapsibleContent: React.FC<CollapsibleContentProps> = ({

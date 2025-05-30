@@ -30,7 +30,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
   const { displayMatches, shouldShowContent } = useMatchVisibility(
     matches,
     loading,
-    error
+    error,
   );
 
   const stats = useMatchStats(displayMatches);

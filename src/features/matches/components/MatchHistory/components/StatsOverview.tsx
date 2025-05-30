@@ -10,7 +10,7 @@ import {
   GamepadIcon,
 } from 'lucide-react';
 import { containerVariants, statsCardVariants } from '../constants';
-import type { MatchStats, StatsCardConfig } from '../types';
+import type { MatchStats, StatsCardConfig } from '../matchHistoryTypes';
 
 interface StatsOverviewProps {
   stats: MatchStats;

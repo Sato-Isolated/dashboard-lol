@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { badgeVariants } from '../constants';
 import { getBadgeKey } from '../utils';
-import type { BadgesListProps } from '../types';
+import type { BadgesListProps } from '../matchCardStatsTypes';
 
 const BadgesList: React.FC<BadgesListProps> = ({ badges }) => {
   const renderBadges = useMemo(

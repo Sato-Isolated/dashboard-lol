@@ -154,4 +154,3 @@ const LeaderboardRow = React.memo(LeaderboardRowComponent);
 LeaderboardRow.displayName = 'LeaderboardRow';
 
 export default LeaderboardRow;
-

@@ -49,4 +49,3 @@ export interface ErrorMessagesProps {
   hasError: boolean;
   suggestionError: string | null;
 }
-

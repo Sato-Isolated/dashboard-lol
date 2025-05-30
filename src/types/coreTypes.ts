@@ -91,3 +91,26 @@ export interface ComponentState<T> extends AsyncState<T> {
   readonly refetch: () => void;
   readonly reset: () => void;
 }
+
+// Common UI component prop types to reduce duplication
+export interface BaseComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export interface SizeVariantProps {
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export interface AsyncComponentProps<T = any> {
+  loading?: boolean;
+  error?: string | null;
+  data?: T | null;
+  onRetry?: () => void;
+}
+
+export interface StateComponentProps
+  extends BaseComponentProps,
+    SizeVariantProps {
+  fullHeight?: boolean;
+}

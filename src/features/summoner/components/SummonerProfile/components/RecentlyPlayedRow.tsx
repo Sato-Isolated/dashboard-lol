@@ -7,7 +7,7 @@ import {
   getWinrateCategory,
   getGamesCategory,
 } from '../constants';
-import type { RecentlyPlayedRowProps } from '../types';
+import type { RecentlyPlayedRowProps } from '../summonerProfileTypes';
 
 export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
   ({ player, effectiveRegion, effectiveTagline, index }) => {
@@ -47,9 +47,9 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
               />
               <a
                 href={`/${effectiveRegion}/summoner/${encodeURIComponent(
-                  player.name
+                  player.name,
                 )}/${encodeURIComponent(
-                  player.tagline ? player.tagline : effectiveTagline
+                  player.tagline ? player.tagline : effectiveTagline,
                 )}`}
                 className='link link-primary font-bold 
                            flex items-center gap-1'
@@ -112,7 +112,7 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
         </td>
       </motion.tr>
     );
-  }
+  },
 );
 
 RecentlyPlayedRow.displayName = 'RecentlyPlayedRow';

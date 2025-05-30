@@ -283,4 +283,3 @@ export abstract class RiotApiClient {
     };
   }
 }
-

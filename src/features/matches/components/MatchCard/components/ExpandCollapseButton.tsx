@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { expandButtonVariants } from '../constants';
-import { ExpandCollapseButtonProps } from '../types';
+import { ExpandCollapseButtonProps } from '../matchCardTypes';
 
 const ExpandCollapseButton: React.FC<ExpandCollapseButtonProps> = ({
   open,

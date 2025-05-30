@@ -206,7 +206,7 @@ const PerformanceDashboard: React.FC = () => {
                           <span>Average:</span>
                           <span className='font-mono'>
                             {formatDuration(
-                              metrics.component_render_time.average
+                              metrics.component_render_time.average,
                             )}
                           </span>
                         </div>
@@ -277,7 +277,7 @@ const PerformanceDashboard: React.FC = () => {
                             <span>DOM Ready:</span>
                             <span className='font-mono'>
                               {formatDuration(
-                                metrics.dom_content_loaded.average
+                                metrics.dom_content_loaded.average,
                               )}
                             </span>
                           </div>
@@ -300,7 +300,7 @@ const PerformanceDashboard: React.FC = () => {
                       [JSON.stringify(exportData, null, 2)],
                       {
                         type: 'application/json',
-                      }
+                      },
                     );
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');

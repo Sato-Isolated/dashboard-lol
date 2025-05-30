@@ -43,7 +43,9 @@ export const MOTION_CONFIG = {
 
 // Function to check if user prefers reduced motion
 export const shouldReduceMotion = (): boolean => {
-  if (typeof window === 'undefined') {return false;}
+  if (typeof window === 'undefined') {
+    return false;
+  }
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
 

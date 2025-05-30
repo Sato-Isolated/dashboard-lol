@@ -91,4 +91,3 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
     </motion.div>
   );
 };
-

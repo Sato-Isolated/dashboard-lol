@@ -1,7 +1,7 @@
 'use client';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useEffectiveUser } from './useEffectiveUser';
-import { useAsyncOperation, useAsyncAction } from './useAsyncOperation';
+import { useAsyncData } from './useAsyncData';
 
 /**
  * Hook that combines useEffectiveUser with async operations
@@ -10,24 +10,29 @@ import { useAsyncOperation, useAsyncAction } from './useAsyncOperation';
 export function useUserDataOperation<T = void>() {
   const { effectiveRegion, effectiveName, effectiveTagline } =
     useEffectiveUser();
-  const { loading, error, data, execute, reset } = useAsyncOperation<
-    T,
-    [string, string, string]
-  >();
+
+  const [currentOperation, setCurrentOperation] = useState<
+    (() => Promise<T>) | null
+  >(null);
+
+  const { loading, error, data, execute, reset } = useAsyncData<T>({
+    operation: currentOperation || undefined,
+    immediate: false,
+  });
+
   const executeWithUserData = useCallback(
     async (
       operation: (region: string, name: string, tagline: string) => Promise<T>,
-    ): Promise<T | null> => {
+    ) => {
       if (!effectiveRegion || !effectiveName || !effectiveTagline) {
         throw new Error('User data not available');
       }
 
-      return execute(
-        operation,
-        effectiveRegion,
-        effectiveName,
-        effectiveTagline,
+      // Set the operation and execute it
+      setCurrentOperation(
+        () => () => operation(effectiveRegion, effectiveName, effectiveTagline),
       );
+      await execute();
     },
     [execute, effectiveRegion, effectiveName, effectiveTagline],
   );
@@ -52,25 +57,30 @@ export function useUserDataOperation<T = void>() {
 export function useUserDataAction() {
   const { effectiveRegion, effectiveName, effectiveTagline } =
     useEffectiveUser();
-  const { loading, error, executeAction, reset } =
-    useAsyncAction<[string, string, string]>();
+
+  const [currentAction, setCurrentAction] = useState<
+    (() => Promise<void>) | null
+  >(null);
+
+  const { loading, error, execute, reset } = useAsyncData<void>({
+    operation: currentAction || undefined,
+    immediate: false,
+  });
 
   const executeUserAction = useCallback(
     async (
       action: (region: string, name: string, tagline: string) => Promise<void>,
-    ): Promise<boolean> => {
+    ) => {
       if (!effectiveRegion || !effectiveName || !effectiveTagline) {
         throw new Error('User data not available');
       }
 
-      return executeAction(
-        action,
-        effectiveRegion,
-        effectiveName,
-        effectiveTagline,
+      setCurrentAction(
+        () => () => action(effectiveRegion, effectiveName, effectiveTagline),
       );
+      await execute();
     },
-    [executeAction, effectiveRegion, effectiveName, effectiveTagline],
+    [execute, effectiveRegion, effectiveName, effectiveTagline],
   );
 
   return {

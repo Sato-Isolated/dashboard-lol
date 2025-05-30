@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { runesContainerVariants, runeVariants } from '../constants';
-import type { RunesDisplayProps } from '../types';
+import type { RunesDisplayProps } from '../matchCardChampionTypes';
 
 const RunesDisplay: React.FC<RunesDisplayProps> = ({ rune1, rune2 }) => {
   return (

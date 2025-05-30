@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { participationVariants } from '../constants';
 import { formatParticipationPercentage } from '../utils';
-import type { ParticipationProps } from '../types';
+import type { ParticipationProps } from '../matchCardStatsTypes';
 
 const ParticipationPercentage: React.FC<ParticipationProps> = ({ pKill }) => {
   return (

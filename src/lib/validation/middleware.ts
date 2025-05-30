@@ -306,4 +306,3 @@ export function withMiddleware<T>(
     return withValidation(validationSchema, composedHandler);
   };
 }
-

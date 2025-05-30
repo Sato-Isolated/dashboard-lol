@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { KDAPartsHook } from '../types';
+import type { KDAPartsHook } from '../matchCardStatsTypes';
 
 export const useKDAParts = (kdaParts: string[]): KDAPartsHook => {
   return useMemo(

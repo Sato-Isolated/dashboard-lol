@@ -10,7 +10,7 @@ import {
   Star,
 } from 'lucide-react';
 import { cardVariants, calculateAverageWinrate } from '../constants';
-import type { RecentlyPlayedCardProps } from '../types';
+import type { RecentlyPlayedCardProps } from '../summonerProfileTypes';
 import { RecentlyPlayedRow } from './RecentlyPlayedRow';
 
 export const RecentlyPlayedCard: React.FC<RecentlyPlayedCardProps> = ({

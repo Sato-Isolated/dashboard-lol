@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { kdaRatioVariants } from '../constants';
 import { formatKDAValue } from '../utils';
-import type { KDARatioProps } from '../types';
+import type { KDARatioProps } from '../matchCardStatsTypes';
 
 const KDARatio: React.FC<KDARatioProps> = ({ kdaValue }) => {
   return (

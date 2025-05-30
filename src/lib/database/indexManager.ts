@@ -138,7 +138,7 @@ async function createIndexes(): Promise<void> {
 
     for (const collectionDef of indexDefinitions) {
       logger.info(
-        `Creating indexes for collection: ${collectionDef.collection}`
+        `Creating indexes for collection: ${collectionDef.collection}`,
       );
 
       try {
@@ -147,7 +147,7 @@ async function createIndexes(): Promise<void> {
         // Check if collection exists and has documents
         const count = await collection.countDocuments();
         logger.info(
-          `Collection ${collectionDef.collection} has ${count} documents`
+          `Collection ${collectionDef.collection} has ${count} documents`,
         );
 
         for (const indexDef of collectionDef.indexes) {
@@ -156,12 +156,12 @@ async function createIndexes(): Promise<void> {
               indexDef.options?.name || Object.keys(indexDef.spec).join('_');
 
             logger.info(
-              `Creating index: ${indexName} on ${collectionDef.collection}`
+              `Creating index: ${indexName} on ${collectionDef.collection}`,
             );
 
             const result = await collection.createIndex(
               indexDef.spec,
-              indexDef.options
+              indexDef.options,
             );
             logger.info(`Index created successfully: ${result}`);
           } catch (indexError: unknown) {
@@ -172,7 +172,7 @@ async function createIndexes(): Promise<void> {
             } else {
               logger.error(
                 `Failed to create index ${indexDef.options?.name}`,
-                indexError as Error
+                indexError as Error,
               );
             }
           }
@@ -180,12 +180,12 @@ async function createIndexes(): Promise<void> {
         const indexes = await collection.listIndexes().toArray();
         logger.info(
           `Collection ${collectionDef.collection} now has ${indexes.length} indexes:`,
-          { indexNames: indexes.map(idx => idx.name) }
+          { indexNames: indexes.map(idx => idx.name) },
         );
       } catch (collectionError: unknown) {
         logger.error(
           `Error working with collection ${collectionDef.collection}`,
-          collectionError as Error
+          collectionError as Error,
         );
       }
     }
@@ -214,21 +214,21 @@ async function dropAllIndexes(): Promise<void> {
 
         if (customIndexes.length > 0) {
           logger.warn(
-            `Dropping ${customIndexes.length} custom indexes from ${collectionDef.collection}`
+            `Dropping ${customIndexes.length} custom indexes from ${collectionDef.collection}`,
           );
           await collection.dropIndexes();
           logger.warn(
-            `Indexes dropped for collection: ${collectionDef.collection}`
+            `Indexes dropped for collection: ${collectionDef.collection}`,
           );
         } else {
           logger.info(
-            `No custom indexes to drop in collection: ${collectionDef.collection}`
+            `No custom indexes to drop in collection: ${collectionDef.collection}`,
           );
         }
       } catch (collectionError: unknown) {
         logger.error(
           `Error dropping indexes for collection ${collectionDef.collection}`,
-          collectionError as Error
+          collectionError as Error,
         );
       }
     }

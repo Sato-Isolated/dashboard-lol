@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import type { BuildTabProps } from '../types';
+import type { BuildTabProps } from '../matchCardTabsTypes';
 
 const BuildTabComponent: React.FC<BuildTabProps> = () => {
   return (

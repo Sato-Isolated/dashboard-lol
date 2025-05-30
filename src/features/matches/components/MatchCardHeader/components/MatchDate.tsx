@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MatchDateProps } from '../types';
+import type { MatchDateProps } from '../matchCardHeaderTypes';
 
 const MatchDate: React.FC<MatchDateProps> = ({ date }) => {
   return (

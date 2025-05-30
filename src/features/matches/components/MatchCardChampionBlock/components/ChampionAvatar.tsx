@@ -6,7 +6,7 @@ import {
   levelBadgeVariants,
   CHAMPION_LEVEL,
 } from '../constants';
-import type { ChampionAvatarProps } from '../types';
+import type { ChampionAvatarProps } from '../matchCardChampionTypes';
 
 const ChampionAvatar: React.FC<ChampionAvatarProps> = ({
   champion,

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MatchStatsCardProps } from '../types';
+import type { MatchStatsCardProps } from '../matchListTypes';
 
 export const MatchStatsCard: React.FC<MatchStatsCardProps> = ({ stats }) => (
   <div className='bg-base-200 rounded-xl p-4 mb-6'>

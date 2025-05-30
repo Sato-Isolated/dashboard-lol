@@ -1,6 +1,6 @@
 'use client';
 import { useState, useCallback } from 'react';
-import type { ViewMode, SortOption } from '../types';
+import type { ViewMode, SortOption } from '../masteryTabTypes';
 
 export const useMasteryControls = () => {
   const [searchTerm, setSearchTerm] = useState('');

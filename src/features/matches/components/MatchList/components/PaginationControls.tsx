@@ -36,4 +36,3 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
     </Button>
   </div>
 );
-

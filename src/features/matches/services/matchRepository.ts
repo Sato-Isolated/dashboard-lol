@@ -438,4 +438,3 @@ export const insertMatch = matchRepository.insertMatch.bind(matchRepository);
 export const getMatchById = matchRepository.getMatchById.bind(matchRepository);
 export const getMultiKillMatches =
   matchRepository.getMultiKillMatches.bind(matchRepository);
-

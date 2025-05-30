@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MasteryCard } from './MasteryCard';
 import { MasteryListRow } from './MasteryListRow';
 import { containerVariants } from '../utils/animations';
-import type { MasteryWithChampion, ViewMode } from '../types';
+import type { MasteryWithChampion, ViewMode } from '../masteryTabTypes';
 
 interface MasteryContentProps {
   masteries: MasteryWithChampion[];

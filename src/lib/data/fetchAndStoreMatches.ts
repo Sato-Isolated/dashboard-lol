@@ -24,7 +24,7 @@ import {
 export async function fetchAndStoreMatches(
   platformRegion: string,
   name: string,
-  tagline: string
+  tagline: string,
 ) {
   // Get account and summoner info
   const accountApi = createAccountService(platformRegion);
@@ -43,7 +43,7 @@ export async function fetchAndStoreMatches(
     platformRegion,
     name,
     tagline,
-    account.puuid
+    account.puuid,
   );
 
   // Record the timestamp of this update
@@ -57,12 +57,12 @@ export async function fetchAndStoreMatches(
   if (!summonerDoc.fetchOldGames) {
     // Fetch all history up to January 2025
     fromTimestamp = Math.floor(
-      new Date('2025-01-09T00:00:00Z').getTime() / 1000
+      new Date('2025-01-09T00:00:00Z').getTime() / 1000,
     );
     console.log(
       `[fetchAndStoreMatches] First time fetch - fetching from ${new Date(
-        fromTimestamp * 1000
-      ).toISOString()} to now`
+        fromTimestamp * 1000,
+      ).toISOString()} to now`,
     );
   } else {
     // Fetch recent games starting from the exact timestamp of the last game
@@ -73,18 +73,18 @@ export async function fetchAndStoreMatches(
       fromTimestamp = lastGameTimestamp + 1;
       console.log(
         `[fetchAndStoreMatches] Update fetch - last game was at ${new Date(
-          lastGameTimestamp * 1000
+          lastGameTimestamp * 1000,
         ).toISOString()}, fetching from ${new Date(
-          fromTimestamp * 1000
-        ).toISOString()} to now`
+          fromTimestamp * 1000,
+        ).toISOString()} to now`,
       );
     } else {
       // No previous games found, fallback to 1 week
       fromTimestamp = now - 60 * 60 * 24 * 7;
       console.log(
         `[fetchAndStoreMatches] Update fetch - no previous games found, fetching from ${new Date(
-          fromTimestamp * 1000
-        ).toISOString()} to now`
+          fromTimestamp * 1000,
+        ).toISOString()} to now`,
       );
     }
   }
@@ -110,7 +110,7 @@ export async function fetchAndStoreMatches(
     try {
       matchIdsBatch = await matchApi.getMatchlistByPuuid(
         account.puuid,
-        optionsBatch
+        optionsBatch,
       );
     } catch (e: unknown) {
       if (e instanceof Error && e.message?.includes('Too Many Requests')) {
@@ -133,7 +133,7 @@ export async function fetchAndStoreMatches(
   }
 
   console.log(
-    `[fetchAndStoreMatches] Found ${allMatchIds.length} match IDs to process`
+    `[fetchAndStoreMatches] Found ${allMatchIds.length} match IDs to process`,
   );
   let mostRecentGameEnd = summonerDoc.lastFetchedGameEndTimestamp || 0;
 
@@ -173,7 +173,7 @@ export async function fetchAndStoreMatches(
       platformRegion,
       name,
       tagline,
-      mostRecentGameEnd
+      mostRecentGameEnd,
     );
   }
 

@@ -77,4 +77,3 @@ export const GET = withValidation(
     return NextResponse.json({ success: true, data: matches });
   },
 );
-

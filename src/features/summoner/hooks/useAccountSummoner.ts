@@ -1,4 +1,4 @@
-import { useFetch } from '@/hooks/useFetch';
+import { useAsyncData } from '@/hooks';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 import type { RiotAccountDto } from '@/types/api/accountTypes';
 import type { SummonerDto, LeagueEntry } from '@/types/api/summonerTypes';
@@ -31,7 +31,7 @@ export function useAccountSummoner(
           r,
         )}&name=${encodeURIComponent(n)}&tagline=${encodeURIComponent(t)}`
       : null;
-  const { data, loading, error, refetch } = useFetch<{
+  const { data, loading, error, refetch } = useAsyncData<{
     success: boolean;
     data: {
       account: RiotAccountDto;
@@ -39,7 +39,11 @@ export function useAccountSummoner(
       leagues: LeagueEntry[];
       aramScore?: number;
     };
-  }>(url, `account-summoner-${r}-${n}-${t}`);
+  }>({
+    url,
+    cacheKey: `account-summoner-${r}-${n}-${t}`,
+    useSWR: true,
+  });
 
   return {
     account: data?.data?.account || null,
@@ -51,4 +55,3 @@ export function useAccountSummoner(
     refetch,
   };
 }
-

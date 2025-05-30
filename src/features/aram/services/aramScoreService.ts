@@ -348,4 +348,3 @@ export class AramScoreService {
     return aramScoreService.syncAramScore(region, name, tagline);
   }
 }
-

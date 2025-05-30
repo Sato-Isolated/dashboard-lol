@@ -28,4 +28,3 @@ export function createMatchService(platformRegion: string) {
     RegionalRegionMap[platformRegion as keyof typeof RegionalRegionMap];
   return new MatchService(regionalRegion);
 }
-

@@ -7,7 +7,7 @@ import {
   emptyItemVariants,
 } from '../constants';
 import { getItemImageSrc, getItemKey, getEmptySlotKey } from '../utils';
-import type { ItemsGridProps } from '../types';
+import type { ItemsGridProps } from '../matchCardChampionTypes';
 
 const ItemsGrid: React.FC<ItemsGridProps> = ({ items }) => {
   return (

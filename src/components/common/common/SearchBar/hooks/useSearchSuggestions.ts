@@ -21,7 +21,9 @@ export const useSearchSuggestions = (summonerName: string) => {
         })
         .then(data => setSuggestions(data))
         .catch(e => {
-          if (e.name === 'AbortError') {return;}
+          if (e.name === 'AbortError') {
+            return;
+          }
           setSuggestionError(e.message || 'Error while searching for players.');
           setSuggestions([]);
         });

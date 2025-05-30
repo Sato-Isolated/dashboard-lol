@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import type { TabNavigationProps } from '../types';
+import type { TabNavigationProps } from '../matchCardTabsTypes';
 
 const TabNavigationComponent: React.FC<TabNavigationProps> = ({
   tabs,

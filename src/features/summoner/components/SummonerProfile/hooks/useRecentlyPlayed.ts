@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { UIRecentlyPlayed } from '@/types/sidebarTypes';
-import { useOptimizedFetch } from '@/hooks/useOptimizedFetch';
+import { useAsyncData } from '@/hooks';
 import type {
   UseRecentlyPlayedOptions,
   UseRecentlyPlayedReturn,
@@ -23,13 +23,13 @@ export const useRecentlyPlayed = ({
       effectiveRegion,
     )}&tagline=${encodeURIComponent(effectiveTagline)}&limit=${limit}`;
   }, [effectiveName, effectiveRegion, effectiveTagline, limit]);
-
   // Fetch recently played data
   const {
     data: recentlyPlayedData,
     loading,
     error,
-  } = useOptimizedFetch<{ data: UIRecentlyPlayed[] }>(recentlyPlayedUrl, {
+  } = useAsyncData<{ data: UIRecentlyPlayed[] }>({
+    url: recentlyPlayedUrl,
     cacheKey: `recently-played:${effectiveRegion}:${effectiveName}:${effectiveTagline}`,
     cacheTTL: 2 * 60 * 1000, // 2 minutes
   });
@@ -46,8 +46,10 @@ export const useRecentlyPlayed = ({
       return 0;
     }
     return Math.round(
-      recentlyPlayed.reduce((acc, p) => acc + p.winrate, 0) /
-        recentlyPlayed.length,
+      recentlyPlayed.reduce(
+        (acc: number, p: UIRecentlyPlayed) => acc + p.winrate,
+        0,
+      ) / recentlyPlayed.length,
     );
   }, [recentlyPlayed]);
 
@@ -58,4 +60,3 @@ export const useRecentlyPlayed = ({
     averageWinrate,
   };
 };
-

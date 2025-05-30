@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import championData from '@/../public/assets/data/en_US/champion.json';
-import type { Mastery, ChampionData, SortOption } from '../types';
+import type { Mastery, ChampionData, SortOption } from '../masteryTabTypes';
 
 export const useMasteryFiltering = (
   masteries: Mastery[],

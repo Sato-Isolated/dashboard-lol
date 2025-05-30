@@ -38,4 +38,3 @@ export function useEffectiveUser(): {
 
   return { effectiveRegion, effectiveTagline, effectiveName };
 }
-

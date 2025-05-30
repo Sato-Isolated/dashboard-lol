@@ -27,7 +27,7 @@ export interface UseInfiniteApiCallResult<T> {
  */
 export function useInfiniteApiCall<T>(
   getUrl: (pageIndex: number, previousPageData: any) => string | null,
-  options: UseInfiniteApiCallOptions = {}
+  options: UseInfiniteApiCallOptions = {},
 ): UseInfiniteApiCallResult<T> {
   const {
     pageSize = 10,
@@ -56,7 +56,7 @@ export function useInfiniteApiCall<T>(
 
       return getUrl(pageIndex, previousPageData);
     },
-    [getUrl, enabled]
+    [getUrl, enabled],
   );
 
   const fetcher = async (url: string) => {
@@ -93,7 +93,7 @@ export function useInfiniteApiCall<T>(
       'loadMore called, current size:',
       size,
       'current data length:',
-      flatData.length
+      flatData.length,
     );
     setIsLoadingMore(true);
     setSize(size + 1);

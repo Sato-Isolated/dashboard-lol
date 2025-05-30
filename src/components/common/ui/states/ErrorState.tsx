@@ -2,8 +2,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { AlertCircle, RotateCcw, X } from 'lucide-react';
+import { getSizeConfig } from '@/lib/design/tokens';
+import type { StateComponentProps } from '@/types/coreTypes';
 
-interface ErrorStateProps {
+interface ErrorStateProps extends StateComponentProps {
   /**
    * Error message to display
    */
@@ -21,18 +23,6 @@ interface ErrorStateProps {
    */
   title?: string;
   /**
-   * Size variant
-   */
-  size?: 'sm' | 'md' | 'lg';
-  /**
-   * Whether to show full height container
-   */
-  fullHeight?: boolean;
-  /**
-   * Additional CSS classes
-   */
-  className?: string;
-  /**
    * Custom error icon
    */
   icon?: React.ReactNode;
@@ -45,30 +35,6 @@ interface ErrorStateProps {
    */
   retryLoading?: boolean;
 }
-
-const sizeConfig = {
-  sm: {
-    container: 'py-6',
-    icon: 'w-8 h-8',
-    title: 'text-base',
-    message: 'text-sm',
-    button: 'btn-sm',
-  },
-  md: {
-    container: 'py-8',
-    icon: 'w-12 h-12',
-    title: 'text-lg',
-    message: 'text-base',
-    button: 'btn-md',
-  },
-  lg: {
-    container: 'py-12',
-    icon: 'w-16 h-16',
-    title: 'text-xl',
-    message: 'text-lg',
-    button: 'btn-lg',
-  },
-};
 
 /**
  * Shared error state component with consistent styling and retry functionality
@@ -85,7 +51,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   retryText = 'Try Again',
   retryLoading = false,
 }) => {
-  const config = sizeConfig[size];
+  const config = getSizeConfig('error', size);
   const errorMessage = error instanceof Error ? error.message : error;
 
   return (

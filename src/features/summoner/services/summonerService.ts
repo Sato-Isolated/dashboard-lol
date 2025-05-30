@@ -49,4 +49,3 @@ export class SummonerService extends RiotApiClient {
     });
   }
 }
-

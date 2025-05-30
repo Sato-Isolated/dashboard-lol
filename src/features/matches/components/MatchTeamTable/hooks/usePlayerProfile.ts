@@ -14,4 +14,3 @@ export const usePlayerProfile = (name: string, tagline?: string) => {
 
   return { region, profileUrl };
 };
-

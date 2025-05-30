@@ -2,8 +2,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { RefreshCw } from 'lucide-react';
+import { getSizeConfig } from '@/lib/design/tokens';
+import type { StateComponentProps } from '@/types/coreTypes';
 
-interface LoadingStateProps {
+interface LoadingStateProps extends StateComponentProps {
   /**
    * Loading text to display
    */
@@ -13,40 +15,10 @@ interface LoadingStateProps {
    */
   showSpinner?: boolean;
   /**
-   * Size variant
-   */
-  size?: 'sm' | 'md' | 'lg';
-  /**
-   * Whether to show full height container
-   */
-  fullHeight?: boolean;
-  /**
-   * Additional CSS classes
-   */
-  className?: string;
-  /**
    * Custom spinner icon
    */
   icon?: React.ReactNode;
 }
-
-const sizeConfig = {
-  sm: {
-    container: 'py-8',
-    icon: 'w-6 h-6',
-    text: 'text-sm',
-  },
-  md: {
-    container: 'py-12',
-    icon: 'w-8 h-8',
-    text: 'text-base',
-  },
-  lg: {
-    container: 'py-16',
-    icon: 'w-12 h-12',
-    text: 'text-lg',
-  },
-};
 
 /**
  * Shared loading state component with consistent styling
@@ -59,7 +31,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   className = '',
   icon,
 }) => {
-  const config = sizeConfig[size];
+  const config = getSizeConfig('loading', size);
 
   return (
     <motion.div

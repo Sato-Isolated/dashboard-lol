@@ -51,14 +51,14 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     'loading:',
     loading,
     'loadingMore:',
-    loadingMore
+    loadingMore,
   );
 
   // Use visibility hook to prevent matches from disappearing during rerenders
   const { displayMatches, shouldShowContent } = useMatchVisibility(
     matches,
     loading,
-    errorMessage
+    errorMessage,
   );
 
   // Memoize content condition to prevent unnecessary re-evaluations
@@ -122,7 +122,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
       // Execute scroll if needed
       if (scrollStateRef.current.shouldScrollToLastMatch && element) {
         console.log(
-          `Scrolling to previous last match. Current count: ${stableMatches.length}`
+          `Scrolling to previous last match. Current count: ${stableMatches.length}`,
         );
 
         // Use requestAnimationFrame for smooth scrolling after DOM update
@@ -137,7 +137,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
         scrollStateRef.current.shouldScrollToLastMatch = false;
       }
     },
-    [stableMatches.length]
+    [stableMatches.length],
   );
 
   // Memoize the index of the last match before loading more
@@ -242,7 +242,7 @@ const MatchListContainer = React.memo(
       JSON.stringify(prevProps.matches.slice(0, 3)) ===
         JSON.stringify(nextProps.matches.slice(0, 3))
     );
-  }
+  },
 );
 MatchListContainer.displayName = 'MatchListContainer';
 

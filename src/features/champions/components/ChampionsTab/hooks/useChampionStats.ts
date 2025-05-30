@@ -1,12 +1,10 @@
 import { useMemo, useCallback } from 'react';
-import { useOptimizedChampionStats } from '@/hooks/useOptimizedFetch';
+import { useOptimizedChampionStats } from '../../../hooks/useOptimizedChampionStats';
 import { apiCache } from '@/lib/cache/CacheManager';
 import {
   ChampionStats,
-  ChampionStatsResponse,
   UseChampionStatsParams,
-} from '../types';
-import type { UseOptimizedFetchResult } from '@/hooks/useOptimizedFetch';
+} from '../championsTabTypes';
 
 export const useChampionStats = (params: UseChampionStatsParams) => {
   // Memoize parameters to prevent unnecessary re-renders
@@ -18,7 +16,6 @@ export const useChampionStats = (params: UseChampionStatsParams) => {
     }),
     [params.region, params.name, params.tagline],
   );
-
   // Use optimized fetch for champion stats
   const {
     data: statsResponse,
@@ -29,7 +26,7 @@ export const useChampionStats = (params: UseChampionStatsParams) => {
     memoizedParams.region,
     memoizedParams.name,
     memoizedParams.tagline,
-  ) as UseOptimizedFetchResult<ChampionStatsResponse>;
+  );
 
   const stats = useMemo<ChampionStats[]>(() => {
     // Handle both direct array and wrapped response format
@@ -59,4 +56,3 @@ export const useChampionStats = (params: UseChampionStatsParams) => {
     refetch: clearCacheAndRefetch,
   };
 };
-

@@ -17,4 +17,3 @@ const GlobalProgressBar: React.FC = () => {
 };
 
 export default GlobalProgressBar;
-

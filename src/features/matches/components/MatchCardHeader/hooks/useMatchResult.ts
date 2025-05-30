@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getDisplayResult, getResultClass, isWinResult } from '../utils';
-import type { MatchResultHook } from '../types';
+import type { MatchResultHook } from '../matchCardHeaderTypes';
 
 export const useMatchResult = (result: string): MatchResultHook => {
   const isWin = useMemo(() => isWinResult(result), [result]);

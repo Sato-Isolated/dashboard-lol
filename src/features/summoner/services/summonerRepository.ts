@@ -331,4 +331,3 @@ export const setAramScore =
   summonerRepository.setAramScore.bind(summonerRepository);
 export const setLastUpdateTimestamp =
   summonerRepository.setLastUpdateTimestamp.bind(summonerRepository);
-

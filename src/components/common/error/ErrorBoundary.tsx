@@ -249,4 +249,3 @@ export class AsyncErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
-

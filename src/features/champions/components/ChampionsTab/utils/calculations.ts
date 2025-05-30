@@ -1,4 +1,4 @@
-import { ChampionStats, GlobalStats } from '../types';
+import { ChampionStats, GlobalStats } from '../championsTabTypes';
 
 export const getWinrate = (champ: ChampionStats): number => {
   return champ.games > 0 ? (champ.wins / champ.games) * 100 : 0;

@@ -77,17 +77,5 @@ export interface ErrorContext {
   readonly metadata?: Record<string, unknown>;
 }
 
-// Loading and status types
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
-
-export interface AsyncState<T> {
-  readonly data: T | null;
-  readonly loading: boolean;
-  readonly error: string | null;
-  readonly lastUpdated?: Date;
-}
-
-export interface ComponentState<T> extends AsyncState<T> {
-  readonly refetch: () => void;
-  readonly reset: () => void;
-}
+// Loading and status types - Re-exported from coreTypes to avoid duplication
+export type { LoadingState, AsyncState, ComponentState } from './coreTypes';

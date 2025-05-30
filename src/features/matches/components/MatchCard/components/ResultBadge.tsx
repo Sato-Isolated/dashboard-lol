@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { badgeVariants } from '../constants';
-import { ResultBadgeProps } from '../types';
+import { ResultBadgeProps } from '../matchCardTypes';
 import { getResultDisplay } from '../utils';
 
 const ResultBadge: React.FC<ResultBadgeProps> = ({ isWin }) => {

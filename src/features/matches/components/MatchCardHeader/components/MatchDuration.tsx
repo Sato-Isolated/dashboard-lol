@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MatchDurationProps } from '../types';
+import type { MatchDurationProps } from '../matchCardHeaderTypes';
 
 const MatchDuration: React.FC<MatchDurationProps> = ({ duration }) => {
   return (

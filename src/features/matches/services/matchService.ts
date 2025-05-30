@@ -78,4 +78,3 @@ export class MatchService extends RiotApiClient {
     });
   }
 }
-

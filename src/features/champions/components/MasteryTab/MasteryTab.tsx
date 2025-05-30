@@ -3,9 +3,8 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Trophy } from 'lucide-react';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
-import { useOptimizedMasteries } from '@/hooks/useOptimizedFetch';
+import { useOptimizedMasteries } from '../../hooks/useOptimizedMasteries';
 import { AsyncStateContainer } from '@/components/common/ui/states';
-import type { UseOptimizedFetchResult } from '@/hooks/useOptimizedFetch';
 import { useMasteryStats } from './hooks/useMasteryStats';
 import { useMasteryFiltering } from './hooks/useMasteryFiltering';
 import { useMasteryControls } from './hooks/useMasteryControls';
@@ -13,7 +12,7 @@ import { StatsCards } from './components/StatsCards';
 import { MasteryControls } from './components/MasteryControls';
 import { MasteryContent } from './components/MasteryContent';
 import { EmptySearchState } from './components/StateComponents';
-import type { Mastery, MasteriesResponse } from './masteryTabTypes';
+import type { MasteriesResponse } from './masteryTabTypes';
 
 const MasteryTab: React.FC = React.memo(() => {
   const { effectiveRegion, effectiveTagline, effectiveName } =
@@ -34,11 +33,7 @@ const MasteryTab: React.FC = React.memo(() => {
     data: masteriesResponse,
     loading,
     error,
-  } = useOptimizedMasteries(
-    effectiveRegion,
-    effectiveName,
-    effectiveTagline,
-  ) as UseOptimizedFetchResult<{ success: boolean; data: Mastery[] }>;
+  } = useOptimizedMasteries(effectiveRegion, effectiveName, effectiveTagline);
 
   const masteries = useMemo(() => {
     if (!masteriesResponse || typeof masteriesResponse !== 'object') {

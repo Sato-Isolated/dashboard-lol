@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { UIMatch } from '@/features/matches/types/uiMatchTypes';
-import type { MatchStats } from '../types';
+import type { MatchStats } from '../matchListTypes';
 
 export const useMatchStats = (matches: UIMatch[]): MatchStats => {
   return useMemo(() => {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { TeamStats } from '../types';
+import type { TeamStats } from '../matchCardTabsTypes';
 import type { UIMatch } from '@/features/matches/types/uiMatchTypes';
 
 export const useTeamStats = (match: UIMatch): TeamStats => {

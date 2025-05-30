@@ -15,7 +15,7 @@ const ChampionsTab = dynamic(
         <div className='loading loading-spinner loading-lg' />
       </div>
     ),
-  }
+  },
 );
 
 const MasteryTab = dynamic(
@@ -26,7 +26,7 @@ const MasteryTab = dynamic(
         <div className='loading loading-spinner loading-lg' />
       </div>
     ),
-  }
+  },
 );
 
 interface PageParams {

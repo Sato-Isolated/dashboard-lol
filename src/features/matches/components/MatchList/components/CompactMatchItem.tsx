@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MatchItemProps } from '../types';
+import type { MatchItemProps } from '../matchListTypes';
 
 export const CompactMatchItem: React.FC<MatchItemProps> = ({
   match,

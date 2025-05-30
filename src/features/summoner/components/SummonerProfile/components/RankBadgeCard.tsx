@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Crown } from 'lucide-react';
 import { cardVariants } from '../constants';
-import type { RankBadgeCardProps } from '../types';
+import type { RankBadgeCardProps } from '../summonerProfileTypes';
 import RankBadge from '../../RankBadge';
 
 export const RankBadgeCard: React.FC<RankBadgeCardProps> = ({

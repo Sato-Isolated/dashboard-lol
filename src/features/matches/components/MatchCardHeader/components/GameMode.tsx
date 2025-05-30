@@ -1,5 +1,5 @@
 import React from 'react';
-import type { GameModeProps } from '../types';
+import type { GameModeProps } from '../matchCardHeaderTypes';
 
 const GameMode: React.FC<GameModeProps> = ({ mode }) => {
   return (

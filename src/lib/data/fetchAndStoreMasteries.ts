@@ -13,7 +13,7 @@ import {
 export async function fetchAndStoreMasteries(
   name: string,
   tagLine: string,
-  region: string
+  region: string,
 ) {
   try {
     const accountApi = createAccountService(region);
@@ -30,7 +30,7 @@ export async function fetchAndStoreMasteries(
 
     const championMasteryService = createChampionMasteryService(region);
     const championMastery = await championMasteryService.getChampionMastery(
-      account.puuid
+      account.puuid,
     );
     if (!championMastery) {
       throw new Error('Champion mastery not found');
@@ -40,7 +40,7 @@ export async function fetchAndStoreMasteries(
       region,
       name,
       tagLine,
-      account.puuid
+      account.puuid,
     );
     if (!summonerDoc) {
       throw new Error('Summoner doc not found');
@@ -54,7 +54,7 @@ export async function fetchAndStoreMasteries(
           tagLine,
           mastery.championId,
           mastery.championLevel,
-          mastery.championPoints
+          mastery.championPoints,
         );
       } catch (error) {
         throw error;

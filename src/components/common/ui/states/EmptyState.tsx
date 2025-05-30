@@ -8,8 +8,10 @@ import {
   AlertCircle,
   Database,
 } from 'lucide-react';
+import { getSizeConfig } from '@/lib/design/tokens';
+import type { StateComponentProps } from '@/types/coreTypes';
 
-interface EmptyStateProps {
+interface EmptyStateProps extends StateComponentProps {
   /**
    * Type of empty state - determines icon and default message
    */
@@ -37,18 +39,6 @@ interface EmptyStateProps {
     onClick: () => void;
     variant?: 'primary' | 'secondary' | 'outline';
   };
-  /**
-   * Size variant
-   */
-  size?: 'sm' | 'md' | 'lg';
-  /**
-   * Whether to show full height container
-   */
-  fullHeight?: boolean;
-  /**
-   * Additional CSS classes
-   */
-  className?: string;
   /**
    * Custom icon (overrides type icon)
    */
@@ -104,33 +94,6 @@ const typeConfig = {
   },
 };
 
-const sizeConfig = {
-  sm: {
-    container: 'py-6',
-    emoji: 'text-4xl',
-    icon: 'w-8 h-8',
-    title: 'text-base',
-    message: 'text-sm',
-    button: 'btn-sm',
-  },
-  md: {
-    container: 'py-8',
-    emoji: 'text-6xl',
-    icon: 'w-12 h-12',
-    title: 'text-lg',
-    message: 'text-base',
-    button: 'btn-md',
-  },
-  lg: {
-    container: 'py-12',
-    emoji: 'text-8xl',
-    icon: 'w-16 h-16',
-    title: 'text-xl',
-    message: 'text-lg',
-    button: 'btn-lg',
-  },
-};
-
 /**
  * Shared empty state component with consistent styling and multiple variants
  */
@@ -146,7 +109,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   emoji,
 }) => {
   const config = typeConfig[type];
-  const sizeConf = sizeConfig[size];
+  const sizeConf = getSizeConfig('empty', size);
 
   const displayTitle = title || config.title;
   const displayMessage = message || config.message;

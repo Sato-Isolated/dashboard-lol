@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { UIMatch } from '@/features/matches/types/uiMatchTypes';
-import { CalculatedMatchData } from '../types';
+import { CalculatedMatchData } from '../matchCardTypes';
 import {
   calculateTeams,
   calculateKDA,

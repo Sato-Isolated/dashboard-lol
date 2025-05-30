@@ -8,7 +8,7 @@ export const getChampionIcon = (champion: string) =>
 
 export const getChampionNameFromId = (
   key: number,
-  champions: Record<string, ChampionData>
+  champions: Record<string, ChampionData>,
 ) => {
   const champion = Object.values(champions).find(c => parseInt(c.key) === key);
   return champion ? champion.name : 'Unknown Champion';
@@ -16,7 +16,7 @@ export const getChampionNameFromId = (
 
 export const getChampionIdFromName = (
   name: string,
-  champions: Record<string, ChampionData>
+  champions: Record<string, ChampionData>,
 ) => {
   const champion = Object.values(champions).find(champ => champ.name === name);
   return champion ? parseInt(champion.key) : null;
@@ -43,10 +43,10 @@ import type { UIMatch, UIPlayer } from '@/features/matches/types/uiMatchTypes';
 
 export function mapRiotMatchToUIMatch(
   riotMatch: Match,
-  summonerName: string
+  summonerName: string,
 ): UIMatch {
   const participant = riotMatch.info.participants.find(
-    p => p.riotIdGameName === summonerName
+    p => p.riotIdGameName === summonerName,
   );
   const redTeam = riotMatch.info.participants.filter(p => p.teamId === 200);
   const blueTeam = riotMatch.info.participants.filter(p => p.teamId === 100);
@@ -193,7 +193,6 @@ const runeIdToIcon: Record<string, string> = (() => {
   }
   return map;
 })();
-
 
 export function getRuneIcon(id: number | string): string | undefined {
   const iconPath = runeIdToIcon[String(id)];

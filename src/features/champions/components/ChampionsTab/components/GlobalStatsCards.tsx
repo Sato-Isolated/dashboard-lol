@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { User, Trophy, Target, Zap } from 'lucide-react';
-import { GlobalStats } from '../types';
+import { GlobalStats } from '../championsTabTypes';
 import { cardVariants } from '../utils/animations';
 
 interface GlobalStatsCardsProps {

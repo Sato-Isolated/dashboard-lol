@@ -20,4 +20,3 @@ export const useRegionPreference = (effectiveRegion?: PlatformRegion | '') => {
 
   return { region, setRegion };
 };
-

@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { backgroundEffectVariants } from '../constants';
-import { AnimatedBackgroundEffectsProps } from '../types';
+import { AnimatedBackgroundEffectsProps } from '../matchCardTypes';
 
 const AnimatedBackgroundEffects: React.FC<AnimatedBackgroundEffectsProps> = ({
   isWin,

@@ -1,14 +1,14 @@
 // Cache Management
 export { CacheManager } from '@/lib/cache/CacheManager';
 
-// Optimized Hooks
+// Optimized Hooks - use useAsyncData directly for unified hook approach
+export { useAsyncData } from '@/hooks';
 export {
-  useOptimizedFetch,
   useOptimizedSummoner,
   useOptimizedMatchHistory,
-  useOptimizedChampionStats,
-  useOptimizedMasteries,
-} from '@/hooks/useOptimizedFetch';
+} from '@/features/summoner/hooks/useOptimizedSummoner';
+export { useOptimizedChampionStats } from '@/features/champions/hooks/useOptimizedChampionStats';
+export { useOptimizedMasteries } from '@/features/champions/hooks/useOptimizedMasteries';
 
 // Performance Monitoring
 export { default as PerformanceMonitoringService } from '@/lib/api/monitoring/PerformanceMonitoringService';
@@ -82,4 +82,3 @@ export const PerformanceUtils = {
       m.default.getInstance(),
     ),
 };
-

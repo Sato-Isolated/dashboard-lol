@@ -21,7 +21,7 @@ export const useMatchHistoryData = () => {
     (isRefresh: boolean) => {
       fetchMatches(isRefresh);
     },
-    [fetchMatches]
+    [fetchMatches],
   );
 
   // Memoize load more callback

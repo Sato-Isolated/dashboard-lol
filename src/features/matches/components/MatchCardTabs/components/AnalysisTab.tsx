@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import type { AnalysisTabProps } from '../types';
+import type { AnalysisTabProps } from '../matchCardTabsTypes';
 
 const AnalysisTabComponent: React.FC<AnalysisTabProps> = ({ match }) => {
   return (

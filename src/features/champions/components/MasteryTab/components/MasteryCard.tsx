@@ -5,7 +5,7 @@ import { Target } from 'lucide-react';
 import { getChampionIcon } from '@/lib/utils/helpers';
 import { getMasteryLevelStyle } from '../utils/masteryLevelStyle';
 import { itemVariants } from '../utils/animations';
-import type { MasteryWithChampion } from '../types';
+import type { MasteryWithChampion } from '../masteryTabTypes';
 
 interface MasteryCardProps {
   mastery: MasteryWithChampion;
@@ -128,4 +128,3 @@ export const MasteryCard: React.FC<MasteryCardProps> = React.memo(
 );
 
 MasteryCard.displayName = 'MasteryCard';
-
