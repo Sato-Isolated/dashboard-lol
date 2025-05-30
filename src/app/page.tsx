@@ -1,5 +1,3 @@
-'use client';
-import { motion } from 'motion/react';
 import {
   TrendingUp,
   Users,
@@ -8,70 +6,11 @@ import {
   BarChart3,
   Star,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { getDatabaseCounts } from '@/lib/utils/databaseStats';
 
-export default function Home() {
-  const [playersCount, setPlayersCount] = useState(0);
-  const [matchesCount, setMatchesCount] = useState(0);
-
-  // Animation des compteurs en temps réel
-  useEffect(() => {
-    const playersTarget = 2547;
-    const matchesTarget = 18342;
-
-    const animateCounter = (
-      target: number,
-      setter: (value: number) => void,
-      duration = 2000,
-    ) => {
-      const increment = target / (duration / 50);
-      let current = 0;
-
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          setter(target);
-          clearInterval(timer);
-        } else {
-          setter(Math.floor(current));
-        }
-      }, 50);
-
-      return timer;
-    };
-
-    // Délai pour démarrer les animations
-    const timeoutPlayers = setTimeout(
-      () => animateCounter(playersTarget, setPlayersCount),
-      500,
-    );
-    const timeoutMatches = setTimeout(
-      () => animateCounter(matchesTarget, setMatchesCount),
-      800,
-    );
-
-    return () => {
-      clearTimeout(timeoutPlayers);
-      clearTimeout(timeoutMatches);
-    };
-  }, []);
-
-  // Simulation d'incréments en temps réel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Ajouter un match toutes les 30 secondes
-      if (Math.random() > 0.5) {
-        setMatchesCount(prev => prev + 1);
-      }
-
-      // Ajouter un joueur toutes les 2 minutes environ
-      if (Math.random() > 0.9) {
-        setPlayersCount(prev => prev + 1);
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
+export default async function Home() {
+  // Fetch real counts from database
+  const { playersCount, matchesCount } = await getDatabaseCounts();
 
   const stats = [
     {
@@ -87,13 +26,6 @@ export default function Home() {
       icon: Gamepad2,
       color: 'text-secondary',
       isLive: true,
-    },
-    {
-      label: 'Features Available',
-      value: '12',
-      icon: Star,
-      color: 'text-accent',
-      isLive: false,
     },
     {
       label: 'Open Source',
@@ -129,48 +61,22 @@ export default function Home() {
   return (
     <div className='min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-base-300'>
       {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className='hero min-h-[60vh] relative overflow-hidden'
-      >
+      <div className='hero min-h-[60vh] relative overflow-hidden'>
         {/* Background Effects */}
         <div className='absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 animate-pulse'></div>
         <div className='absolute top-20 left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-bounce-subtle'></div>
         <div className='absolute bottom-20 right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-bounce-subtle delay-1000'></div>
 
         <div className='hero-content text-center relative z-10'>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className='max-w-4xl'
-          >
-            <motion.h1
-              className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-4 sm:mb-6'
-              animate={{
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
+          <div className='max-w-4xl'>
+            <h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-4 sm:mb-6'>
               League of Legends ARAM Dashboard
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className='text-lg sm:text-xl text-base-content/80 mb-6 sm:mb-8 leading-relaxed px-4 sm:px-0'
-            >
+            </h1>
+            <p className='text-lg sm:text-xl text-base-content/80 mb-6 sm:mb-8 leading-relaxed px-4 sm:px-0'>
               Track your ARAM performance, analyze champion statistics, and
               climb the community rankings with our open-source dashboard
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className='flex flex-wrap gap-2 sm:gap-4 justify-center px-4 sm:px-0'
-            >
+            </p>
+            <div className='flex flex-wrap gap-2 sm:gap-4 justify-center px-4 sm:px-0'>
               <div className='badge badge-primary badge-sm sm:badge-lg animate-glow'>
                 <BarChart3 className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2' />
                 <span className='text-xs sm:text-sm'>Performance Tracking</span>
@@ -183,25 +89,17 @@ export default function Home() {
                 <Users className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2' />
                 <span className='text-xs sm:text-sm'>Open Source</span>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Stats Section */}
       <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16'>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16'
-        >
-          {stats.map((stat, index) => (
-            <motion.div
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-16'>
+          {stats.map(stat => (
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
               className='card bg-base-100 shadow-xl transition-all duration-300 relative'
             >
               {stat.isLive && (
@@ -223,29 +121,21 @@ export default function Home() {
                   {stat.label}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className='text-center mb-8 sm:mb-12'
-        >
+        </div>
+        <div className='text-center mb-8 sm:mb-12'>
           <h2 className='text-2xl sm:text-3xl lg:text-4xl font-bold text-base-content mb-3 sm:mb-4'>
             Track Your ARAM Journey
           </h2>
           <p className='text-lg sm:text-xl text-base-content/70 px-4 sm:px-0'>
             Monitor your progress and compete with the community
           </p>
-        </motion.div>
+        </div>
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8'>
-          {features.map((feature, index) => (
-            <motion.div
+          {features.map(feature => (
+            <div
               key={feature.title}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
               className='card bg-base-100 shadow-xl transition-all duration-300'
             >
               <div className='card-body p-4 sm:p-6'>
@@ -276,16 +166,11 @@ export default function Home() {
                   max='100'
                 ></progress>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
         {/* Coming Soon Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className='mt-20 mb-16'
-        >
+        <div className='mt-20 mb-16'>
           <div className='text-center mb-8 sm:mb-12'>
             <h2 className='text-2xl sm:text-3xl lg:text-4xl font-bold text-base-content mb-3 sm:mb-4'>
               Coming Soon
@@ -296,12 +181,7 @@ export default function Home() {
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8'>
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className='card bg-base-100 shadow-xl border border-primary/20'
-            >
+            <div className='card bg-base-100 shadow-xl border border-primary/20'>
               <div className='card-body p-4 sm:p-6'>
                 <div className='flex items-center mb-4'>
                   <div className='p-2 sm:p-3 rounded-full bg-warning/10'>
@@ -319,14 +199,9 @@ export default function Home() {
                   In Development
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className='card bg-base-100 shadow-xl border border-success/20'
-            >
+            <div className='card bg-base-100 shadow-xl border border-success/20'>
               <div className='card-body p-4 sm:p-6'>
                 <div className='flex items-center mb-4'>
                   <div className='p-2 sm:p-3 rounded-full bg-success/10'>
@@ -344,16 +219,11 @@ export default function Home() {
                   Available Now
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
         {/* Call to Action Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className='text-center mt-20'
-        >
+        <div className='text-center mt-20'>
           <div className='card bg-gradient-to-r from-primary/10 to-secondary/10 shadow-xl'>
             <div className='card-body p-6 sm:p-8'>
               <h2 className='text-2xl sm:text-3xl font-bold text-base-content mb-3 sm:mb-4 text-center'>
@@ -365,30 +235,23 @@ export default function Home() {
               </p>
 
               <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center'>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  className='btn btn-primary btn-md sm:btn-lg w-full sm:w-auto'
-                >
+                <button className='btn btn-primary btn-md sm:btn-lg w-full sm:w-auto'>
                   <TrendingUp className='w-4 h-4 sm:w-5 sm:h-5 mr-2' />
                   <span className='text-sm sm:text-base'>Track Your Stats</span>
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
+                </button>
+                <a
+                  href='https://github.com/Sato-Isolated/dashboard-lol'
+                  target='_blank'
+                  rel='noopener noreferrer'
                   className='btn btn-outline btn-md sm:btn-lg w-full sm:w-auto'
-                  onClick={() =>
-                    window.open(
-                      'https://github.com/Sato-Isolated/dashboard-lol',
-                      '_blank',
-                    )
-                  }
                 >
                   <Trophy className='w-4 h-4 sm:w-5 sm:h-5 mr-2' />
                   <span className='text-sm sm:text-base'>View on GitHub</span>
-                </motion.button>
+                </a>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

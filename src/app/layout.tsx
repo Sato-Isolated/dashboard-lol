@@ -1,6 +1,22 @@
 import type { Metadata } from 'next';
-import ClientLayout from '@/components/common/layout/ClientLayout';
+import { ThemeProvider } from '@/stores/themeStore';
+import Header from '@/components/common/layout/Header';
+import Footer from '@/components/common/layout/Footer';
+import { Geist, Geist_Mono } from 'next/font/google';
+import GlobalErrorAlert from '@/components/common/ui/GlobalErrorAlert';
+import GlobalProgressBar from '@/components/common/ui/GlobalProgressBar';
+import ErrorBoundary from '@/components/common/error/ErrorBoundary';
+import { getDatabaseCounts } from '@/lib/utils/databaseStats';
 import './globals.css';
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+});
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'Dashboard - League of Legends Aram',
@@ -12,15 +28,41 @@ export const viewport = {
   initialScale: 1.0,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch database counts for the footer
+  const databaseCounts = await getDatabaseCounts();
+
   return (
     <html lang='en'>
-      <body>
-        <ClientLayout>{children}</ClientLayout>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ErrorBoundary>
+          <ThemeProvider>
+            <Header />
+            <GlobalProgressBar />
+            <GlobalErrorAlert />
+            <ErrorBoundary
+              fallback={
+                <div className='min-h-screen flex items-center justify-center'>
+                  <div className='alert alert-error max-w-md'>
+                    <div>
+                      <div className='font-semibold'>Application Error</div>
+                      <div className='text-sm'>
+                        The main content failed to load. Please refresh the page.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            >
+              {children}
+            </ErrorBoundary>
+            <Footer playersCount={databaseCounts.playersCount} matchesCount={databaseCounts.matchesCount} />
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

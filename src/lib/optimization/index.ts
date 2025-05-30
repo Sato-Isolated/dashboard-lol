@@ -10,9 +10,6 @@ export {
 export { useOptimizedChampionStats } from '@/features/champions/hooks/useOptimizedChampionStats';
 export { useOptimizedMasteries } from '@/features/champions/hooks/useOptimizedMasteries';
 
-// Performance Monitoring
-export { default as PerformanceMonitoringService } from '@/lib/api/monitoring/PerformanceMonitoringService';
-
 // Database Optimization
 export { default as DatabaseOptimizationService } from '@/lib/api/database/DatabaseOptimizationService';
 
@@ -23,20 +20,11 @@ export {
   withErrorBoundary,
 } from '@/components/common/error/ErrorBoundary';
 
-export { default as PerformanceDashboard } from '@/components/common/debug/PerformanceDashboard';
-
 /**
  * Initialization function for all optimization services
  */
 export async function initializeOptimizations() {
   try {
-    // Initialize performance monitoring
-    const PerformanceMonitoringService = (
-      await import('@/lib/api/monitoring/PerformanceMonitoringService')
-    ).default;
-    const performanceMonitor = PerformanceMonitoringService.getInstance();
-    performanceMonitor.startMonitoring();
-
     // Initialize database optimization (server-side only)
     if (typeof window === 'undefined') {
       const DatabaseOptimizationService = (
@@ -46,7 +34,7 @@ export async function initializeOptimizations() {
       await dbOptimizer.createOptimizedIndexes();
     }
 
-    console.log('🚀 Performance optimizations initialized');
+    console.log('🚀 Database optimizations initialized');
     return true;
   } catch (error) {
     console.error('❌ Failed to initialize optimizations:', error);
@@ -68,12 +56,6 @@ export const PerformanceUtils = {
   getUserDataCache: () =>
     import('@/lib/cache/CacheManager').then(m =>
       m.CacheManager.getUserDataCache(),
-    ),
-
-  // Quick performance monitoring
-  getPerformanceMonitor: () =>
-    import('@/lib/api/monitoring/PerformanceMonitoringService').then(m =>
-      m.default.getInstance(),
     ),
 
   // Quick database optimization

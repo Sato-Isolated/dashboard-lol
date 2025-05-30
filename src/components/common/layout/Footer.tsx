@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -7,13 +8,18 @@ import {
   Palette,
   Code,
   Users,
-  Star,
+  GamepadIcon,
   ChevronUp,
   Coffee,
   Shield,
 } from 'lucide-react';
 import { useTheme } from '@/stores/themeStore';
-// Removed unused motion component imports
+import { formatCount } from '@/lib/utils/formatUtils';
+
+interface FooterProps {
+  playersCount: number;
+  matchesCount: number;
+}
 
 const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme, themes } = useTheme();
@@ -120,17 +126,22 @@ const StatsCard = ({
   </motion.div>
 );
 
-const Footer: React.FC = () => {
+const Footer: React.FC<FooterProps> = ({ playersCount, matchesCount }) => {
   const currentYear = new Date().getFullYear();
 
   const footerStats = [
     {
       icon: Users,
-      value: '1.2K+',
-      label: 'Active Users',
+      value: formatCount(playersCount),
+      label: 'Players Tracked',
       color: 'text-primary',
     },
-    { icon: Star, value: '4.8', label: 'Rating', color: 'text-warning' },
+    {
+      icon: GamepadIcon,
+      value: formatCount(matchesCount),
+      label: 'ARAM Matches',
+      color: 'text-warning',
+    },
     { icon: Shield, value: '99.9%', label: 'Uptime', color: 'text-success' },
     { icon: Code, value: 'Open', label: 'Source', color: 'text-info' },
   ];
