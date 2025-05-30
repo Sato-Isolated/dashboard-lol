@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { fetchAndStoreMatches } from '@/scripts/fetchAndStoreMatches';
-import { MongoService } from '@/shared/services/database/MongoService';
-import { withValidation } from '@/shared/lib/validation/middleware';
-import { logger } from '@/shared/lib/logger/logger';
+import { fetchAndStoreMatches } from '@/lib/data/fetchAndStoreMatches';
+import { MongoService } from '@/lib/api/database/MongoService';
+import { withValidation } from '@/lib/validation/middleware';
+import { logger } from '@/lib/logger/logger';
 import { z } from 'zod';
 
 // Utility function to get recently played players
@@ -99,7 +99,7 @@ export const GET = withValidation(
     });
 
     return NextResponse.json({ success: true, data: result });
-  }
+  },
 );
 
 // POST /api/summoner/recently-played (triggers a real update)
@@ -128,5 +128,6 @@ export const POST = withValidation(
       message: `Update successful (${totalFetched} matches fetched)`,
       totalFetched,
     });
-  }
+  },
 );
+

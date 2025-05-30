@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getSummoner } from '@/features/summoner/services/summonerRepository';
 import { AramScoreService } from '@/features/aram/services/aramScoreService';
-import type { SummonerCollection } from '@/features/summoner/types/summoner.types';
-import { withValidation } from '@/shared/lib/validation/middleware';
-import { logger } from '@/shared/lib/logger/logger';
+import type { SummonerCollection } from '@/features/summoner/types/summonerTypes';
+import { withValidation } from '@/lib/validation/middleware';
+import { logger } from '@/lib/logger/logger';
 import { z } from 'zod';
 
 // GET /api/summoner/aram-score?region=...&name=...&tagline=...
@@ -23,13 +23,13 @@ export const GET = withValidation(
     const summoner = (await getSummoner(
       region,
       name,
-      tagline
+      tagline,
     )) as SummonerCollection | null;
 
     if (!summoner) {
       return NextResponse.json(
         { error: 'Summoner not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -39,7 +39,7 @@ export const GET = withValidation(
       aramScoreFirstCalculated: !!summoner.aramScoreFirstCalculated,
       aramScoreLastCheck: summoner.aramScoreLastCheck ?? null,
     });
-  }
+  },
 );
 
 // POST /api/summoner/aram-score { region, name, tagline }
@@ -59,5 +59,6 @@ export const POST = withValidation(
     const result = await AramScoreService.syncAramScore(region, name, tagline);
 
     return NextResponse.json({ success: true, ...result });
-  }
+  },
 );
+

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { fetchSummonerFull } from '@/features/summoner/services/summoner';
+import { fetchSummonerFull } from '@/features/summoner/services/summonerDataService';
 import { z } from 'zod';
-import { withMiddleware } from '@/shared/lib/validation/middleware';
-import { NotFoundError } from '@/shared/lib/errorHandler';
+import { withMiddleware } from '@/lib/validation/middleware';
+import { NotFoundError } from '@/lib/globalErrorHandler';
 
 // Validation schema for summoner query
 const summonerSchema = z.object({
@@ -28,3 +28,4 @@ export const GET = withMiddleware(summonerSchema, {
 
   return NextResponse.json({ success: true, data });
 });
+

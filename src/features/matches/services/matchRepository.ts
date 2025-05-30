@@ -1,9 +1,9 @@
-import { MongoService } from '@/shared/services/database/MongoService';
-import { MatchCollection } from '@/features/matches/types/match.types';
-import { Match } from '@/shared/types/api/match.types';
-import { logger } from '@/shared/lib/logger/logger';
-import { ValidationHelper, ValidationError } from '@/shared/lib/patterns';
-import { BaseRepositoryImpl } from '@/shared/lib/patterns';
+import { MongoService } from '@/lib/api/database/MongoService';
+import { MatchCollection } from '@/features/matches/types/matchTypes';
+import { Match } from '@/types/api/matchTypes';
+import { logger } from '@/lib/logger/logger';
+import { ValidationError, BaseRepositoryImpl } from '@/lib/patterns';
+import { matchIdSchema, puuidSchema } from '@/lib/validation/schemas';
 
 /**
  * Repository for match data operations
@@ -17,19 +17,19 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
       return collection.findOne({ _id: id });
     }, 'findById');
   }
 
   async create(
-    entity: Omit<MatchCollection, 'id' | 'createdAt' | 'updatedAt'>
+    entity: Omit<MatchCollection, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<MatchCollection> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const doc = entity as MatchCollection;
@@ -40,18 +40,18 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
   async update(
     id: string,
-    updates: Partial<MatchCollection>
+    updates: Partial<MatchCollection>,
   ): Promise<MatchCollection | null> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const result = await collection.findOneAndUpdate(
         { _id: id },
         { $set: updates },
-        { returnDocument: 'after' }
+        { returnDocument: 'after' },
       );
 
       return result || null;
@@ -62,7 +62,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const result = await collection.deleteOne({ _id: id });
@@ -72,20 +72,14 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
   /**
    * Insert a match with proper validation and error handling
-   */
-  async insertMatch(match: Match): Promise<void> {
+   */ async insertMatch(match: Match): Promise<void> {
     return this.errorHandler.repository(
       async () => {
         // Validate match data
-        const matchIdValidation = ValidationHelper.validateString(
-          match.metadata.matchId,
-          'matchId',
-          10,
-          50
-        );
-        if (!matchIdValidation.isValid) {
+        const matchIdResult = matchIdSchema.safeParse(match.metadata.matchId);
+        if (!matchIdResult.success) {
           throw new ValidationError(
-            matchIdValidation.error || 'Invalid match ID'
+            matchIdResult.error.errors[0]?.message || 'Invalid match ID',
           );
         }
 
@@ -97,7 +91,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         const matchDoc: MatchCollection = {
@@ -129,7 +123,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
           }
         }
       },
-      { collection: this.collectionName, operation: 'insertMatch' }
+      { collection: this.collectionName, operation: 'insertMatch' },
     );
   }
 
@@ -140,15 +134,10 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     return this.errorHandler.repository(
       async () => {
         // Validate match ID
-        const matchIdValidation = ValidationHelper.validateString(
-          matchId,
-          'matchId',
-          10,
-          50
-        );
-        if (!matchIdValidation.isValid) {
+        const matchIdResult = matchIdSchema.safeParse(matchId);
+        if (!matchIdResult.success) {
           throw new ValidationError(
-            matchIdValidation.error || 'Invalid match ID'
+            matchIdResult.error.errors[0]?.message || 'Invalid match ID',
           );
         }
 
@@ -156,7 +145,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
         const match = await collection.findOne({ _id: matchId });
 
@@ -168,7 +157,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         return match;
       },
-      { collection: this.collectionName, operation: 'getMatchById' }
+      { collection: this.collectionName, operation: 'getMatchById' },
     );
   }
 
@@ -181,7 +170,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const matches = await collection
@@ -204,20 +193,15 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
    */
   async getMatchesByPuuid(
     puuid: string,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.errorHandler.repository(
       async () => {
         // Validate PUUID
-        const puuidValidation = ValidationHelper.validateString(
-          puuid,
-          'puuid',
-          78,
-          78
-        );
-        if (!puuidValidation.isValid) {
+        const puuidResult = puuidSchema.safeParse(puuid);
+        if (!puuidResult.success) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            puuidResult.error.errors[0]?.message || 'Invalid PUUID format',
           );
         }
 
@@ -225,7 +209,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         // PHASE 2.1 OPTIMIZATION: Use optimized query pattern that leverages indexes
@@ -250,7 +234,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         return matches;
       },
-      { collection: this.collectionName, operation: 'getMatchesByPuuid' }
+      { collection: this.collectionName, operation: 'getMatchesByPuuid' },
     );
   }
 
@@ -260,20 +244,15 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
   async getMatchesByPuuidAndQueue(
     puuid: string,
     queueId: number,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.errorHandler.repository(
       async () => {
         // Validate PUUID
-        const puuidValidation = ValidationHelper.validateString(
-          puuid,
-          'puuid',
-          78,
-          78
-        );
-        if (!puuidValidation.isValid) {
+        const puuidResult = puuidSchema.safeParse(puuid);
+        if (!puuidResult.success) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            puuidResult.error.errors[0]?.message || 'Invalid PUUID format',
           );
         }
 
@@ -285,7 +264,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         // PHASE 2.1 OPTIMIZATION: Use optimized compound index
@@ -316,7 +295,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
       {
         collection: this.collectionName,
         operation: 'getMatchesByPuuidAndQueue',
-      }
+      },
     );
   }
 
@@ -327,20 +306,15 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
     puuid: string,
     startTimestamp?: number,
     endTimestamp?: number,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.errorHandler.repository(
       async () => {
         // Validate PUUID
-        const puuidValidation = ValidationHelper.validateString(
-          puuid,
-          'puuid',
-          78,
-          78
-        );
-        if (!puuidValidation.isValid) {
+        const puuidResult = puuidSchema.safeParse(puuid);
+        if (!puuidResult.success) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            puuidResult.error.errors[0]?.message || 'Invalid PUUID format',
           );
         }
 
@@ -353,7 +327,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         const mongo = MongoService.getInstance();
         const collection = await mongo.getCollection<MatchCollection>(
-          this.collectionName
+          this.collectionName,
         );
 
         // Build optimized query
@@ -364,8 +338,12 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
         // Add date range filter
         if (startTimestamp || endTimestamp) {
           const ts: Record<string, number> = {};
-          if (startTimestamp) ts.$gte = startTimestamp;
-          if (endTimestamp) ts.$lte = endTimestamp;
+          if (startTimestamp) {
+            ts.$gte = startTimestamp;
+          }
+          if (endTimestamp) {
+            ts.$lte = endTimestamp;
+          }
           filter['info.gameCreation'] = ts;
         }
 
@@ -390,7 +368,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
         return matches;
       },
-      { collection: this.collectionName, operation: 'getRecentMatchesByPuuid' }
+      { collection: this.collectionName, operation: 'getRecentMatchesByPuuid' },
     );
   }
 
@@ -400,7 +378,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
   async getRecentMatches(
     startTimestamp?: number,
     endTimestamp?: number,
-    limit?: number
+    limit?: number,
   ): Promise<MatchCollection[]> {
     return this.executeOperation(async () => {
       logger.info('Fetching recent matches', {
@@ -411,7 +389,7 @@ class MatchRepository extends BaseRepositoryImpl<MatchCollection, string> {
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.collectionName
+        this.collectionName,
       );
       const filter: Record<
         string,
@@ -460,3 +438,4 @@ export const insertMatch = matchRepository.insertMatch.bind(matchRepository);
 export const getMatchById = matchRepository.getMatchById.bind(matchRepository);
 export const getMultiKillMatches =
   matchRepository.getMultiKillMatches.bind(matchRepository);
+

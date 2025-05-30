@@ -1,6 +1,7 @@
-import { Match } from '@/shared/types/api/match.types';
-import { RiotApiClient } from '@/shared/services/api/riot/RiotApiClient';
-import { StandardErrorHandler, ValidationHelper } from '@/shared/lib/patterns';
+import { Match } from '@/types/api/matchTypes';
+import { RiotApiClient } from '@/lib/api/api/riot/RiotApiClient';
+import { StandardErrorHandler } from '@/lib/patterns';
+import { matchIdSchema, puuidSchema } from '@/lib/validation/schemas';
 
 export class MatchService extends RiotApiClient {
   private readonly featureName = 'matches';
@@ -13,12 +14,13 @@ export class MatchService extends RiotApiClient {
   constructor(region: string) {
     super(region);
   }
-
   public async getMatchById(matchId: string): Promise<Match> {
     // Validate input
-    const validation = ValidationHelper.validateString(matchId, 'matchId', 1);
-    if (!validation.isValid) {
-      throw new Error(validation.error || 'Invalid match ID');
+    const matchIdResult = matchIdSchema.safeParse(matchId);
+    if (!matchIdResult.success) {
+      throw new Error(
+        matchIdResult.error.errors[0]?.message || 'Invalid match ID',
+      );
     }
 
     const endpoint = `/lol/match/v5/matches/${matchId}`;
@@ -37,26 +39,35 @@ export class MatchService extends RiotApiClient {
       type?: string;
       start?: number;
       count?: number;
-    }
+    },
   ): Promise<string[]> {
     // Validate input
-    const validation = ValidationHelper.validateString(puuid, 'puuid', 78, 78);
-    if (!validation.isValid) {
-      throw new Error(validation.error || 'Invalid PUUID format');
+    const puuidResult = puuidSchema.safeParse(puuid);
+    if (!puuidResult.success) {
+      throw new Error(
+        puuidResult.error.errors[0]?.message || 'Invalid PUUID format',
+      );
     }
 
     const params = new URLSearchParams();
-    if (options?.startTime !== undefined)
+    if (options?.startTime !== undefined) {
       params.append('startTime', options.startTime.toString());
-    if (options?.endTime !== undefined)
+    }
+    if (options?.endTime !== undefined) {
       params.append('endTime', options.endTime.toString());
-    if (options?.queue !== undefined)
+    }
+    if (options?.queue !== undefined) {
       params.append('queue', options.queue.toString());
-    if (options?.type !== undefined) params.append('type', options.type);
-    if (options?.start !== undefined)
+    }
+    if (options?.type !== undefined) {
+      params.append('type', options.type);
+    }
+    if (options?.start !== undefined) {
       params.append('start', options.start.toString());
-    if (options?.count !== undefined)
+    }
+    if (options?.count !== undefined) {
       params.append('count', options.count.toString());
+    }
 
     const query = params.toString() ? `?${params.toString()}` : '';
     const endpoint = `/lol/match/v5/matches/by-puuid/${puuid}/ids${query}`;
@@ -67,3 +78,4 @@ export class MatchService extends RiotApiClient {
     });
   }
 }
+

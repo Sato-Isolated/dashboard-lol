@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { MongoService } from '@/shared/services/database/MongoService';
-import type { Match } from '@/shared/types/api/match.types';
+import { MongoService } from '@/lib/api/database/MongoService';
+import type { Match } from '@/types/api/matchTypes';
 import { z } from 'zod';
-import { withValidation } from '@/shared/lib/validation/middleware';
-import { NotFoundError } from '@/shared/lib/errorHandler';
+import { withValidation } from '@/lib/validation/middleware';
+import { NotFoundError } from '@/lib/globalErrorHandler';
 
 // Validation schema
 const championsStatsSchema = z.object({
@@ -21,7 +21,7 @@ export const GET = withValidation(
 
     const mongo = MongoService.getInstance();
     const collection = await mongo.getCollection<{ puuid: string }>(
-      'summoners'
+      'summoners',
     );
 
     // Find summoner's puuid
@@ -104,5 +104,6 @@ export const GET = withValidation(
       totalChampions: result.length,
       totalGames: result.reduce((sum, champion) => sum + champion.games, 0),
     });
-  }
+  },
 );
+

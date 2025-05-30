@@ -1,10 +1,7 @@
-import { useApiResource } from '@/shared/hooks/useApiResource';
-import { useEffectiveUser } from '@/shared/hooks/useEffectiveUser';
-import type { RiotAccountDto } from '@/shared/types/api/account.types';
-import type {
-  SummonerDto,
-  LeagueEntry,
-} from '@/shared/types/api/summoners.types';
+import { useApiResource } from '@/hooks/useApiResource';
+import { useEffectiveUser } from '@/hooks/useEffectiveUser';
+import type { RiotAccountDto } from '@/types/api/accountTypes';
+import type { SummonerDto, LeagueEntry } from '@/types/api/summonerTypes';
 
 interface AccountSummonerResult {
   account: RiotAccountDto | null;
@@ -19,7 +16,7 @@ interface AccountSummonerResult {
 export function useAccountSummoner(
   region?: string,
   name?: string,
-  tagline?: string
+  tagline?: string,
 ): AccountSummonerResult {
   // If not provided, fallback to effective user
   const effective = useEffectiveUser();
@@ -31,7 +28,7 @@ export function useAccountSummoner(
   const url =
     r && n && t
       ? `/api/summoner?region=${encodeURIComponent(
-          r
+          r,
         )}&name=${encodeURIComponent(n)}&tagline=${encodeURIComponent(t)}`
       : null;
   const { data, loading, error, refetch } = useApiResource<{
@@ -54,3 +51,4 @@ export function useAccountSummoner(
     refetch,
   };
 }
+

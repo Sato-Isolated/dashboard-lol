@@ -1,8 +1,12 @@
-import { MongoService } from '@/shared/services/database/MongoService';
-import { SummonerCollection } from '@/features/summoner/types/summoner.types';
-import { logger } from '@/shared/lib/logger/logger';
-import { ValidationHelper, ValidationError } from '@/shared/lib/patterns';
-import { BaseRepositoryImpl } from '@/shared/lib/patterns';
+import { MongoService } from '@/lib/api/database/MongoService';
+import { SummonerCollection } from '@/features/summoner/types/summonerTypes';
+import { logger } from '@/lib/logger/logger';
+import { ValidationError, BaseRepositoryImpl } from '@/lib/patterns';
+import {
+  puuidSchema,
+  regionSchema,
+  summonerNameSchema,
+} from '@/lib/validation/schemas';
 
 /**
  * Repository for summoner data operations
@@ -19,7 +23,7 @@ class SummonerRepository extends BaseRepositoryImpl<
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
       return collection.findOne({
         _id: new (await import('mongodb')).ObjectId(id),
@@ -28,12 +32,12 @@ class SummonerRepository extends BaseRepositoryImpl<
   }
 
   async create(
-    entity: Omit<SummonerCollection, 'id' | 'createdAt' | 'updatedAt'>
+    entity: Omit<SummonerCollection, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<SummonerCollection> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const doc: SummonerCollection = {
@@ -48,18 +52,18 @@ class SummonerRepository extends BaseRepositoryImpl<
 
   async update(
     id: string,
-    updates: Partial<SummonerCollection>
+    updates: Partial<SummonerCollection>,
   ): Promise<SummonerCollection | null> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const result = await collection.findOneAndUpdate(
         { _id: new (await import('mongodb')).ObjectId(id) },
         { $set: updates },
-        { returnDocument: 'after' }
+        { returnDocument: 'after' },
       );
 
       return result || null;
@@ -70,7 +74,7 @@ class SummonerRepository extends BaseRepositoryImpl<
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       const result = await collection.deleteOne({
@@ -86,12 +90,12 @@ class SummonerRepository extends BaseRepositoryImpl<
   async findByIdentity(
     region: string,
     name: string,
-    tagline: string
+    tagline: string,
   ): Promise<SummonerCollection | null> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
       return collection.findOne({ region, name, tagline });
     }, 'findByIdentity');
@@ -104,42 +108,30 @@ class SummonerRepository extends BaseRepositoryImpl<
     region: string,
     name: string,
     tagline: string,
-    puuid: string
+    puuid: string,
   ): Promise<SummonerCollection> {
     return this.errorHandler.repository(
       async () => {
         // Validate inputs using standardized validation
-        const regionValidation = ValidationHelper.validateString(
-          region,
-          'region',
-          2,
-          10
-        );
-        if (!regionValidation.isValid) {
-          throw new ValidationError(regionValidation.error || 'Invalid region');
-        }
-
-        const nameValidation = ValidationHelper.validateString(
-          name,
-          'name',
-          3,
-          16
-        );
-        if (!nameValidation.isValid) {
+        // Region
+        const regionResult = regionSchema.safeParse(region);
+        if (!regionResult.success) {
           throw new ValidationError(
-            nameValidation.error || 'Invalid summoner name'
+            regionResult.error.errors[0]?.message || 'Invalid region',
           );
         }
-
-        const puuidValidation = ValidationHelper.validateString(
-          puuid,
-          'puuid',
-          78,
-          78
-        );
-        if (!puuidValidation.isValid) {
+        // Name
+        const nameResult = summonerNameSchema.safeParse(name);
+        if (!nameResult.success) {
           throw new ValidationError(
-            puuidValidation.error || 'Invalid PUUID format'
+            nameResult.error.errors[0]?.message || 'Invalid summoner name',
+          );
+        }
+        // PUUID
+        const puuidResult = puuidSchema.safeParse(puuid);
+        if (!puuidResult.success) {
+          throw new ValidationError(
+            puuidResult.error.errors[0]?.message || 'Invalid PUUID format',
           );
         }
 
@@ -172,7 +164,7 @@ class SummonerRepository extends BaseRepositoryImpl<
 
           const mongo = MongoService.getInstance();
           const collection = await mongo.getCollection<SummonerCollection>(
-            this.collectionName
+            this.collectionName,
           );
           await collection.insertOne(doc);
           summoner = doc;
@@ -194,7 +186,7 @@ class SummonerRepository extends BaseRepositoryImpl<
 
         return summoner;
       },
-      { collection: this.collectionName, operation: 'getOrCreate' }
+      { collection: this.collectionName, operation: 'getOrCreate' },
     );
   }
 
@@ -207,12 +199,12 @@ class SummonerRepository extends BaseRepositoryImpl<
     tagline: string,
     championId: number,
     championLevel: number,
-    championPoints: number
+    championPoints: number,
   ): Promise<void> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
@@ -224,7 +216,7 @@ class SummonerRepository extends BaseRepositoryImpl<
               championPoints,
             },
           },
-        }
+        },
       );
     }, 'updateChampionMastery');
   }
@@ -236,17 +228,17 @@ class SummonerRepository extends BaseRepositoryImpl<
     region: string,
     name: string,
     tagline: string,
-    value: boolean
+    value: boolean,
   ): Promise<void> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
         { region, name, tagline },
-        { $set: { fetchOldGames: value } }
+        { $set: { fetchOldGames: value } },
       );
     }, 'setFetchOldGames');
   }
@@ -258,17 +250,17 @@ class SummonerRepository extends BaseRepositoryImpl<
     region: string,
     name: string,
     tagline: string,
-    timestamp: number
+    timestamp: number,
   ): Promise<void> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
         { region, name, tagline },
-        { $set: { lastFetchedGameEndTimestamp: timestamp } }
+        { $set: { lastFetchedGameEndTimestamp: timestamp } },
       );
     }, 'setLastFetchedGameEndTimestamp');
   }
@@ -280,17 +272,17 @@ class SummonerRepository extends BaseRepositoryImpl<
     region: string,
     name: string,
     tagline: string,
-    aramScore: number
+    aramScore: number,
   ): Promise<void> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
         { region, name, tagline },
-        { $set: { aramScore } }
+        { $set: { aramScore } },
       );
     }, 'setAramScore');
   }
@@ -302,17 +294,17 @@ class SummonerRepository extends BaseRepositoryImpl<
     region: string,
     name: string,
     tagline: string,
-    timestamp: number
+    timestamp: number,
   ): Promise<void> {
     return this.executeOperation(async () => {
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
         { region, name, tagline },
-        { $set: { lastUpdateTimestamp: timestamp } }
+        { $set: { lastUpdateTimestamp: timestamp } },
       );
     }, 'setLastUpdateTimestamp');
   }
@@ -339,3 +331,4 @@ export const setAramScore =
   summonerRepository.setAramScore.bind(summonerRepository);
 export const setLastUpdateTimestamp =
   summonerRepository.setLastUpdateTimestamp.bind(summonerRepository);
+

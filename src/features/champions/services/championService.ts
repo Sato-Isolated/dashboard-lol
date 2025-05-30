@@ -1,5 +1,5 @@
-import { ChampionInfoDto } from '@/shared/types/api/champion.types';
-import { RiotApiClient } from '@/shared/services/api/riot/RiotApiClient';
+import { ChampionInfoDto } from '@/types/api/championTypes';
+import { RiotApiClient } from '@/lib/api/api/riot/RiotApiClient';
 
 export class ChampionService extends RiotApiClient {
   constructor(region: string) {
@@ -7,6 +7,7 @@ export class ChampionService extends RiotApiClient {
   }
 
   public async getChampionInfo() {
-    return this.fetch<ChampionInfoDto>(`/lol/platform/v3/champion-rotations`);
+    return this.fetch<ChampionInfoDto>('/lol/platform/v3/champion-rotations');
   }
 }
+

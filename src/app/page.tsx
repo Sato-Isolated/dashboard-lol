@@ -1,5 +1,5 @@
 'use client';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import {
   TrendingUp,
   Users,
@@ -22,7 +22,7 @@ export default function Home() {
     const animateCounter = (
       target: number,
       setter: (value: number) => void,
-      duration: number = 2000
+      duration = 2000,
     ) => {
       const increment = target / (duration / 50);
       let current = 0;
@@ -43,11 +43,11 @@ export default function Home() {
     // Délai pour démarrer les animations
     const timeoutPlayers = setTimeout(
       () => animateCounter(playersTarget, setPlayersCount),
-      500
+      500,
     );
     const timeoutMatches = setTimeout(
       () => animateCounter(matchesTarget, setMatchesCount),
-      800
+      800,
     );
 
     return () => {
@@ -76,14 +76,14 @@ export default function Home() {
   const stats = [
     {
       label: 'Players Tracked',
-      value: playersCount.toLocaleString(),
+      value: playersCount.toLocaleString('en-US'),
       icon: Users,
       color: 'text-primary',
       isLive: true,
     },
     {
       label: 'ARAM Matches',
-      value: matchesCount.toLocaleString(),
+      value: matchesCount.toLocaleString('en-US'),
       icon: Gamepad2,
       color: 'text-secondary',
       isLive: true,
@@ -376,7 +376,10 @@ export default function Home() {
                   whileTap={{ scale: 0.95 }}
                   className='btn btn-outline btn-md sm:btn-lg w-full sm:w-auto'
                   onClick={() =>
-                    window.open('https://github.com/your-repo', '_blank')
+                    window.open(
+                      'https://github.com/Sato-Isolated/dashboard-lol',
+                      '_blank',
+                    )
                   }
                 >
                   <Trophy className='w-4 h-4 sm:w-5 sm:h-5 mr-2' />

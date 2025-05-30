@@ -7,7 +7,6 @@ export function middleware(request: NextRequest) {
   // Skip middleware for static files and API routes
   if (
     pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/') ||
     pathname.startsWith('/static/') ||
     pathname.includes('.') // Any file with extension
   ) {
@@ -31,23 +30,37 @@ export function middleware(request: NextRequest) {
 
   // Check summoner route pattern specifically
   const summonerRouteMatch = pathname.match(
-    /^\/([^\/]+)\/summoner\/([^\/]+)\/([^\/]+)$/
+    /^\/([^\/]+)\/summoner\/([^\/]+)\/([^\/]+)$/,
   );
   if (summonerRouteMatch) {
-    const [, region, name, tagline] = summonerRouteMatch;
+    const [, region, rawName, rawTagline] = summonerRouteMatch;
+
+    // Decode URL components to handle encoded characters
+    let name: string, tagline: string;
+    try {
+      name = decodeURIComponent(rawName);
+      tagline = decodeURIComponent(rawTagline);
+    } catch {
+      // Invalid URL encoding
+      return new NextResponse(null, { status: 404 });
+    }
 
     // Validate region format (should be letters and numbers)
     if (!/^[a-z0-9]+$/i.test(region)) {
       return new NextResponse(null, { status: 404 });
     }
 
-    // Validate that name and tagline don't contain file extensions
-    if (name.includes('.') || tagline.includes('.')) {
+    // Validate that raw name and tagline don't contain file extensions
+    if (rawName.includes('.') || rawTagline.includes('.')) {
       return new NextResponse(null, { status: 404 });
     }
 
-    // Validate basic summoner name format
-    if (name.length < 1 || name.length > 16) {
+    // Validate decoded summoner name format (allow spaces and common characters)
+    if (
+      name.length < 1 ||
+      name.length > 16 ||
+      !/^[a-zA-Z0-9_\s]+$/.test(name)
+    ) {
       return new NextResponse(null, { status: 404 });
     }
 

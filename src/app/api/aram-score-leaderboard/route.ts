@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { MongoService } from '@/shared/services/database/MongoService';
+import { MongoService } from '@/lib/api/database/MongoService';
 import { z } from 'zod';
-import { withValidation } from '@/shared/lib/validation/middleware';
+import { withValidation } from '@/lib/validation/middleware';
 
 // Validation schema for leaderboard query
 const leaderboardSchema = z.object({
@@ -35,5 +35,6 @@ export const GET = withValidation(
       platform,
       count: leaderboard.length,
     });
-  }
+  },
 );
+

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { MongoService } from '@/shared/services/database/MongoService';
+import { MongoService } from '@/lib/api/database/MongoService';
 import { z } from 'zod';
-import { withValidation } from '@/shared/lib/validation/middleware';
-import { logger } from '@/shared/lib/logger/logger';
+import { withValidation } from '@/lib/validation/middleware';
+import { logger } from '@/lib/logger/logger';
 
 // Validation schema for search query
 const searchSchema = z.object({
@@ -38,5 +38,6 @@ export const GET = withValidation(
     });
 
     return NextResponse.json(users);
-  }
+  },
 );
+

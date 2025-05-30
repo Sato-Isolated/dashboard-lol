@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Crown, Medal, Award, Trophy } from 'lucide-react';
-import { getSummonerIcon } from '@/shared/lib/utils/helpers';
+import { getSummonerIcon } from '@/lib/utils/helpers';
 
 interface LeaderboardRowProps {
   entry: {
@@ -22,44 +22,50 @@ interface LeaderboardRowProps {
 // Fonction pour déterminer le tier basé sur le rang et le score
 const getTier = (
   rank: number,
-  score: number
+  score: number,
 ): { name: string; icon: React.ReactNode; color: string } => {
-  if (rank === 1)
+  if (rank === 1) {
     return {
       name: 'Champion',
       icon: <Crown className='w-4 h-4' />,
       color: 'text-yellow-500',
     };
-  if (rank <= 3)
+  }
+  if (rank <= 3) {
     return {
       name: 'Master',
       icon: <Medal className='w-4 h-4' />,
       color: 'text-slate-400',
     };
-  if (rank <= 10)
+  }
+  if (rank <= 10) {
     return {
       name: 'Diamond',
       icon: <Award className='w-4 h-4' />,
       color: 'text-blue-400',
     };
-  if (rank <= 25)
+  }
+  if (rank <= 25) {
     return {
       name: 'Platinum',
       icon: <Trophy className='w-4 h-4' />,
       color: 'text-green-400',
     };
-  if (rank <= 50)
+  }
+  if (rank <= 50) {
     return {
       name: 'Gold',
       icon: <Trophy className='w-4 h-4' />,
       color: 'text-yellow-600',
     };
-  if (rank <= 100)
+  }
+  if (rank <= 100) {
     return {
       name: 'Silver',
       icon: <Trophy className='w-4 h-4' />,
       color: 'text-gray-400',
     };
+  }
   return {
     name: 'Bronze',
     icon: <Trophy className='w-4 h-4' />,
@@ -77,9 +83,15 @@ const LeaderboardRowComponent: React.FC<LeaderboardRowProps> = ({
   const tier = getTier(rank, entry.aramScore);
 
   const getRankStyle = (rank: number) => {
-    if (rank === 1) return 'text-2xl font-bold text-yellow-500';
-    if (rank <= 3) return 'text-xl font-bold text-slate-400';
-    if (rank <= 10) return 'text-lg font-bold text-blue-400';
+    if (rank === 1) {
+      return 'text-2xl font-bold text-yellow-500';
+    }
+    if (rank <= 3) {
+      return 'text-xl font-bold text-slate-400';
+    }
+    if (rank <= 10) {
+      return 'text-lg font-bold text-blue-400';
+    }
     return 'text-lg font-semibold';
   };
 
@@ -101,7 +113,7 @@ const LeaderboardRowComponent: React.FC<LeaderboardRowProps> = ({
           <div className='flex flex-col min-w-0 flex-1'>
             <Link
               href={`/${platform}/summoner/${encodeURIComponent(
-                entry.name
+                entry.name,
               )}/${encodeURIComponent(entry.tagline)}`}
               className='text-sm sm:text-base md:text-lg font-semibold text-primary transition-colors hover:text-primary-focus truncate max-w-[150px] sm:max-w-none'
             >
@@ -115,7 +127,7 @@ const LeaderboardRowComponent: React.FC<LeaderboardRowProps> = ({
       </td>
       <td className='text-sm sm:text-base md:text-lg font-semibold text-center'>
         <span className='hidden sm:inline'>
-          {entry.aramScore.toLocaleString()}
+          {entry.aramScore.toLocaleString('en-US')}
         </span>
         <span className='sm:hidden'>
           {entry.aramScore > 999
@@ -142,3 +154,4 @@ const LeaderboardRow = React.memo(LeaderboardRowComponent);
 LeaderboardRow.displayName = 'LeaderboardRow';
 
 export default LeaderboardRow;
+

@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import LeaderboardRow from './LeaderboardRow';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 interface LeaderboardTableProps {
   leaderboard: Array<{
@@ -62,11 +61,6 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
                   duration: 0.5,
                   delay: Math.min(i * 0.05, 1), // Limite le délai maximum
                 }}
-                whileHover={{
-                  scale: 1.02,
-                  backgroundColor: 'rgba(var(--p), 0.1)',
-                  transition: { duration: 0.2 },
-                }}
                 className='transition-all duration-200'
               >
                 <LeaderboardRow
@@ -85,10 +79,7 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
   );
 };
 
-export const LeaderboardTable = withPerformanceTracking(
-  React.memo(LeaderboardTableComponent),
-  'LeaderboardTable'
-);
+export const LeaderboardTable = React.memo(LeaderboardTableComponent);
 
 LeaderboardTable.displayName = 'LeaderboardTable';
 

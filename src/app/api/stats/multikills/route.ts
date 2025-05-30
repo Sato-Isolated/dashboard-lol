@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getMultiKillMatches } from '@/features/matches/services/matchRepository';
 import { z } from 'zod';
-import { withValidation } from '@/shared/lib/validation/middleware';
+import { withValidation } from '@/lib/validation/middleware';
 
 // Empty schema since no parameters are needed
 const multikillsSchema = z.object({});
@@ -16,10 +16,18 @@ export const GET = withValidation(
       .map(match => {
         const participantsWithBadges = match.info.participants.map(p => {
           const badges: string[] = [];
-          if (p.doubleKills && p.doubleKills > 0) badges.push('doublekill');
-          if (p.tripleKills && p.tripleKills > 0) badges.push('triplekill');
-          if (p.quadraKills && p.quadraKills > 0) badges.push('quadrakill');
-          if (p.pentaKills && p.pentaKills > 0) badges.push('pentakill');
+          if (p.doubleKills && p.doubleKills > 0) {
+            badges.push('doublekill');
+          }
+          if (p.tripleKills && p.tripleKills > 0) {
+            badges.push('triplekill');
+          }
+          if (p.quadraKills && p.quadraKills > 0) {
+            badges.push('quadrakill');
+          }
+          if (p.pentaKills && p.pentaKills > 0) {
+            badges.push('pentakill');
+          }
           return {
             summonerName: p.summonerName,
             riotIdGameName: p.riotIdGameName,
@@ -47,5 +55,6 @@ export const GET = withValidation(
       data: matchesWithBadges,
       totalMatches: matchesWithBadges.length,
     });
-  }
+  },
 );
+

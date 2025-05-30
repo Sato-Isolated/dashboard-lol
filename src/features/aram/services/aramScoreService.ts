@@ -1,13 +1,14 @@
-import { MongoService } from '@/shared/services/database/MongoService';
+import { MongoService } from '@/lib/api/database/MongoService';
 import { getSummoner } from '@/features/summoner/services/summonerRepository';
-import type { Participant } from '@/shared/types/api/match.types';
-import type { SummonerCollection } from '@/features/summoner/types/summoner.types';
-import type { MatchCollection } from '@/features/matches/types/match.types';
-import { StandardErrorHandler, ValidationHelper } from '@/shared/lib/patterns';
+import type { Participant } from '@/types/api/matchTypes';
+import type { SummonerCollection } from '@/features/summoner/types/summonerTypes';
+import type { MatchCollection } from '@/features/matches/types/matchTypes';
+import { StandardErrorHandler } from '@/lib/patterns';
 import {
-  validateRegion,
-  validateSummonerName,
-} from '@/shared/lib/validation/schemas';
+  taglineSchema,
+  regionSchema,
+  summonerNameSchema,
+} from '@/lib/validation/schemas';
 
 /**
  * Calculates a unique ARAM score for a player in a match.
@@ -30,7 +31,7 @@ import {
  */
 export function computeAramScore(
   participant: Participant,
-  teamParticipants: Participant[]
+  teamParticipants: Participant[],
 ): number {
   // Stricter base points
   const BASE_WIN = 15;
@@ -43,7 +44,7 @@ export function computeAramScore(
   const avgHeal =
     teamParticipants.reduce(
       (a, p) => a + (p.challenges?.effectiveHealAndShielding ?? 0),
-      0
+      0,
     ) / teamParticipants.length;
   const avgTank =
     teamParticipants.reduce((a, p) => a + p.totalDamageTaken, 0) /
@@ -57,7 +58,7 @@ export function computeAramScore(
   // Damage dealt (stricter)
   const damageScore = Math.min(
     7,
-    (participant.totalDamageDealtToChampions / (avgDamage || 1)) * 3
+    (participant.totalDamageDealtToChampions / (avgDamage || 1)) * 3,
   );
 
   // Kill participation (stricter)
@@ -71,7 +72,7 @@ export function computeAramScore(
           3,
           ((participant.challenges?.effectiveHealAndShielding ?? 0) /
             (avgHeal || 1)) *
-            2
+            2,
         )
       : 0;
   const tankScore =
@@ -86,8 +87,11 @@ export function computeAramScore(
     : BASE_LOSS + kdaScore + damageScore + kpScore + supportTankScore;
 
   // Clamp: never positive on loss, never more than 30 on win
-  if (participant.win) points = Math.min(points, 30);
-  else points = Math.max(Math.min(points, -1), -50);
+  if (participant.win) {
+    points = Math.min(points, 30);
+  } else {
+    points = Math.max(Math.min(points, -1), -50);
+  }
 
   return Math.round(points);
 }
@@ -109,7 +113,7 @@ class AramScoreServiceImpl {
    */
   private async executeOperation<R>(
     operation: () => Promise<R>,
-    operationName: string
+    operationName: string,
   ): Promise<R> {
     return this.errorHandler.repository(operation, {
       collection: this.collectionName,
@@ -121,7 +125,7 @@ class AramScoreServiceImpl {
    * Check if ARAM score should be calculated for a summoner
    */
   async shouldCalculateAramScore(
-    summoner: SummonerCollection
+    summoner: SummonerCollection,
   ): Promise<boolean> {
     return this.executeOperation(async () => {
       // Validate input
@@ -139,27 +143,28 @@ class AramScoreServiceImpl {
   async calculateAramScore(
     region: string,
     name: string,
-    tagline: string
+    tagline: string,
   ): Promise<number> {
     return this.executeOperation(async () => {
       // Validate inputs
-      const regionValidation = validateRegion(region);
-      if (!regionValidation.isValid) {
-        throw new Error(regionValidation.error || 'Invalid region');
+      const regionValidation = regionSchema.safeParse(region);
+      if (!regionValidation.success) {
+        throw new Error(
+          regionValidation.error.errors[0]?.message || 'Invalid region',
+        );
       }
 
-      const nameValidation = validateSummonerName(name);
-      if (!nameValidation.isValid) {
-        throw new Error(nameValidation.error || 'Invalid summoner name');
+      const nameValidation = summonerNameSchema.safeParse(name);
+      if (!nameValidation.success) {
+        throw new Error(
+          nameValidation.error.errors[0]?.message || 'Invalid summoner name',
+        );
       }
-
-      const taglineValidation = ValidationHelper.validateString(
-        tagline,
-        'tagline',
-        1
-      );
-      if (!taglineValidation.isValid) {
-        throw new Error(taglineValidation.error || 'Invalid tagline');
+      const taglineValidation = taglineSchema.safeParse(tagline);
+      if (!taglineValidation.success) {
+        throw new Error(
+          taglineValidation.error.errors[0]?.message || 'Invalid tagline',
+        );
       }
 
       // Get summoner data
@@ -171,7 +176,7 @@ class AramScoreServiceImpl {
       const puuid = summoner.puuid;
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<MatchCollection>(
-        this.matchesCollectionName
+        this.matchesCollectionName,
       );
 
       // Find ARAM matches for this summoner
@@ -185,14 +190,16 @@ class AramScoreServiceImpl {
       let totalScore = 0;
       for (const match of matches) {
         const participant = match.info.participants.find(
-          (p: Participant) => p.puuid === puuid
+          (p: Participant) => p.puuid === puuid,
         );
-        if (!participant) continue;
+        if (!participant) {
+          continue;
+        }
 
         // Find the participant's team
         const teamId = participant.teamId;
         const teamParticipants = match.info.participants.filter(
-          (p: Participant) => p.teamId === teamId
+          (p: Participant) => p.teamId === teamId,
         );
 
         const score = computeAramScore(participant, teamParticipants);
@@ -205,32 +212,32 @@ class AramScoreServiceImpl {
 
   /**
    * Update ARAM score for a summoner with validation and error handling
-   */
-  async updateAramScore(
+   */ async updateAramScore(
     region: string,
     name: string,
     tagline: string,
-    score: number
+    score: number,
   ): Promise<void> {
     return this.executeOperation(async () => {
       // Validate inputs
-      const regionValidation = validateRegion(region);
-      if (!regionValidation.isValid) {
-        throw new Error(regionValidation.error || 'Invalid region');
+      const regionValidation = regionSchema.safeParse(region);
+      if (!regionValidation.success) {
+        throw new Error(
+          regionValidation.error.errors[0]?.message || 'Invalid region',
+        );
+      }
+      const nameValidation = summonerNameSchema.safeParse(name);
+      if (!nameValidation.success) {
+        throw new Error(
+          nameValidation.error.errors[0]?.message || 'Invalid summoner name',
+        );
       }
 
-      const nameValidation = validateSummonerName(name);
-      if (!nameValidation.isValid) {
-        throw new Error(nameValidation.error || 'Invalid summoner name');
-      }
-
-      const taglineValidation = ValidationHelper.validateString(
-        tagline,
-        'tagline',
-        1
-      );
-      if (!taglineValidation.isValid) {
-        throw new Error(taglineValidation.error || 'Invalid tagline');
+      const taglineValidation = taglineSchema.safeParse(tagline);
+      if (!taglineValidation.success) {
+        throw new Error(
+          taglineValidation.error.errors[0]?.message || 'Invalid tagline',
+        );
       }
 
       if (typeof score !== 'number' || isNaN(score)) {
@@ -239,7 +246,7 @@ class AramScoreServiceImpl {
 
       const mongo = MongoService.getInstance();
       const collection = await mongo.getCollection<SummonerCollection>(
-        this.collectionName
+        this.collectionName,
       );
 
       await collection.updateOne(
@@ -250,40 +257,40 @@ class AramScoreServiceImpl {
             aramScoreFirstCalculated: true,
             aramScoreLastCheck: Date.now(),
           },
-        }
+        },
       );
     }, 'updateAramScore');
   }
-
   /**
    * Synchronize ARAM score for a summoner with comprehensive error handling
    */
   async syncAramScore(region: string, name: string, tagline: string) {
     return this.executeOperation(async () => {
       // Validate inputs
-      const regionValidation = validateRegion(region);
-      if (!regionValidation.isValid) {
-        throw new Error(regionValidation.error || 'Invalid region');
+      const regionValidation = regionSchema.safeParse(region);
+      if (!regionValidation.success) {
+        throw new Error(
+          regionValidation.error.errors[0]?.message || 'Invalid region',
+        );
+      }
+      const nameValidation = summonerNameSchema.safeParse(name);
+      if (!nameValidation.success) {
+        throw new Error(
+          nameValidation.error.errors[0]?.message || 'Invalid summoner name',
+        );
       }
 
-      const nameValidation = validateSummonerName(name);
-      if (!nameValidation.isValid) {
-        throw new Error(nameValidation.error || 'Invalid summoner name');
-      }
-
-      const taglineValidation = ValidationHelper.validateString(
-        tagline,
-        'tagline',
-        1
-      );
-      if (!taglineValidation.isValid) {
-        throw new Error(taglineValidation.error || 'Invalid tagline');
+      const taglineValidation = taglineSchema.safeParse(tagline);
+      if (!taglineValidation.success) {
+        throw new Error(
+          taglineValidation.error.errors[0]?.message || 'Invalid tagline',
+        );
       }
 
       const summoner = (await getSummoner(
         region,
         name,
-        tagline
+        tagline,
       )) as SummonerCollection | null;
       if (!summoner) {
         throw new Error('Summoner not found');
@@ -315,7 +322,7 @@ const aramScoreService = new AramScoreServiceImpl();
 export class AramScoreService {
   // Legacy static methods for backward compatibility
   static async shouldCalculateAramScore(
-    summoner: SummonerCollection
+    summoner: SummonerCollection,
   ): Promise<boolean> {
     return aramScoreService.shouldCalculateAramScore(summoner);
   }
@@ -323,7 +330,7 @@ export class AramScoreService {
   static async calculateAramScore(
     region: string,
     name: string,
-    tagline: string
+    tagline: string,
   ): Promise<number> {
     return aramScoreService.calculateAramScore(region, name, tagline);
   }
@@ -332,7 +339,7 @@ export class AramScoreService {
     region: string,
     name: string,
     tagline: string,
-    score: number
+    score: number,
   ): Promise<void> {
     return aramScoreService.updateAramScore(region, name, tagline, score);
   }
@@ -341,3 +348,4 @@ export class AramScoreService {
     return aramScoreService.syncAramScore(region, name, tagline);
   }
 }
+

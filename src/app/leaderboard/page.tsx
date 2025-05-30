@@ -1,4 +1,4 @@
-import { MongoService } from '@/shared/services/database/MongoService';
+import { MongoService } from '@/lib/api/database/MongoService';
 import type { Document } from 'mongodb';
 import { LeaderboardClient } from '@/features/leaderboard';
 
@@ -66,3 +66,4 @@ export default async function AramScoreRankPage(props: {
     />
   );
 }
+

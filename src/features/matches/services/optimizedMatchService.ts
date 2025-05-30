@@ -1,7 +1,7 @@
 // features/matches/services/optimizedMatchService.ts
-import { MongoService } from '@/shared/services/database/MongoService';
-import { PerformanceLogger } from '@/shared/services/logging/PerformanceLogger';
-import type { Match } from '@/shared/types/api/match.types';
+import { MongoService } from '@/lib/api/database/MongoService';
+import { PerformanceLogger } from '@/lib/api/logging/PerformanceLogger';
+import type { Match } from '@/types/api/matchTypes';
 
 // Define MatchQueryOptions interface locally for now
 interface MatchQueryOptions {
@@ -28,7 +28,7 @@ export class OptimizedMatchService {
    */
   async getPlayerMatches(
     puuid: string,
-    options: MatchQueryOptions = {}
+    options: MatchQueryOptions = {},
   ): Promise<Match[]> {
     const perfLogger = new PerformanceLogger('get_player_matches', {
       puuid: puuid.substring(0, 8),
@@ -92,7 +92,7 @@ export class OptimizedMatchService {
         {
           hint: 'player_matches_optimized', // Force l'utilisation de notre index
           maxTimeMS: 10000,
-        }
+        },
       );
 
       perfLogger.success(matches);
@@ -109,7 +109,7 @@ export class OptimizedMatchService {
    */
   async getPlayerAramMatches(
     puuid: string,
-    options: Omit<MatchQueryOptions, 'queueId'> = {}
+    options: Omit<MatchQueryOptions, 'queueId'> = {},
   ): Promise<Match[]> {
     const perfLogger = new PerformanceLogger('get_player_aram_matches', {
       puuid: puuid.substring(0, 8),
@@ -137,7 +137,7 @@ export class OptimizedMatchService {
   async getPlayerMatchStats(
     puuid: string,
     fromDate: Date,
-    toDate?: Date
+    toDate?: Date,
   ): Promise<{
     totalMatches: number;
     winRate: number;
@@ -232,7 +232,7 @@ export class OptimizedMatchService {
         {
           hint: 'player_matches_by_creation',
           maxTimeMS: 15000,
-        }
+        },
       );
 
       if (!result) {
@@ -280,10 +280,7 @@ export class OptimizedMatchService {
    * ✅ Query pour les matches récents globaux par mode de jeu
    * Utilise l'index: queue_timeline
    */
-  async getRecentMatchesByQueue(
-    queueId: number,
-    limit: number = 50
-  ): Promise<Match[]> {
+  async getRecentMatchesByQueue(queueId: number, limit = 50): Promise<Match[]> {
     const perfLogger = new PerformanceLogger('get_recent_matches_by_queue', {
       queueId,
       limit,
@@ -299,7 +296,7 @@ export class OptimizedMatchService {
             sort: { 'info.gameEndTimestamp': -1 },
             limit,
             hint: 'queue_timeline',
-          }
+          },
         )
         .toArray();
 
@@ -316,7 +313,7 @@ export class OptimizedMatchService {
    */
   async explainQuery(
     puuid: string,
-    options: MatchQueryOptions = {}
+    options: MatchQueryOptions = {},
   ): Promise<any> {
     const collection = await this.mongo.getCollection('matches');
 
@@ -343,3 +340,4 @@ export class OptimizedMatchService {
     };
   }
 }
+

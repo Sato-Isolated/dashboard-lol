@@ -1,5 +1,4 @@
 import React from 'react';
-import { withPerformanceTracking } from '@/shared/components/performance/SimplePerformanceWrapper';
 
 interface MatchCardCollapseButtonProps {
   open: boolean;
@@ -25,10 +24,7 @@ const MatchCardCollapseButtonComponent: React.FC<
   </button>
 );
 
-const MatchCardCollapseButton = withPerformanceTracking(
-  React.memo(MatchCardCollapseButtonComponent),
-  'MatchCardCollapseButton'
-);
+const MatchCardCollapseButton = React.memo(MatchCardCollapseButtonComponent);
 MatchCardCollapseButton.displayName = 'MatchCardCollapseButton';
 
 export default MatchCardCollapseButton;

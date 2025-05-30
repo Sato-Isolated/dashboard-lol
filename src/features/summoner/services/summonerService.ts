@@ -1,6 +1,7 @@
-import { SummonerDto, LeagueEntry } from '@/shared/types/api/summoners.types';
-import { RiotApiClient } from '@/shared/services/api/riot/RiotApiClient';
-import { StandardErrorHandler, ValidationHelper } from '@/shared/lib/patterns';
+import { SummonerDto, LeagueEntry } from '@/types/api/summonerTypes';
+import { RiotApiClient } from '@/lib/api/api/riot/RiotApiClient';
+import { StandardErrorHandler } from '@/lib/patterns';
+import { puuidSchema, summonerIdSchema } from '@/lib/validation/schemas';
 
 export class SummonerService extends RiotApiClient {
   private readonly featureName = 'summoner';
@@ -13,12 +14,13 @@ export class SummonerService extends RiotApiClient {
   constructor(region: string) {
     super(region);
   }
-
   public async getSummonerByPuuid(puuid: string): Promise<SummonerDto> {
     // Validate input
-    const validation = ValidationHelper.validateString(puuid, 'puuid', 78, 78);
-    if (!validation.isValid) {
-      throw new Error(validation.error || 'Invalid PUUID format');
+    const puuidResult = puuidSchema.safeParse(puuid);
+    if (!puuidResult.success) {
+      throw new Error(
+        puuidResult.error.errors[0]?.message || 'Invalid PUUID format',
+      );
     }
 
     const endpoint = `/lol/summoner/v4/summoners/by-puuid/${puuid}`;
@@ -28,18 +30,15 @@ export class SummonerService extends RiotApiClient {
       endpoint,
     });
   }
-
   public async getLeaguesBySummonerId(
-    summonerId: string
+    summonerId: string,
   ): Promise<LeagueEntry[]> {
     // Validate input
-    const validation = ValidationHelper.validateString(
-      summonerId,
-      'summonerId',
-      1
-    );
-    if (!validation.isValid) {
-      throw new Error(validation.error || 'Invalid summoner ID');
+    const summonerIdResult = summonerIdSchema.safeParse(summonerId);
+    if (!summonerIdResult.success) {
+      throw new Error(
+        summonerIdResult.error.errors[0]?.message || 'Invalid summoner ID',
+      );
     }
 
     const endpoint = `/lol/league/v4/entries/by-summoner/${summonerId}`;
@@ -50,3 +49,4 @@ export class SummonerService extends RiotApiClient {
     });
   }
 }
+

@@ -1,5 +1,5 @@
-import { fetchSummonerFull } from '@/features/summoner/services/summoner';
-import PageWithTabs from '@/shared/components/ui/PageWithTabs';
+import { fetchSummonerFull } from '@/features/summoner/services/summonerDataService';
+import PageWithTabs from '@/components/common/ui/PageWithTabs';
 import HeaderSection from '@/features/summoner/components/SummonerHeader';
 import LeftColumn from '@/features/summoner/components/SummonerProfile';
 import CenterColumn from '@/features/matches/components/MatchHistory';
@@ -81,8 +81,9 @@ export default async function Page(props: { params: Promise<PageParams> }) {
 
   const data = await fetchSummonerFull(region, decodedName, decodedTagline);
 
-  if (!data)
+  if (!data) {
     return <div className='text-center text-error mt-8'>Account not found</div>;
+  }
 
   return (
     <PageWithTabs

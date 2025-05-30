@@ -1,5 +1,5 @@
-// Export all Champions-related functionality
+// Champions feature exports
 export * from './components';
-export * from './services/championService';
-export * from './services/championMasteryService';
-// export * from './types/champion.types'; // TODO: Create when needed
+//export * from './hooks';
+export * from './services';
+//export * from './types';

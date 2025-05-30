@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
-import { fetchAndStoreMatches } from '@/scripts/fetchAndStoreMatches';
-import { MongoService } from '@/shared/services/database/MongoService';
+import { fetchAndStoreMatches } from '@/lib/data/fetchAndStoreMatches';
+import { MongoService } from '@/lib/api/database/MongoService';
 import { z } from 'zod';
-import {
-  withValidation,
-  withMiddleware,
-} from '@/shared/lib/validation/middleware';
+import { withValidation, withMiddleware } from '@/lib/validation/middleware';
 
 // Validation schemas
 const postMatchesSchema = z.object({
@@ -60,8 +57,12 @@ export const GET = withValidation(
 
     if (from || to) {
       const ts: Record<string, number> = {};
-      if (from) ts.$gte = from;
-      if (to) ts.$lt = to;
+      if (from) {
+        ts.$gte = from;
+      }
+      if (to) {
+        ts.$lt = to;
+      }
       query['info.gameEndTimestamp'] = ts;
     }
 
@@ -74,5 +75,6 @@ export const GET = withValidation(
       .toArray();
 
     return NextResponse.json({ success: true, data: matches });
-  }
+  },
 );
+
