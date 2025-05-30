@@ -87,7 +87,7 @@ const ChampionsTab: React.FC = React.memo(() => {
           onSearchChange={setSearchTerm}
           onRefresh={refetch}
           isLoading={loading}
-        />{' '}
+        />
         {/* Champions Table */}
         <ChampionsTable
           sortedStats={sortedStats}

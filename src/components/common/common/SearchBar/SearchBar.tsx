@@ -47,7 +47,6 @@ const SearchBar: React.FC = () => {
 
   return (
     <div className='w-full'>
-      {' '}
       <motion.form
         initial={formVariants.initial}
         animate={formVariants.animate}
@@ -68,7 +67,6 @@ const SearchBar: React.FC = () => {
         >
           {/* Main input container */}
           <div className='relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full'>
-            {' '}
             {/* Summoner Name Input */}
             <SearchInput
               value={summonerName}

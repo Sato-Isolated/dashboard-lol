@@ -10,6 +10,7 @@ const MatchHistoryComponent: React.FC = () => {
   const {
     matches,
     loading,
+    loadingMore,
     hasMore,
     errorMessage,
     effectiveName,
@@ -43,6 +44,7 @@ const MatchHistoryComponent: React.FC = () => {
         <MatchListContainer
           matches={matches}
           loading={loading}
+          loadingMore={loadingMore}
           hasMore={hasMore}
           errorMessage={errorMessage}
           effectiveName={effectiveName}

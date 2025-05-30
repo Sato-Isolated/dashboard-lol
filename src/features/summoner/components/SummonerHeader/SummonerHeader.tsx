@@ -46,7 +46,7 @@ const SummonerHeader: React.FC = () => {
   const { favorites, isFav, handleToggleFavorite } = useFavorites(
     effectiveRegion,
     effectiveTagline,
-    effectiveName,
+    effectiveName
   );
 
   const { shareMsg, rankMsg, handleShare, showRankMessage } =
@@ -68,10 +68,10 @@ const SummonerHeader: React.FC = () => {
         summonerName: fav.name,
       });
       window.location.href = `/${fav.region}/summoner/${encodeURIComponent(
-        fav.name,
+        fav.name
       )}/${encodeURIComponent(fav.tagline)}`;
     },
-    [setUser],
+    [setUser]
   );
 
   const handleShareProfile = useCallback(() => {
@@ -96,7 +96,7 @@ const SummonerHeader: React.FC = () => {
         const aramScore = (summoner as { aramScore?: number }).aramScore ?? 0;
         const aramRank = getAramRank(aramScore);
         showRankMessage(
-          `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`,
+          `New ARAM rank: ${aramRank.displayName} (score ${aramScore})`
         );
       }
       setGlobalLoading(false);
@@ -177,7 +177,7 @@ const SummonerHeader: React.FC = () => {
                   onShare={handleShareProfile}
                   onUpdateAndRank={handleUpdateAndRank}
                 />
-              </div>{' '}
+              </div>
               {/* Favorites Sidebar */}
               <FavoritesSidebar
                 favorites={favorites}

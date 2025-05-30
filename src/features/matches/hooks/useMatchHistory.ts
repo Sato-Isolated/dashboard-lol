@@ -11,6 +11,7 @@ export function useMatchHistory(): {
   matches: UIMatch[];
   error: string | null;
   loading: boolean;
+  loadingMore: boolean;
   hasMore: boolean;
   fetchMatches: (reset?: boolean) => void;
 } {
@@ -19,7 +20,9 @@ export function useMatchHistory(): {
 
   const getUrl = useCallback(
     (pageIndex: number, previousPageData: { data: Match[] } | null) => {
-      if (!effectiveName || !effectiveRegion || !effectiveTagline) {return null;}
+      if (!effectiveName || !effectiveRegion || !effectiveTagline) {
+        return null;
+      }
 
       if (
         previousPageData &&
@@ -30,17 +33,16 @@ export function useMatchHistory(): {
       }
 
       return `/api/summoner/matches?name=${encodeURIComponent(
-        effectiveName,
+        effectiveName
       )}&region=${encodeURIComponent(
-        effectiveRegion,
+        effectiveRegion
       )}&tagline=${encodeURIComponent(effectiveTagline)}&start=${
         pageIndex * PAGE_SIZE
       }&count=${PAGE_SIZE}`;
     },
-    [effectiveName, effectiveRegion, effectiveTagline],
+    [effectiveName, effectiveRegion, effectiveTagline]
   );
-
-  const { data, error, loading, hasMore, loadMore, reset } =
+  const { data, error, loading, loadingMore, hasMore, loadMore, reset } =
     useInfiniteApiCall<Match>(getUrl, {
       pageSize: PAGE_SIZE,
       enabled: !!(effectiveName && effectiveRegion && effectiveTagline),
@@ -48,26 +50,26 @@ export function useMatchHistory(): {
 
   // Map raw Match data to UIMatch
   const matches: UIMatch[] = data.map(match =>
-    mapRiotMatchToUIMatch(match, effectiveName),
+    mapRiotMatchToUIMatch(match, effectiveName)
   );
 
   const fetchMatches = useCallback(
     (resetPagination = false) => {
+      console.log('fetchMatches called with reset:', resetPagination);
       if (resetPagination) {
         reset();
       } else {
         loadMore();
       }
     },
-    [reset, loadMore],
+    [reset, loadMore]
   );
-
   return {
     matches,
     error,
     loading,
+    loadingMore,
     hasMore,
     fetchMatches,
   };
 }
-

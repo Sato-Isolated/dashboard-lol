@@ -30,7 +30,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
   const { displayMatches, shouldShowContent } = useMatchVisibility(
     matches,
     loading,
-    error,
+    error
   );
 
   const stats = useMatchStats(displayMatches);
@@ -60,7 +60,9 @@ const MatchListComponent: React.FC<MatchListProps> = ({
 
   // Check if data should be considered empty
   const isEmpty = React.useMemo(() => {
-    if (!shouldShowContent && !loading) {return true;}
+    if (!shouldShowContent && !loading) {
+      return true;
+    }
     return false;
   }, [shouldShowContent, loading]);
 
@@ -126,7 +128,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
             onNextPage={goToNextPage}
             onPrevPage={goToPrevPage}
           />
-        )}{' '}
+        )}
         {/* Show More / Load More */}
         {!enablePagination && (
           <LoadMoreControls

@@ -29,7 +29,6 @@ const MatchCardSkeleton: React.FC = () => (
     />
 
     <div className='relative flex flex-col lg:flex-row items-stretch gap-0 w-full px-4 lg:px-6 pt-6 pb-4 z-10'>
-      {' '}
       {/* Header Section Skeleton */}
       <div className='flex flex-col justify-center min-w-[140px] max-w-[180px] p-4 rounded-2xl bg-base-200/60 backdrop-blur-sm border border-base-content/10'>
         <Skeleton
@@ -46,7 +45,7 @@ const MatchCardSkeleton: React.FC = () => (
           className='mb-2'
         />
         <Skeleton variant='text' width='3.5rem' height='1rem' />
-      </div>{' '}
+      </div>
       {/* Champion Section Skeleton */}
       <div className='flex flex-row items-center gap-4 px-6 flex-1'>
         <div className='relative'>
@@ -80,7 +79,7 @@ const MatchCardSkeleton: React.FC = () => (
             ))}
           </div>
         </div>
-      </div>{' '}
+      </div>
       {/* Stats Section Skeleton */}
       <div className='flex flex-col items-center justify-center min-w-[160px] px-4'>
         {/* KDA */}

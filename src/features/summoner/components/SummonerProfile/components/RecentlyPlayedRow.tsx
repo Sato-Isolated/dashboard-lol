@@ -33,7 +33,6 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
             className='flex items-center gap-2'
           >
             <div className='flex items-center gap-2'>
-              {' '}
               <motion.div
                 className={`w-2 h-2 rounded-full ${
                   isGoodPerf ? 'bg-success' : 'bg-base-content/40'
@@ -48,9 +47,9 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
               />
               <a
                 href={`/${effectiveRegion}/summoner/${encodeURIComponent(
-                  player.name,
+                  player.name
                 )}/${encodeURIComponent(
-                  player.tagline ? player.tagline : effectiveTagline,
+                  player.tagline ? player.tagline : effectiveTagline
                 )}`}
                 className='link link-primary font-bold 
                            flex items-center gap-1'
@@ -66,7 +65,6 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
         {/* Games with enhanced badge */}
         <td className='py-4 px-4 text-center'>
           <motion.div transition={{ duration: 0.2 }}>
-            {' '}
             <span
               className={`badge badge-lg font-bold px-3 py-2 shadow-lg
                           ${
@@ -86,7 +84,6 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
         {/* Winrate with dynamic styling */}
         <td className='py-4 px-4 text-center'>
           <motion.div transition={{ duration: 0.2 }}>
-            {' '}
             <span
               className={`badge badge-lg font-bold px-3 py-2 shadow-lg
                           ${
@@ -115,7 +112,7 @@ export const RecentlyPlayedRow: React.FC<RecentlyPlayedRowProps> = React.memo(
         </td>
       </motion.tr>
     );
-  },
+  }
 );
 
 RecentlyPlayedRow.displayName = 'RecentlyPlayedRow';

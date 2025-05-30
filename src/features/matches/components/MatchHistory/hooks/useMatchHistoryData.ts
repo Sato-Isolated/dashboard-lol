@@ -1,15 +1,17 @@
 'use client';
-import { useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useMatchHistory } from '@/features/matches/hooks/useMatchHistory';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 
 export const useMatchHistoryData = () => {
   const { effectiveRegion, effectiveTagline, effectiveName } =
     useEffectiveUser();
+
   const {
     matches,
     error: parseError,
     loading,
+    loadingMore,
     hasMore,
     fetchMatches,
   } = useMatchHistory();
@@ -19,11 +21,12 @@ export const useMatchHistoryData = () => {
     (isRefresh: boolean) => {
       fetchMatches(isRefresh);
     },
-    [fetchMatches],
+    [fetchMatches]
   );
 
   // Memoize load more callback
   const handleLoadMore = useCallback(() => {
+    console.log('handleLoadMore called');
     handleFetchMatches(false);
   }, [handleFetchMatches]);
 
@@ -36,17 +39,10 @@ export const useMatchHistoryData = () => {
       ? "Impossible de récupérer les matchs. L'API Riot ou la base de données est peut-être indisponible. Réessayez plus tard."
       : parseError;
   }, [parseError]);
-
-  useEffect(() => {
-    if (!effectiveName || !effectiveRegion || !effectiveTagline) {
-      return;
-    }
-    handleFetchMatches(true);
-  }, [effectiveName, effectiveRegion, effectiveTagline, handleFetchMatches]);
-
   return {
     matches,
     loading,
+    loadingMore,
     hasMore,
     errorMessage,
     effectiveName,
@@ -56,4 +52,3 @@ export const useMatchHistoryData = () => {
     handleLoadMore,
   };
 };
-

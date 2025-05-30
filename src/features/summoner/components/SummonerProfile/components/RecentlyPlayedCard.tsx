@@ -141,7 +141,7 @@ export const RecentlyPlayedCard: React.FC<RecentlyPlayedCardProps> = ({
                 <Users size={12} />
                 {recentlyPlayed.length} recent teammate
                 {recentlyPlayed.length !== 1 ? 's' : ''}
-              </span>{' '}
+              </span>
               <span className='flex items-center gap-1'>
                 <Star size={12} />
                 {calculateAverageWinrate(recentlyPlayed)}% avg winrate
