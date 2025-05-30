@@ -1,7 +1,7 @@
 'use client';
 import { useParams } from 'next/navigation';
 import { useUserStore } from '@/stores/userStore';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 export function useEffectiveUser(): {
   effectiveRegion: string;
@@ -18,23 +18,35 @@ export function useEffectiveUser(): {
     ? decodeURIComponent(params.name as string)
     : summonerName;
 
-  // Sync store if params are present and different from store
-  useEffect(() => {
-    if (
+  // Sync store if params are present and different from store - optimized with useMemo
+  const shouldSync = useMemo(() => {
+    return (
       params?.region &&
       params?.tagline &&
       params?.name &&
       (params.region !== region ||
         params.tagline !== tagline ||
         params.name !== summonerName)
-    ) {
+    );
+  }, [
+    params?.region,
+    params?.tagline,
+    params?.name,
+    region,
+    tagline,
+    summonerName,
+  ]);
+
+  // Effect sans dépendances sur les props pour éviter les loops
+  useEffect(() => {
+    if (shouldSync) {
       setUser({
         region: params.region as string,
         tagline: decodeURIComponent(params.tagline as string),
         summonerName: decodeURIComponent(params.name as string),
       });
     }
-  }, [params, setUser, region, tagline, summonerName]);
+  }, [shouldSync, setUser, params?.region, params?.tagline, params?.name]);
 
   return { effectiveRegion, effectiveTagline, effectiveName };
 }

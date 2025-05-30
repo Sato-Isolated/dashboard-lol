@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Favorite } from '../types/Favorites';
 
 const FAVORITES_KEY = 'lol-favorites';
@@ -25,23 +25,22 @@ function saveFavorites(favs: Favorite[]) {
 export const useFavorites = (
   effectiveRegion: string,
   effectiveTagline: string,
-  effectiveName: string,
+  effectiveName: string
 ) => {
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [isFav, setIsFav] = useState(false);
+  // Optimisation: initialiser directement avec les bonnes valeurs
+  const [favorites, setFavorites] = useState<Favorite[]>(() => getFavorites());
 
-  useEffect(() => {
-    const favs = getFavorites();
-    setFavorites(favs);
-    setIsFav(
-      favs.some(
+  // Calculer isFav avec useMemo pour éviter les recalculs
+  const isFav = useMemo(
+    () =>
+      favorites.some(
         f =>
           f.region === effectiveRegion &&
           f.tagline === effectiveTagline &&
-          f.name === effectiveName,
+          f.name === effectiveName
       ),
-    );
-  }, [effectiveRegion, effectiveTagline, effectiveName]);
+    [favorites, effectiveRegion, effectiveTagline, effectiveName]
+  );
 
   const handleToggleFavorite = useCallback(() => {
     const favs = getFavorites();
@@ -49,7 +48,7 @@ export const useFavorites = (
       f =>
         f.region === effectiveRegion &&
         f.tagline === effectiveTagline &&
-        f.name === effectiveName,
+        f.name === effectiveName
     );
     if (idx !== -1) {
       favs.splice(idx, 1);
@@ -62,7 +61,6 @@ export const useFavorites = (
     }
     saveFavorites(favs);
     setFavorites(favs);
-    setIsFav(idx === -1);
   }, [effectiveRegion, effectiveTagline, effectiveName]);
 
   return {

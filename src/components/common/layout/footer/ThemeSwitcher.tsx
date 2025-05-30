@@ -228,9 +228,8 @@ const ThemeSwitcher: React.FC = () => {
         aria-expanded={isOpen}
         aria-haspopup='listbox'
       >
-        <Palette className='w-3 h-3 sm:w-4 sm:h-4' />
-        <span className='text-xs sm:text-sm font-medium truncate'>
-          {getThemeDisplayName(theme)}
+        <Palette className='w-3 h-3 sm:w-4 sm:h-4' />        <span className='text-xs sm:text-sm font-medium truncate'>
+          {mounted ? getThemeDisplayName(theme) : 'Light'}
         </span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}

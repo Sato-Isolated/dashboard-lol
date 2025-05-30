@@ -1,5 +1,9 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Menu, X, Zap } from 'lucide-react';
@@ -109,14 +113,32 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+  // Optimisation : utilisation de useCallback pour éviter les re-créations
+  const handleScroll = useCallback(() => {
+    setIsScrolled(window.scrollY > 20);
+  }, []);
+
+  // Optimisation : utilisation de useLayoutEffect pour éviter le flicker
+  useLayoutEffect(() => {
+    // Vérification du côté client
+    if (typeof window === 'undefined') return;
+
+    // Initialisation immédiate
+    handleScroll();
+
+    // Throttle pour optimiser les performances
+    let timeoutId: number;
+    const throttledHandleScroll = () => {
+      if (timeoutId) cancelAnimationFrame(timeoutId);
+      timeoutId = requestAnimationFrame(handleScroll);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', throttledHandleScroll);
+      if (timeoutId) cancelAnimationFrame(timeoutId);
+    };
+  }, [handleScroll]);
 
   return (
     <motion.header

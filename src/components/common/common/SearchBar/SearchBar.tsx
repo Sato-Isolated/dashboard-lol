@@ -36,7 +36,7 @@ const SearchBar: React.FC = () => {
     setHighlightedIndex,
     inputRef,
     handleKeyDown,
-  } = useKeyboardNavigation(suggestions, suggestion => {
+  } = useKeyboardNavigation(suggestions || [], suggestion => {
     handleSuggestionSelect(suggestion, setRegion);
     setShowSuggestions(false);
   });
@@ -101,7 +101,7 @@ const SearchBar: React.FC = () => {
 
           {/* Suggestions Dropdown */}
           <AnimatePresence mode='wait'>
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && suggestions && suggestions.length > 0 && (
               <SuggestionList
                 suggestions={suggestions}
                 highlightedIndex={highlightedIndex}

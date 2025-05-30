@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import useSWRInfinite from 'swr/infinite';
 
 export interface UseInfiniteApiCallOptions {
@@ -27,7 +27,7 @@ export interface UseInfiniteApiCallResult<T> {
  */
 export function useInfiniteApiCall<T>(
   getUrl: (pageIndex: number, previousPageData: any) => string | null,
-  options: UseInfiniteApiCallOptions = {},
+  options: UseInfiniteApiCallOptions = {}
 ): UseInfiniteApiCallResult<T> {
   const {
     pageSize = 10,
@@ -56,7 +56,7 @@ export function useInfiniteApiCall<T>(
 
       return getUrl(pageIndex, previousPageData);
     },
-    [getUrl, enabled],
+    [getUrl, enabled]
   );
 
   const fetcher = async (url: string) => {
@@ -93,18 +93,21 @@ export function useInfiniteApiCall<T>(
       'loadMore called, current size:',
       size,
       'current data length:',
-      flatData.length,
+      flatData.length
     );
     setIsLoadingMore(true);
     setSize(size + 1);
   }, [setSize, size, flatData.length]);
 
-  // Reset loadingMore when data changes (new page loaded)
-  useEffect(() => {
-    if (data && isLoadingMore) {
-      setIsLoadingMore(false);
-    }
-  }, [data, isLoadingMore]);
+  // Optimisation: Reset loadingMore directement quand data change plutôt qu'avec useEffect
+  const wasLoadingMore = useRef(isLoadingMore);
+  if (wasLoadingMore.current && data && !isValidating) {
+    setIsLoadingMore(false);
+    wasLoadingMore.current = false;
+  }
+  if (isLoadingMore && !wasLoadingMore.current) {
+    wasLoadingMore.current = true;
+  }
 
   const refresh = useCallback(() => {
     mutate();

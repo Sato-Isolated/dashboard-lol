@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import type { UIMatch } from '@/features/matches/types/uiMatchTypes';
 
 /**
@@ -8,61 +8,67 @@ import type { UIMatch } from '@/features/matches/types/uiMatchTypes';
 export const useMatchVisibility = (
   matches: UIMatch[],
   loading: boolean,
-  error: string | null,
+  error: string | null
 ) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastValidMatches, setLastValidMatches] = useState<UIMatch[]>(matches);
   const prevMatchesRef = useRef<UIMatch[]>(matches);
   const visibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Optimisation: calculer les états avec useMemo
+  const visibilityState = useMemo(() => {
+    const hasValidMatches = matches && matches.length > 0;
+    const hadPreviousMatches = prevMatchesRef.current.length > 0;
+
+    return {
+      hasValidMatches,
+      hadPreviousMatches,
+      shouldShowImmediate:
+        hasValidMatches || error || (loading && hadPreviousMatches),
+      shouldHideWithDelay: !hasValidMatches && !loading && !error,
+    };
+  }, [matches, loading, error]);
+
+  // Un seul useEffect optimisé pour gérer tous les cas
   useEffect(() => {
     // Clear any existing timeout
     if (visibilityTimeoutRef.current) {
       clearTimeout(visibilityTimeoutRef.current);
+      visibilityTimeoutRef.current = null;
     }
 
-    // If we have valid matches, update our last valid state
-    if (matches && matches.length > 0) {
+    const { hasValidMatches, shouldShowImmediate, shouldHideWithDelay } =
+      visibilityState;
+
+    // Update valid matches and refs when we have valid data
+    if (hasValidMatches) {
       setLastValidMatches(matches);
       setIsVisible(true);
       prevMatchesRef.current = matches;
       return;
     }
 
-    // If no matches but we're loading, keep showing previous matches temporarily
-    if (loading && prevMatchesRef.current.length > 0) {
+    // Show immediately for loading/error states
+    if (shouldShowImmediate) {
       setIsVisible(true);
       return;
     }
 
-    // If we have an error, show it immediately
-    if (error) {
-      setIsVisible(true);
-      return;
-    }
-
-    // If no matches and not loading, hide after a short delay to prevent flashing
-    if (!matches || matches.length === 0) {
+    // Hide with delay to prevent flashing
+    if (shouldHideWithDelay) {
       visibilityTimeoutRef.current = setTimeout(() => {
         setIsVisible(false);
       }, 100);
     }
 
+    // Cleanup function
     return () => {
       if (visibilityTimeoutRef.current) {
         clearTimeout(visibilityTimeoutRef.current);
+        visibilityTimeoutRef.current = null;
       }
     };
-  }, [matches, loading, error]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (visibilityTimeoutRef.current) {
-        clearTimeout(visibilityTimeoutRef.current);
-      }
-    };
-  }, []);
+  }, [matches, visibilityState]);
 
   return {
     isVisible,

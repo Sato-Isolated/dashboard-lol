@@ -1,31 +1,33 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Suggestion } from '../types';
 
 export const useKeyboardNavigation = (
   suggestions: Suggestion[],
-  onSuggestionSelect: (suggestion: Suggestion) => void,
+  onSuggestionSelect: (suggestion: Suggestion) => void
 ) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Reset highlighted index when suggestions or list visibility changes
-  useEffect(() => {
-    setHighlightedIndex(-1);
-  }, [suggestions, showSuggestions]);
+  // Optimisation: Reset highlighted index directement sans useEffect
+  const actualHighlightedIndex = useMemo(() => {
+    // Reset automatiquement quand suggestions ou showSuggestions changent
+    return suggestions.length > 0 && showSuggestions ? highlightedIndex : -1;
+  }, [suggestions.length, showSuggestions, highlightedIndex]);
 
-  // Close suggestions if click outside
+  // Optimisation: gérer les événements avec un seul useEffect
   useEffect(() => {
+    if (!showSuggestions) return;
+
     function handleClick(e: MouseEvent) {
       if (!inputRef.current?.parentElement?.contains(e.target as Node)) {
         setShowSuggestions(false);
+        setHighlightedIndex(-1);
       }
     }
 
-    if (showSuggestions) {
-      document.addEventListener('mousedown', handleClick);
-      return () => document.removeEventListener('mousedown', handleClick);
-    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
   }, [showSuggestions]);
 
   const handleKeyDown = useCallback(
@@ -40,24 +42,25 @@ export const useKeyboardNavigation = (
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setHighlightedIndex(prev =>
-          prev <= 0 ? suggestions.length - 1 : prev - 1,
+          prev <= 0 ? suggestions.length - 1 : prev - 1
         );
-      } else if (e.key === 'Enter' && highlightedIndex >= 0) {
+      } else if (e.key === 'Enter' && actualHighlightedIndex >= 0) {
         e.preventDefault();
-        const suggestion = suggestions[highlightedIndex];
+        const suggestion = suggestions[actualHighlightedIndex];
         onSuggestionSelect(suggestion);
         setShowSuggestions(false);
       } else if (e.key === 'Escape') {
         setShowSuggestions(false);
+        setHighlightedIndex(-1);
       }
     },
-    [showSuggestions, suggestions, highlightedIndex, onSuggestionSelect],
+    [showSuggestions, suggestions, actualHighlightedIndex, onSuggestionSelect]
   );
 
   return {
     showSuggestions,
     setShowSuggestions,
-    highlightedIndex,
+    highlightedIndex: actualHighlightedIndex,
     setHighlightedIndex,
     inputRef,
     handleKeyDown,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/stores/userStore';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
@@ -6,20 +6,23 @@ import { validateSearchForm } from '../utils/validationUtils';
 import type { SearchFormData, Suggestion } from '../types';
 
 export const useSearchForm = () => {
-  const { effectiveRegion, effectiveTagline, effectiveName } =
-    useEffectiveUser();
+  const { effectiveTagline, effectiveName } = useEffectiveUser();
   const { setUser } = useUserStore();
   const router = useRouter();
 
-  const [summonerName, setSummonerName] = useState<string>(effectiveName || '');
-  const [tagline, setTagline] = useState<string>(effectiveTagline || '');
+  // Optimisation: initialiser directement avec les bonnes valeurs
+  const [summonerName, setSummonerName] = useState<string>('');
+  const [tagline, setTagline] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState<boolean>(false);
 
-  // Sync local state with effective values (e.g., direct navigation)
+  // Optimisation: ne synchroniser que si l'utilisateur n'a pas encore interagi
   useEffect(() => {
-    setTagline(effectiveTagline || '');
-    setSummonerName(effectiveName || '');
-  }, [effectiveTagline, effectiveName]);
+    if (!hasUserInteracted && (effectiveName || effectiveTagline)) {
+      setSummonerName(effectiveName || '');
+      setTagline(effectiveTagline || '');
+    }
+  }, [effectiveName, effectiveTagline, hasUserInteracted]);
 
   const handleSubmit = useCallback(
     (region: string, e: React.FormEvent) => {
@@ -41,11 +44,11 @@ export const useSearchForm = () => {
       setUser({ region, tagline, summonerName });
       router.push(
         `/${region}/summoner/${encodeURIComponent(
-          summonerName,
-        )}/${encodeURIComponent(tagline)}`,
+          summonerName
+        )}/${encodeURIComponent(tagline)}`
       );
     },
-    [summonerName, tagline, setUser, router],
+    [summonerName, tagline, setUser, router]
   );
 
   const handleSuggestionSelect = useCallback(
@@ -54,14 +57,25 @@ export const useSearchForm = () => {
       setTagline(suggestion.tagline);
       setRegion(suggestion.region);
     },
-    [],
+    []
   );
+
+  // Wrappers pour marquer l'interaction utilisateur
+  const handleSummonerNameChange = useCallback((value: string) => {
+    setHasUserInteracted(true);
+    setSummonerName(value);
+  }, []);
+
+  const handleTaglineChange = useCallback((value: string) => {
+    setHasUserInteracted(true);
+    setTagline(value);
+  }, []);
 
   return {
     summonerName,
-    setSummonerName,
+    setSummonerName: handleSummonerNameChange,
     tagline,
-    setTagline,
+    setTagline: handleTaglineChange,
     hasError,
     handleSubmit,
     handleSuggestionSelect,

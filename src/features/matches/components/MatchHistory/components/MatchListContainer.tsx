@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useCallback, useMemo, useEffect } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import { motion } from 'motion/react';
 import SectionCard from '@/components/common/ui/SectionCard';
 import AsyncStateContainer from '@/components/common/ui/states/AsyncStateContainer';
@@ -48,14 +48,14 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     'loading:',
     loading,
     'loadingMore:',
-    loadingMore,
+    loadingMore
   );
 
   // Use visibility hook to prevent matches from disappearing during rerenders
   const { displayMatches, shouldShowContent } = useMatchVisibility(
     matches,
     loading,
-    errorMessage,
+    errorMessage
   );
 
   // Memoize content condition to prevent unnecessary re-evaluations
@@ -78,23 +78,25 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     }));
   }, [displayMatches]);
 
-  // Handle scroll logic in useEffect to avoid side effects in useMemo
-  useEffect(() => {
+  // Optimisation: gérer la logique de scroll directement dans useMemo
+  const shouldScroll = useMemo(() => {
     const currentCount = stableMatches.length;
     const previousCount = previousMatchCountRef.current;
 
-    // Determine if we should scroll after new matches are loaded
-    const shouldScroll =
+    const result =
       currentCount > previousCount &&
       previousCount > 0 &&
       !loadingMore &&
       lastMatchElementRef.current;
 
-    if (shouldScroll) {
+    // Mettre à jour les refs après le calcul
+    previousMatchCountRef.current = currentCount;
+
+    if (result) {
       shouldScrollToLastMatchRef.current = true;
     }
 
-    previousMatchCountRef.current = currentCount;
+    return result;
   }, [stableMatches.length, loadingMore]);
 
   // Determine empty state condition
@@ -115,7 +117,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     // Execute scroll if needed
     if (shouldScrollToLastMatchRef.current && element) {
       console.log(
-        `Scrolling to previous last match. Current count: ${previousMatchCountRef.current}`,
+        `Scrolling to previous last match. Current count: ${previousMatchCountRef.current}`
       );
 
       // Use requestAnimationFrame for smooth scrolling after DOM update

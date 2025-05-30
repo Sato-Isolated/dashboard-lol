@@ -57,11 +57,9 @@ export function useAsyncData<T = unknown>(
     cacheTTL,
     useSWR: shouldUseSWR = false,
     staleWhileRevalidate = true,
-    dedupe = true,
-    retryCount = 3,
+    dedupe = true,    retryCount = 3,
     retryDelay = 1000,
     operation,
-    dependencies = [],
     immediate = true,
   } = options;
 
@@ -98,10 +96,8 @@ export function useAsyncData<T = unknown>(
     mutate: swrMutate,
   } = useSWR<T>(swrKey, ([url]) => defaultFetcher(url), {
     revalidateOnFocus: false,
-  });
-
-  // Use refs to store configuration values to avoid recreating executeOperation too often
-  const configRef = useRef({
+  });  // Memoize configuration to prevent unnecessary updates and re-renders
+  const config = useMemo(() => ({
     enabled,
     operation,
     url,
@@ -112,23 +108,7 @@ export function useAsyncData<T = unknown>(
     dedupe,
     retryCount,
     retryDelay,
-  });
-
-  // Update ref when values change
-  useEffect(() => {
-    configRef.current = {
-      enabled,
-      operation,
-      url,
-      cacheKey,
-      cacheTTL,
-      shouldUseSWR,
-      staleWhileRevalidate,
-      dedupe,
-      retryCount,
-      retryDelay,
-    };
-  }, [
+  }), [
     enabled,
     operation,
     url,
@@ -141,17 +121,21 @@ export function useAsyncData<T = unknown>(
     retryDelay,
   ]);
 
+  // Use a ref to store the latest config for executeOperation
+  const configRef = useRef(config);
+  configRef.current = config;
   // Main execution function - simplified dependencies
   const executeOperation = useCallback(
     async (useCache = true) => {
       const config = configRef.current;
-      
+
       if (!config.enabled) {
         return;
       }
 
       const operationToRun =
-        config.operation || (config.url ? () => defaultFetcher(config.url!) : null);
+        config.operation ||
+        (config.url ? () => defaultFetcher(config.url!) : null);
       if (!operationToRun) {
         return;
       }
@@ -286,15 +270,22 @@ export function useAsyncData<T = unknown>(
     if (error !== swrSyncedState.error) {
       setError(swrSyncedState.error);
     }
+  }  // Auto-execute on mount - optimisé avec useRef pour éviter les re-exécutions
+  const hasExecutedRef = useRef(false);
+  const lastUrlRef = useRef(url);
+  
+  // Reset execution flag when URL changes
+  if (lastUrlRef.current !== url) {
+    lastUrlRef.current = url;
+    hasExecutedRef.current = false;
   }
-  // Auto-execute on mount - only run once on first render
-  useEffect(() => {
-    if (immediate && !shouldUseSWR && enabled) {
-      executeOperation();
-    }
-  }, []); // Empty dependency array ensures this only runs once on mount
+  
+  if (immediate && !shouldUseSWR && enabled && !hasExecutedRef.current) {
+    hasExecutedRef.current = true;
+    executeOperation();
+  }
 
-  // Cleanup on unmount
+  // Cleanup on unmount - optimisé en utilisant l'abort controller existant
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -305,7 +296,7 @@ export function useAsyncData<T = unknown>(
 
   const refetch = useCallback(async () => {
     const config = configRef.current;
-    
+
     if (config.shouldUseSWR) {
       await swrMutate();
     } else {
@@ -319,7 +310,7 @@ export function useAsyncData<T = unknown>(
   const mutate = useCallback(
     (newData: T) => {
       const config = configRef.current;
-      
+
       if (config.shouldUseSWR) {
         swrMutate(newData, false);
       } else {
@@ -334,7 +325,7 @@ export function useAsyncData<T = unknown>(
 
   const reset = useCallback(() => {
     const config = configRef.current;
-    
+
     setData(null);
     setLoading(false);
     setError(null);
