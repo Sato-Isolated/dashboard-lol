@@ -1,7 +1,6 @@
 // Auto-generated index file for hooks
 // Export all modules from this directory
 
-export * from './useApiResource';
 export * from './useAsyncOperation';
 export * from './useEffectiveUser';
 export * from './useFetch';

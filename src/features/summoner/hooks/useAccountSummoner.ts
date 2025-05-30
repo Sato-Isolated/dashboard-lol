@@ -1,4 +1,4 @@
-import { useApiResource } from '@/hooks/useApiResource';
+import { useFetch } from '@/hooks/useFetch';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 import type { RiotAccountDto } from '@/types/api/accountTypes';
 import type { SummonerDto, LeagueEntry } from '@/types/api/summonerTypes';
@@ -31,7 +31,7 @@ export function useAccountSummoner(
           r,
         )}&name=${encodeURIComponent(n)}&tagline=${encodeURIComponent(t)}`
       : null;
-  const { data, loading, error, refetch } = useApiResource<{
+  const { data, loading, error, refetch } = useFetch<{
     success: boolean;
     data: {
       account: RiotAccountDto;
