@@ -129,13 +129,9 @@ const MatchListComponent: React.FC<MatchListProps> = ({
             onPrevPage={goToPrevPage}
           />
         )}
-        {/* Show More / Load More */}
+        {/* Load More */}
         {!enablePagination && (
           <LoadMoreControls
-            matches={matches}
-            maxInitialItems={maxInitialItems}
-            showAll={showAll}
-            onShowAll={() => setShowAll(true)}
             hasMore={hasMore}
             onLoadMore={onLoadMore}
             loadingMore={loadingMore}

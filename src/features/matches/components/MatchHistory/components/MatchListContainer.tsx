@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import SectionCard from '@/components/common/ui/SectionCard';
 import AsyncStateContainer from '@/components/common/ui/states/AsyncStateContainer';
@@ -35,12 +35,9 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
   onLoadMore,
 }) => {
   // State management for scroll position tracking
-  const scrollStateRef = useRef({
-    previousCount: 0,
-    shouldScrollToLastMatch: false,
-    lastMatchElement: null as HTMLDivElement | null,
-    lastMatchIndexBeforeLoad: -1,
-  });
+  const previousMatchCountRef = useRef(0);
+  const lastMatchElementRef = useRef<HTMLDivElement | null>(null);
+  const shouldScrollToLastMatchRef = useRef(false);
 
   // Debug logs
   console.log(
@@ -66,42 +63,39 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     return effectiveName && effectiveRegion && effectiveTagline;
   }, [effectiveName, effectiveRegion, effectiveTagline]);
 
-  // Memoize matches with stable keys and handle scroll state updates
+  // Memoize matches with stable keys - NO SIDE EFFECTS HERE
   const stableMatches = useMemo(() => {
     if (!displayMatches || displayMatches.length === 0) {
       return [];
     }
 
-    const matches = displayMatches.map((match, idx) => ({
+    return displayMatches.map((match, idx) => ({
       ...match,
       // Ensure stable key by creating composite key
       stableKey:
         match.gameId ||
         `match-${idx}-${match.champion}-${match.result}-${match.date}`,
     }));
+  }, [displayMatches]);
 
-    // Update scroll state when matches change
-    const currentCount = matches.length;
-    const previousCount = scrollStateRef.current.previousCount;
+  // Handle scroll logic in useEffect to avoid side effects in useMemo
+  useEffect(() => {
+    const currentCount = stableMatches.length;
+    const previousCount = previousMatchCountRef.current;
 
     // Determine if we should scroll after new matches are loaded
     const shouldScroll =
       currentCount > previousCount &&
       previousCount > 0 &&
       !loadingMore &&
-      scrollStateRef.current.lastMatchElement;
+      lastMatchElementRef.current;
 
     if (shouldScroll) {
-      // Schedule scroll action for next render
-      scrollStateRef.current.shouldScrollToLastMatch = true;
-      // Store the index of the last match from the previous state
-      scrollStateRef.current.lastMatchIndexBeforeLoad = previousCount - 1;
+      shouldScrollToLastMatchRef.current = true;
     }
 
-    scrollStateRef.current.previousCount = currentCount;
-
-    return matches;
-  }, [displayMatches, loadingMore]);
+    previousMatchCountRef.current = currentCount;
+  }, [stableMatches.length, loadingMore]);
 
   // Determine empty state condition
   const isEmpty = useMemo(() => {
@@ -114,35 +108,33 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     return stableMatches.length === 0 && !loading;
   }, [hasValidUser, shouldShowContent, stableMatches.length, loading]);
 
-  // Callback ref for tracking the last match element
-  const lastMatchCallbackRef = useCallback(
-    (element: HTMLDivElement | null) => {
-      scrollStateRef.current.lastMatchElement = element;
+  // Stable callback ref for tracking the last match element
+  const lastMatchCallbackRef = useCallback((element: HTMLDivElement | null) => {
+    lastMatchElementRef.current = element;
 
-      // Execute scroll if needed
-      if (scrollStateRef.current.shouldScrollToLastMatch && element) {
-        console.log(
-          `Scrolling to previous last match. Current count: ${stableMatches.length}`,
-        );
+    // Execute scroll if needed
+    if (shouldScrollToLastMatchRef.current && element) {
+      console.log(
+        `Scrolling to previous last match. Current count: ${previousMatchCountRef.current}`,
+      );
 
-        // Use requestAnimationFrame for smooth scrolling after DOM update
-        requestAnimationFrame(() => {
+      // Use requestAnimationFrame for smooth scrolling after DOM update
+      requestAnimationFrame(() => {
+        if (element && shouldScrollToLastMatchRef.current) {
           element.scrollIntoView({
             behavior: 'smooth',
             block: 'nearest',
             inline: 'nearest',
           });
-        });
-
-        scrollStateRef.current.shouldScrollToLastMatch = false;
-      }
-    },
-    [stableMatches.length],
-  );
+          shouldScrollToLastMatchRef.current = false;
+        }
+      });
+    }
+  }, []); // No dependencies to prevent recreations
 
   // Memoize the index of the last match before loading more
   const lastMatchIndex = useMemo(() => {
-    return scrollStateRef.current.lastMatchIndexBeforeLoad;
+    return previousMatchCountRef.current - 1;
   }, [stableMatches.length]);
 
   // Dynamic empty state props based on the reason for emptiness
@@ -209,9 +201,6 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
 
             {hasMore && !loading && (
               <LoadMoreControls
-                matches={matches}
-                showAll={false}
-                onShowAll={() => {}} // Not used in this context
                 hasMore={hasMore}
                 onLoadMore={onLoadMore}
                 loadingMore={loadingMore}
@@ -224,26 +213,8 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
   );
 };
 
-// Memoize component to prevent unnecessary re-renders with enhanced comparison
-const MatchListContainer = React.memo(
-  MatchListContainerComponent,
-  (prevProps, nextProps) => {
-    // Custom comparison to prevent unnecessary rerenders
-    return (
-      prevProps.loading === nextProps.loading &&
-      prevProps.loadingMore === nextProps.loadingMore &&
-      prevProps.hasMore === nextProps.hasMore &&
-      prevProps.errorMessage === nextProps.errorMessage &&
-      prevProps.effectiveName === nextProps.effectiveName &&
-      prevProps.effectiveRegion === nextProps.effectiveRegion &&
-      prevProps.effectiveTagline === nextProps.effectiveTagline &&
-      prevProps.matches.length === nextProps.matches.length &&
-      // Compare first few matches for deep equality check
-      JSON.stringify(prevProps.matches.slice(0, 3)) ===
-        JSON.stringify(nextProps.matches.slice(0, 3))
-    );
-  },
-);
+// Simplified memoization to prevent unnecessary re-renders
+const MatchListContainer = React.memo(MatchListContainerComponent);
 MatchListContainer.displayName = 'MatchListContainer';
 
 export default MatchListContainer;

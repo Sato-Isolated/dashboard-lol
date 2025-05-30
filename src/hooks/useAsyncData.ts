@@ -48,7 +48,7 @@ export interface UseAsyncDataResult<T> extends AsyncState<T> {
  * Unified hook for all async data operations
  */
 export function useAsyncData<T = unknown>(
-  options: UseAsyncDataOptions<T> = {},
+  options: UseAsyncDataOptions<T> = {}
 ): UseAsyncDataResult<T> {
   const {
     url,
@@ -100,29 +100,76 @@ export function useAsyncData<T = unknown>(
     revalidateOnFocus: false,
   });
 
-  // Main execution function
+  // Use refs to store configuration values to avoid recreating executeOperation too often
+  const configRef = useRef({
+    enabled,
+    operation,
+    url,
+    cacheKey,
+    cacheTTL,
+    shouldUseSWR,
+    staleWhileRevalidate,
+    dedupe,
+    retryCount,
+    retryDelay,
+  });
+
+  // Update ref when values change
+  useEffect(() => {
+    configRef.current = {
+      enabled,
+      operation,
+      url,
+      cacheKey,
+      cacheTTL,
+      shouldUseSWR,
+      staleWhileRevalidate,
+      dedupe,
+      retryCount,
+      retryDelay,
+    };
+  }, [
+    enabled,
+    operation,
+    url,
+    cacheKey,
+    cacheTTL,
+    shouldUseSWR,
+    staleWhileRevalidate,
+    dedupe,
+    retryCount,
+    retryDelay,
+  ]);
+
+  // Main execution function - simplified dependencies
   const executeOperation = useCallback(
     async (useCache = true) => {
-      if (!enabled) {return;}
+      const config = configRef.current;
+      
+      if (!config.enabled) {
+        return;
+      }
 
       const operationToRun =
-        operation || (url ? () => defaultFetcher(url) : null);
-      if (!operationToRun) {return;}
+        config.operation || (config.url ? () => defaultFetcher(config.url!) : null);
+      if (!operationToRun) {
+        return;
+      }
 
       const timerId = clientLogger.startTimer('async_operation', {
-        url,
-        cacheKey,
+        url: config.url,
+        cacheKey: config.cacheKey,
       });
 
       try {
         // Check cache first (only for non-SWR operations)
-        if (!shouldUseSWR && useCache && cacheKey) {
-          const cached = apiCache.get<T>(cacheKey);
+        if (!config.shouldUseSWR && useCache && config.cacheKey) {
+          const cached = apiCache.get<T>(config.cacheKey);
           if (cached) {
             setData(cached);
             setError(null);
 
-            if (staleWhileRevalidate) {
+            if (config.staleWhileRevalidate) {
               executeOperation(false); // Background refresh
             }
 
@@ -132,12 +179,12 @@ export function useAsyncData<T = unknown>(
         }
 
         // Dedupe concurrent requests
-        if (dedupe && inflightRequests.current.has(cacheKey)) {
+        if (config.dedupe && inflightRequests.current.has(config.cacheKey)) {
           clientLogger.endTimer(timerId);
           return;
         }
 
-        inflightRequests.current.add(cacheKey);
+        inflightRequests.current.add(config.cacheKey);
         setLoading(true);
         setError(null);
 
@@ -151,13 +198,13 @@ export function useAsyncData<T = unknown>(
         let attempt = 0;
         let lastError: Error | null = null;
 
-        while (attempt < retryCount) {
+        while (attempt < config.retryCount) {
           try {
             const result = await operationToRun();
 
             // Cache the result (only for non-SWR operations)
-            if (!shouldUseSWR && cacheKey) {
-              apiCache.set(cacheKey, result, cacheTTL);
+            if (!config.shouldUseSWR && config.cacheKey) {
+              apiCache.set(config.cacheKey, result, config.cacheTTL);
             }
 
             setData(result);
@@ -165,8 +212,8 @@ export function useAsyncData<T = unknown>(
 
             clientLogger.endTimer(timerId);
             clientLogger.info('Async operation successful', {
-              url,
-              cacheKey,
+              url: config.url,
+              cacheKey: config.cacheKey,
               attempt: attempt + 1,
             });
 
@@ -179,20 +226,20 @@ export function useAsyncData<T = unknown>(
             }
 
             attempt++;
-            if (attempt < retryCount) {
+            if (attempt < config.retryCount) {
               await new Promise(resolve =>
-                setTimeout(resolve, retryDelay * attempt),
+                setTimeout(resolve, config.retryDelay * attempt)
               );
             }
           }
         }
 
-        if (lastError && attempt >= retryCount) {
+        if (lastError && attempt >= config.retryCount) {
           setError(lastError.message);
           clientLogger.error('Async operation failed after retries', {
             error: lastError.message,
-            url,
-            cacheKey,
+            url: config.url,
+            cacheKey: config.cacheKey,
             attempts: attempt,
           });
         }
@@ -200,28 +247,16 @@ export function useAsyncData<T = unknown>(
         setError(err instanceof Error ? err.message : 'Unknown error');
         clientLogger.error('Async operation error', {
           error: err instanceof Error ? err.message : 'Unknown error',
-          url,
-          cacheKey,
+          url: config.url,
+          cacheKey: config.cacheKey,
         });
       } finally {
         setLoading(false);
-        inflightRequests.current.delete(cacheKey);
+        inflightRequests.current.delete(config.cacheKey);
         clientLogger.endTimer(timerId);
       }
     },
-    [
-      enabled,
-      operation,
-      url,
-      cacheKey,
-      cacheTTL,
-      shouldUseSWR,
-      staleWhileRevalidate,
-      dedupe,
-      retryCount,
-      retryDelay,
-      ...dependencies,
-    ],
+    [] // No dependencies - use configRef for all values
   );
   // Sync SWR state when using SWR - modern approach with direct state updates
   const swrSyncedState = useMemo(() => {
@@ -252,17 +287,12 @@ export function useAsyncData<T = unknown>(
       setError(swrSyncedState.error);
     }
   }
-  // Auto-execute on mount using modern pattern - useMemo for initial execution trigger
-  const shouldExecuteInitially = useMemo(() => {
-    return immediate && !shouldUseSWR;
-  }, [immediate, shouldUseSWR]);
-
-  // Execute immediately if needed, using Promise.resolve to avoid render-time execution
-  if (shouldExecuteInitially && enabled) {
-    Promise.resolve().then(() => {
+  // Auto-execute on mount - only run once on first render
+  useEffect(() => {
+    if (immediate && !shouldUseSWR && enabled) {
       executeOperation();
-    });
-  }
+    }
+  }, []); // Empty dependency array ensures this only runs once on mount
 
   // Cleanup on unmount
   useEffect(() => {
@@ -274,38 +304,44 @@ export function useAsyncData<T = unknown>(
   }, []);
 
   const refetch = useCallback(async () => {
-    if (shouldUseSWR) {
+    const config = configRef.current;
+    
+    if (config.shouldUseSWR) {
       await swrMutate();
     } else {
-      if (cacheKey) {
-        apiCache.delete(cacheKey);
+      if (config.cacheKey) {
+        apiCache.delete(config.cacheKey);
       }
       await executeOperation(false);
     }
-  }, [shouldUseSWR, swrMutate, cacheKey, executeOperation]);
+  }, [swrMutate, executeOperation]);
 
   const mutate = useCallback(
     (newData: T) => {
-      if (shouldUseSWR) {
+      const config = configRef.current;
+      
+      if (config.shouldUseSWR) {
         swrMutate(newData, false);
       } else {
         setData(newData);
-        if (cacheKey) {
-          apiCache.set(cacheKey, newData, cacheTTL);
+        if (config.cacheKey) {
+          apiCache.set(config.cacheKey, newData, config.cacheTTL);
         }
       }
     },
-    [shouldUseSWR, swrMutate, cacheKey, cacheTTL],
+    [swrMutate]
   );
 
   const reset = useCallback(() => {
+    const config = configRef.current;
+    
     setData(null);
     setLoading(false);
     setError(null);
-    if (cacheKey) {
-      apiCache.delete(cacheKey);
+    if (config.cacheKey) {
+      apiCache.delete(config.cacheKey);
     }
-  }, [cacheKey]);
+  }, []);
   return {
     data,
     loading,

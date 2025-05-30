@@ -1,45 +1,49 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Button } from '@/components/common/ui/Button';
 
 interface LoadMoreControlsProps {
-  matches: any[];
-  maxInitialItems?: number;
-  showAll: boolean;
-  onShowAll: () => void;
   hasMore?: boolean;
   onLoadMore?: () => void;
   loadingMore?: boolean;
 }
 
 export const LoadMoreControls: React.FC<LoadMoreControlsProps> = ({
-  matches,
-  maxInitialItems,
-  showAll,
-  onShowAll,
   hasMore,
   onLoadMore,
   loadingMore,
-}) => (
-  <>
-    {maxInitialItems && matches.length > maxInitialItems && !showAll && (
-      <div className='text-center'>
-        <Button variant='outline' onClick={onShowAll}>
-          Show All {matches.length} Matches
-        </Button>
-      </div>
-    )}
+}) => {
+  // Prevent multiple rapid clicks
+  const isLoadingRef = useRef(false);
 
-    {hasMore && onLoadMore && (
-      <div className='text-center'>
-        <Button
-          variant='primary'
-          onClick={onLoadMore}
-          isLoading={loadingMore}
-          disabled={loadingMore}
-        >
-          {loadingMore ? 'Loading...' : 'Load More Matches'}
-        </Button>
-      </div>
-    )}
-  </>
-);
+  const handleLoadMore = useCallback(() => {
+    if (isLoadingRef.current || loadingMore || !onLoadMore) {
+      return;
+    }
+    
+    isLoadingRef.current = true;
+    onLoadMore();
+    
+    // Reset flag after a short delay to prevent multiple clicks
+    setTimeout(() => {
+      isLoadingRef.current = false;
+    }, 1000);
+  }, [onLoadMore, loadingMore]);
+
+  return (
+    <>
+      {/* Load More button - for loading additional data from API */}
+      {hasMore && onLoadMore && (
+        <div className='text-center'>
+          <Button
+            variant='primary'
+            onClick={handleLoadMore}
+            isLoading={loadingMore}
+            disabled={loadingMore || isLoadingRef.current}
+          >
+            {loadingMore ? 'Loading...' : 'Load More Matches'}
+          </Button>
+        </div>
+      )}
+    </>
+  );
+};
