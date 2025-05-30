@@ -270,7 +270,7 @@ export function useAsyncData<T = unknown>(
     if (error !== swrSyncedState.error) {
       setError(swrSyncedState.error);
     }
-  }  // Auto-execute on mount - optimisé avec useRef pour éviter les re-exécutions
+  }  // Auto-execute on mount - optimized with useRef to avoid re-executions
   const hasExecutedRef = useRef(false);
   const lastUrlRef = useRef(url);
   
@@ -285,7 +285,7 @@ export function useAsyncData<T = unknown>(
     executeOperation();
   }
 
-  // Cleanup on unmount - optimisé en utilisant l'abort controller existant
+  // Cleanup on unmount - optimized using existing abort controller
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {

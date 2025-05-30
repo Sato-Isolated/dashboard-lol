@@ -37,7 +37,7 @@ export function useEffectiveUser(): {
     summonerName,
   ]);
 
-  // Effect sans dépendances sur les props pour éviter les loops
+  // Effect without dependencies on props to avoid loops
   useEffect(() => {
     if (shouldSync) {
       setUser({

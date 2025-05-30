@@ -3,18 +3,18 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import type { Suggestion } from '../types';
 
 export const useSearchSuggestions = (summonerName: string) => {
-  // Debounce pour éviter trop de requêtes
+  // Debounce to avoid too many requests
   const [debouncedSummonerName, setDebouncedSummonerName] = useState(summonerName);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSummonerName(summonerName);
-    }, 300); // 300ms de délai
+    }, 300); // 300ms delay
 
     return () => clearTimeout(timer);
   }, [summonerName]);
 
-  // Utilisation d'useAsyncData au lieu d'useEffect manuel pour une meilleure gestion
+  // Using useAsyncData instead of manual useEffect for better management
   const searchUrl = useMemo(() => {
     return debouncedSummonerName.length >= 2
       ? `/api/summoner/search?q=${encodeURIComponent(debouncedSummonerName)}`
@@ -29,8 +29,8 @@ export const useSearchSuggestions = (summonerName: string) => {
     url: searchUrl,
     enabled: !!searchUrl,
     immediate: true,
-    retryCount: 1, // Réduire les retry pour les recherches
-    cacheTTL: 30000, // Cache 30s pour éviter les requêtes répétées
+    retryCount: 1, // Reduce retry for searches
+    cacheTTL: 30000, // Cache 30s to avoid repeated requests
   });
 
   return {

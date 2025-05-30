@@ -59,7 +59,7 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{
                   duration: 0.5,
-                  delay: Math.min(i * 0.05, 1), // Limite le délai maximum
+                  delay: Math.min(i * 0.05, 1), // Limit maximum delay
                 }}
                 className='transition-all duration-200'
               >
@@ -68,7 +68,7 @@ const LeaderboardTableComponent: React.FC<LeaderboardTableProps> = ({
                   rank={i + 1}
                   platform={platform}
                   isPriority={i < 10}
-                  asTableRow={false} // On gère le tr dans ce composant
+                  asTableRow={false} // We handle the tr in this component
                 />
               </motion.tr>
             ))}

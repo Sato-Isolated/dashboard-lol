@@ -9,7 +9,7 @@ export interface SummonerCollection {
   fetchOldGames: boolean;
   lastFetchedGameEndTimestamp?: number; // timestamp of the most recent match fetched
   lastUpdateTimestamp?: number; // timestamp when the "Update" button was last pressed
-  aramScore?: number; // score ARAM personnalisé
+  aramScore?: number; // custom ARAM score
   aramScoreFirstCalculated?: boolean;
   aramScoreLastCheck?: number;
   profileIconId?: number; // Riot profile icon ID

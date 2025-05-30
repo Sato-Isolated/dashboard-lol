@@ -113,20 +113,20 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Optimisation : utilisation de useCallback pour éviter les re-créations
+  // Optimization: use useCallback to avoid re-creations
   const handleScroll = useCallback(() => {
     setIsScrolled(window.scrollY > 20);
   }, []);
 
-  // Optimisation : utilisation de useLayoutEffect pour éviter le flicker
+  // Optimization: use useLayoutEffect to avoid flicker
   useLayoutEffect(() => {
-    // Vérification du côté client
+    // Client-side check
     if (typeof window === 'undefined') return;
 
-    // Initialisation immédiate
+    // Immediate initialization
     handleScroll();
 
-    // Throttle pour optimiser les performances
+    // Throttle to optimize performance
     let timeoutId: number;
     const throttledHandleScroll = () => {
       if (timeoutId) cancelAnimationFrame(timeoutId);

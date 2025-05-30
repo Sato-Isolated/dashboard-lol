@@ -10,13 +10,13 @@ export const useSearchForm = () => {
   const { setUser } = useUserStore();
   const router = useRouter();
 
-  // Optimisation: initialiser directement avec les bonnes valeurs
+  // Optimization: initialize directly with the correct values
   const [summonerName, setSummonerName] = useState<string>('');
   const [tagline, setTagline] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
   const [hasUserInteracted, setHasUserInteracted] = useState<boolean>(false);
 
-  // Optimisation: ne synchroniser que si l'utilisateur n'a pas encore interagi
+  // Optimization: only synchronize if the user hasn't interacted yet
   useEffect(() => {
     if (!hasUserInteracted && (effectiveName || effectiveTagline)) {
       setSummonerName(effectiveName || '');
@@ -60,7 +60,7 @@ export const useSearchForm = () => {
     []
   );
 
-  // Wrappers pour marquer l'interaction utilisateur
+  // Wrappers to mark user interaction
   const handleSummonerNameChange = useCallback((value: string) => {
     setHasUserInteracted(true);
     setSummonerName(value);

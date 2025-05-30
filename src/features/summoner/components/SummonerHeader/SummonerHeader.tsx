@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useAccountSummoner } from '@/features/summoner/hooks/useAccountSummoner';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
@@ -52,9 +52,9 @@ const SummonerHeader: React.FC = () => {
   const { shareMsg, rankMsg, handleShare, showRankMessage } =
     useToastMessages();
 
-  const [lastUpdate, setLastUpdate] = React.useState<number>(0);
+  const [lastUpdate, setLastUpdate] = useState<number>(0);
 
-  // Optimisation: gérer l'erreur directement dans useMemo plutôt qu'avec useEffect
+  // Optimization: handle error directly in useMemo rather than with useEffect
   useMemo(() => {
     if (updateUserDataError) {
       setGlobalError(updateUserDataError);
@@ -104,7 +104,7 @@ const SummonerHeader: React.FC = () => {
     }, 300);
   };
   // Show loading states if needed
-  const isDataMissing = React.useMemo(() => {
+  const isDataMissing = useMemo(() => {
     return !account || !summoner;
   }, [account, summoner]);
 

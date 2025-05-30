@@ -15,7 +15,7 @@ export const useMatchVisibility = (
   const prevMatchesRef = useRef<UIMatch[]>(matches);
   const visibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Optimisation: calculer les états avec useMemo
+  // Optimization: calculate states with useMemo
   const visibilityState = useMemo(() => {
     const hasValidMatches = matches && matches.length > 0;
     const hadPreviousMatches = prevMatchesRef.current.length > 0;
@@ -29,7 +29,7 @@ export const useMatchVisibility = (
     };
   }, [matches, loading, error]);
 
-  // Un seul useEffect optimisé pour gérer tous les cas
+  // Single optimized useEffect to handle all cases
   useEffect(() => {
     // Clear any existing timeout
     if (visibilityTimeoutRef.current) {

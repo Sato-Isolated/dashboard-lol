@@ -35,8 +35,8 @@ export const useMatchHistoryData = () => {
     if (!parseError) {
       return null;
     }
-    return parseError.includes('Riot') || parseError.includes('base de données')
-      ? "Impossible de récupérer les matchs. L'API Riot ou la base de données est peut-être indisponible. Réessayez plus tard."
+    return parseError.includes('Riot') || parseError.includes('database')
+      ? "Unable to retrieve matches. The Riot API or database may be unavailable. Please try again later."
       : parseError;
   }, [parseError]);
   return {

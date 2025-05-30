@@ -19,7 +19,7 @@ interface LeaderboardRowProps {
   asTableRow?: boolean;
 }
 
-// Fonction pour déterminer le tier basé sur le rang et le score
+// Function to determine the tier based on rank and score
 const getTier = (
   rank: number,
   score: number,

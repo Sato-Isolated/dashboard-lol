@@ -42,7 +42,7 @@ export async function fetchSummonerFull(
     tagline,
   );
   const aramScore = dbSummoner?.aramScore ?? 0;
-  // Ajout : update le profileIconId en base si différent ou manquant
+  // Addition: update the profileIconId in database if different or missing
   if (
     dbSummoner &&
     (typeof dbSummoner.profileIconId === 'undefined' ||

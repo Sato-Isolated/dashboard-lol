@@ -11,7 +11,7 @@ const MatchCardCollapseButtonComponent: React.FC<
   <button
     className='absolute right-4 bottom-4 bg-base-100/90 glass rounded-full shadow-lg p-2 border-2 border-primary/30 transition z-20 focus:outline-none focus:ring-2 focus:ring-primary/40'
     onClick={onClick}
-    aria-label={open ? 'Masquer les détails' : 'Afficher les détails'}
+    aria-label={open ? 'Hide details' : 'Show details'}
     tabIndex={0}
     type='button'
   >

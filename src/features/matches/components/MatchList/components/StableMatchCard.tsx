@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { default as MatchCard } from '../../MatchCard';
 import type { UIMatch } from '@/features/matches/types/uiMatchTypes';
@@ -16,7 +16,7 @@ const StableMatchCardComponent: React.FC<StableMatchCardProps> = ({
   isVisible,
 }) => {
   // Generate stable key for the match
-  const stableKey = React.useMemo(() => {
+  const stableKey = useMemo(() => {
     return (
       match.gameId || `${match.champion}-${match.result}-${index}-${match.date}`
     );

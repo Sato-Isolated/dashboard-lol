@@ -51,7 +51,7 @@ export interface UIPlayer {
   spell2: number;
   rune1: number;
   rune2: number;
-  // Multi-kill et séries pour les badges
+  // Multi-kill and sprees for badges
   doubleKills?: number;
   tripleKills?: number;
   quadraKills?: number;

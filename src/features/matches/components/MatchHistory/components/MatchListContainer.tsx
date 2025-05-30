@@ -78,7 +78,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     }));
   }, [displayMatches]);
 
-  // Optimisation: gérer la logique de scroll directement dans useMemo
+  // Optimization: handle scroll logic directly in useMemo
   const shouldScroll = useMemo(() => {
     const currentCount = stableMatches.length;
     const previousCount = previousMatchCountRef.current;
@@ -89,7 +89,7 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
       !loadingMore &&
       lastMatchElementRef.current;
 
-    // Mettre à jour les refs après le calcul
+    // Update refs after calculation
     previousMatchCountRef.current = currentCount;
 
     if (result) {
@@ -144,9 +144,8 @@ const MatchListContainerComponent: React.FC<MatchListContainerProps> = ({
     if (!hasValidUser) {
       return {
         type: 'users' as const,
-        title: 'No Player Selected',
-        message:
-          "Veuillez renseigner un nom de joueur et un tagline pour afficher l'historique.",
+        title: 'No Player Selected',        message:
+          "Please enter a player name and tagline to display the match history.",
         emoji: '⚠️',
         size: 'lg' as const,
       };

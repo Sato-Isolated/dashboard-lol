@@ -24,18 +24,18 @@ export const getBrowserDefaultRegion = (): PlatformRegion => {
 export const getInitialRegion = (
   currentRegion?: PlatformRegion | '',
 ): PlatformRegion => {
-  // Si on a déjà une région, la garder
+  // If we already have a region, keep it
   if (currentRegion) {
     return currentRegion;
   }
 
-  // Essayer de récupérer depuis le stockage local
+  // Try to retrieve from local storage
   const stored = getStoredRegion();
   if (stored) {
     return stored;
   }
 
-  // Sinon, utiliser la région par défaut du navigateur
+  // Otherwise, use the browser's default region
   const defaultRegion = getBrowserDefaultRegion();
   setStoredRegion(defaultRegion);
   return defaultRegion;

@@ -23,8 +23,8 @@ export class OptimizedMatchService {
   }
 
   /**
-   * ✅ Query optimisée pour l'historique des matches d'un joueur
-   * Utilise l'index composé: player_matches_optimized
+   * ✅ Optimized query for player match history
+   * Uses composite index: player_matches_optimized
    */
   async getPlayerMatches(
     puuid: string,
@@ -38,15 +38,15 @@ export class OptimizedMatchService {
     try {
       const collection = await this.mongo.getCollection<Match>('matches');
 
-      // Construction du pipeline d'agrégation optimisé
+      // Construction of optimized aggregation pipeline
       const pipeline = [
-        // Stage 1: Match avec index optimal
+        // Stage 1: Match with optimal index
         {
           $match: {
             participants: {
               $elemMatch: { puuid: puuid },
             },
-            // Filtres additionnels qui utilisent l'index composé
+            // Additional filters that use the composite index
             ...(options.queueId && { 'info.queueId': options.queueId }),
             ...(options.fromDate && {
               'info.gameCreation': { $gte: options.fromDate.getTime() },
@@ -57,7 +57,7 @@ export class OptimizedMatchService {
           },
         },
 
-        // Stage 2: Sort utilisant l'index
+        // Stage 2: Sort using the index
         {
           $sort: { 'info.gameEndTimestamp': -1 },
         },
@@ -66,7 +66,7 @@ export class OptimizedMatchService {
         ...(options.skip ? [{ $skip: options.skip }] : []),
         { $limit: options.limit || 20 },
 
-        // Stage 4: Projection optimisée (seulement les champs nécessaires)
+        // Stage 4: Optimized projection (only necessary fields)
         {
           $project: {
             'metadata.matchId': 1,
@@ -90,7 +90,7 @@ export class OptimizedMatchService {
         'matches',
         pipeline,
         {
-          hint: 'player_matches_optimized', // Force l'utilisation de notre index
+          hint: 'player_matches_optimized', // Force the use of our index
           maxTimeMS: 10000,
         },
       );
@@ -104,8 +104,8 @@ export class OptimizedMatchService {
   }
 
   /**
-   * ✅ Query spécialisée pour les matches ARAM
-   * Utilise l'index partiel: aram_player_history
+   * ✅ Specialized query for ARAM matches
+   * Uses partial index: aram_player_history
    */
   async getPlayerAramMatches(
     puuid: string,
@@ -116,7 +116,7 @@ export class OptimizedMatchService {
     });
 
     try {
-      // Utilise la méthode optimisée avec queueId forcé à 450 (ARAM)
+      // Uses the optimized method with queueId forced to 450 (ARAM)
       const matches = await this.getPlayerMatches(puuid, {
         ...options,
         queueId: 450,
@@ -131,8 +131,8 @@ export class OptimizedMatchService {
   }
 
   /**
-   * ✅ Query pour les statistiques de matches par période
-   * Utilise l'index: player_matches_by_creation
+   * ✅ Query for match statistics by period
+   * Uses index: player_matches_by_creation
    */
   async getPlayerMatchStats(
     puuid: string,
@@ -155,7 +155,7 @@ export class OptimizedMatchService {
       const collection = await this.mongo.getCollection('matches');
 
       const pipeline = [
-        // Match avec index optimisé pour les dates
+        // Match with optimized index for dates
         {
           $match: {
             'participants.puuid': puuid,
@@ -166,17 +166,17 @@ export class OptimizedMatchService {
           },
         },
 
-        // Unwind pour traiter chaque participant
+        // Unwind to process each participant
         { $unwind: '$participants' },
 
-        // Filter pour garder seulement notre joueur
+        // Filter to keep only our player
         {
           $match: {
             'participants.puuid': puuid,
           },
         },
 
-        // Calculs des statistiques
+        // Statistics calculations
         {
           $group: {
             _id: null,
@@ -194,7 +194,7 @@ export class OptimizedMatchService {
           },
         },
 
-        // Calculs finaux
+        // Final calculations
         {
           $project: {
             totalMatches: 1,
@@ -245,7 +245,7 @@ export class OptimizedMatchService {
         };
       }
 
-      // Post-traitement pour le champion le plus joué et distribution des queues
+      // Post-processing for most played champion and queue distribution
       const championCounts: Record<string, number> = {};
       result.champions.forEach((champ: string) => {
         championCounts[champ] = (championCounts[champ] || 0) + 1;
@@ -277,8 +277,8 @@ export class OptimizedMatchService {
   }
 
   /**
-   * ✅ Query pour les matches récents globaux par mode de jeu
-   * Utilise l'index: queue_timeline
+   * ✅ Query for recent global matches by game mode
+   * Uses index: queue_timeline
    */
   async getRecentMatchesByQueue(queueId: number, limit = 50): Promise<Match[]> {
     const perfLogger = new PerformanceLogger('get_recent_matches_by_queue', {
@@ -309,7 +309,7 @@ export class OptimizedMatchService {
   }
 
   /**
-   * 🔍 Méthode de diagnostic pour vérifier l'utilisation des index
+   * 🔍 Diagnostic method to check index usage
    */
   async explainQuery(
     puuid: string,

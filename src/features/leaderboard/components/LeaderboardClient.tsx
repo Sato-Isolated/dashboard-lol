@@ -45,7 +45,7 @@ const LeaderboardClientComponent: React.FC<LeaderboardClientProps> = ({
     p => p.value === selectedPlatform,
   );
 
-  // Statistiques calculées
+  // Calculated statistics
   const stats = useMemo(() => {
     if (leaderboard.length === 0) {
       return null;

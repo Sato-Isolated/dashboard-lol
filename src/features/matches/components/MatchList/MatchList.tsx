@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   MatchStatsCard,
   MinimalMatchItem,
@@ -44,7 +44,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
     goToPrevPage,
   } = useMatchPagination(displayMatches, enablePagination, maxInitialItems);
   // Memoize stable matches to prevent rerender issues
-  const stableMatches = React.useMemo(() => {
+  const stableMatches = useMemo(() => {
     if (!displayedMatches || displayedMatches.length === 0) {
       return [];
     }
@@ -59,7 +59,7 @@ const MatchListComponent: React.FC<MatchListProps> = ({
   }, [displayedMatches]);
 
   // Check if data should be considered empty
-  const isEmpty = React.useMemo(() => {
+  const isEmpty = useMemo(() => {
     if (!shouldShowContent && !loading) {
       return true;
     }

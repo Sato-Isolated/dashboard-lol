@@ -5,7 +5,7 @@ import { Palette, ChevronUp } from 'lucide-react';
 import { useTheme } from '@/stores/themeStore';
 import { createPortal } from 'react-dom';
 
-// Hook personnalisé pour gérer le montage côté client
+// Custom hook to handle client-side mounting
 const useClientMounted = () => {
   const [mounted, setMounted] = useState(false);
   
@@ -16,7 +16,7 @@ const useClientMounted = () => {
   return mounted;
 };
 
-// Hook personnalisé pour gérer les événements de fenêtre
+// Custom hook to handle window events
 const useWindowEvents = (isOpen: boolean, updatePosition: () => void, setIsOpen: (value: boolean) => void) => {
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -139,7 +139,7 @@ interface ButtonPosition {
 const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme, themes } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
-  const mounted = useClientMounted(); // Hook personnalisé moderne
+  const mounted = useClientMounted(); // Modern custom hook
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [buttonPosition, setButtonPosition] = useState<ButtonPosition>({ top: 0, left: 0, width: 0 });
   // Modernized position calculation with useCallback
@@ -167,7 +167,7 @@ const ThemeSwitcher: React.FC = () => {
     });
   }, [isOpen]);
 
-  // Hook personnalisé pour gérer les événements
+  // Custom hook to handle events
   useWindowEvents(isOpen, updatePosition, setIsOpen);// Memoized theme colors for performance
   const themeColors = useMemo(() => ({
     light: { primary: '#570df8', secondary: '#f000b8', accent: '#37cdbe' },

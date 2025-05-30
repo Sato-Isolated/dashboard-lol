@@ -1,4 +1,4 @@
-// Centralise les exports des services LoL
+// Centralize LoL service exports
 export * from './accountService';
 // export * from "./services/championService"; // Moved to features/champions
 // export * from "./services/champion-masteryService"; // Moved to features/champions

@@ -65,7 +65,7 @@ export default async function Page(props: { params: Promise<PageParams> }) {
     notFound();
   }
 
-  // Décoder le nom pour supporter les espaces et caractères spéciaux
+  // Decode the name to support spaces and special characters
   const decodedName = decodeURIComponent(name);
   const decodedTagline = decodeURIComponent(tagline);
 

@@ -9,13 +9,13 @@ export const useKeyboardNavigation = (
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Optimisation: Reset highlighted index directement sans useEffect
+  // Optimization: Reset highlighted index directly without useEffect
   const actualHighlightedIndex = useMemo(() => {
-    // Reset automatiquement quand suggestions ou showSuggestions changent
+    // Reset automatically when suggestions or showSuggestions change
     return suggestions.length > 0 && showSuggestions ? highlightedIndex : -1;
   }, [suggestions.length, showSuggestions, highlightedIndex]);
 
-  // Optimisation: gérer les événements avec un seul useEffect
+  // Optimization: handle events with a single useEffect
   useEffect(() => {
     if (!showSuggestions) return;
 

@@ -27,10 +27,10 @@ export const useFavorites = (
   effectiveTagline: string,
   effectiveName: string
 ) => {
-  // Optimisation: initialiser directement avec les bonnes valeurs
+  // Optimization: initialize directly with the correct values
   const [favorites, setFavorites] = useState<Favorite[]>(() => getFavorites());
 
-  // Calculer isFav avec useMemo pour éviter les recalculs
+  // Calculate isFav with useMemo to avoid recalculations
   const isFav = useMemo(
     () =>
       favorites.some(

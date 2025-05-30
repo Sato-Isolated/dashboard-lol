@@ -275,7 +275,7 @@ export abstract class RiotApiClient {
     }
   }
 
-  // Méthode utile pour le debugging
+  // Useful method for debugging
   public getRateLimitStatus(): RateLimitState & RateLimitConfig {
     return {
       ...this.rateLimitState,

@@ -99,7 +99,7 @@ export function useInfiniteApiCall<T>(
     setSize(size + 1);
   }, [setSize, size, flatData.length]);
 
-  // Optimisation: Reset loadingMore directement quand data change plutôt qu'avec useEffect
+  // Optimization: Reset loadingMore directly when data changes rather than with useEffect
   const wasLoadingMore = useRef(isLoadingMore);
   if (wasLoadingMore.current && data && !isValidating) {
     setIsLoadingMore(false);

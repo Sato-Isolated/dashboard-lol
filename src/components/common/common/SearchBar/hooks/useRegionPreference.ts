@@ -3,23 +3,23 @@ import { PlatformRegion } from '@/lib/api/api/riot/types';
 import { getInitialRegion, setStoredRegion } from '../utils/regionUtils';
 
 export const useRegionPreference = (effectiveRegion?: PlatformRegion | '') => {
-  // Optimisation: initialiser directement avec la bonne valeur
+  // Optimization: initialize directly with the correct value
   const [region, setRegion] = useState<PlatformRegion | ''>(() =>
     getInitialRegion(effectiveRegion)
   );
 
-  // Optimisation: utiliser useMemo pour mettre à jour la région quand effectiveRegion change
+  // Optimization: use useMemo to update region when effectiveRegion changes
   const currentRegion = useMemo(() => {
     if (effectiveRegion && effectiveRegion !== region) {
       const newRegion = getInitialRegion(effectiveRegion);
-      // Mettre à jour l'état directement dans le render (React optimise cela)
+      // Update state directly in render (React optimizes this)
       setRegion(newRegion);
       return newRegion;
     }
     return region;
   }, [effectiveRegion, region]);
 
-  // Optimisation: combiner la mise à jour d'état et le storage
+  // Optimization: combine state update and storage
   const updateRegion = useMemo(
     () => (newRegion: PlatformRegion | '') => {
       setRegion(newRegion);

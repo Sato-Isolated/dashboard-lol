@@ -23,7 +23,7 @@ export function useUpdateUserData() {
         await handleUserChampionMastery(region, name, tagline);
         await handleUserRecentlyPlayedUpdate(region, name, tagline);
 
-        // Appel à syncAramScore via l'API
+        // Call to syncAramScore via the API
         const res = await fetch('/api/summoner/aram-score', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -51,7 +51,7 @@ export function useUpdateUserData() {
             errorMessage.includes('API key lacks required permissions')
           ) {
             throw new Error(
-              'API permissions insuffisantes. Veuillez vérifier votre clé API Riot Games.',
+              'Insufficient API permissions. Please check your Riot Games API key.',
             );
           } else {
             throw new Error(errorMessage);
