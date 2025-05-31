@@ -20,7 +20,7 @@ const customFormat = winston.format.combine(
       message,
       ...meta,
     });
-  }),
+  })
 );
 
 const consoleFormat = winston.format.combine(
@@ -29,7 +29,7 @@ const consoleFormat = winston.format.combine(
   winston.format.printf(({ timestamp, level, message, ...meta }) => {
     const metaStr = Object.keys(meta).length > 0 ? JSON.stringify(meta) : '';
     return `${timestamp} [${level}]: ${message} ${metaStr}`;
-  }),
+  })
 );
 
 class Logger {
@@ -55,7 +55,7 @@ class Logger {
         new winston.transports.File({
           filename: 'logs/combined.log',
           format: customFormat,
-        }),
+        })
       );
     }
 
@@ -74,7 +74,7 @@ class Logger {
   error(
     message: string,
     error?: Error | unknown,
-    meta?: Record<string, unknown>,
+    meta?: Record<string, unknown>
   ): void {
     const errorMeta = this.formatError(error);
     this.winston.error(message, { ...meta, ...errorMeta });
@@ -106,11 +106,11 @@ class Logger {
     }
 
     const duration = Date.now() - timer.startTime;
-    this.info('Performance metric', {
+    /* this.info('Performance metric', {
       operation: timer.operation,
       duration_ms: duration,
       ...timer.metadata,
-    });
+    }); */
 
     this.performanceTimers.delete(timerId);
   }
@@ -121,7 +121,7 @@ class Logger {
     collection: string,
     query?: Record<string, unknown>,
     duration?: number,
-    resultCount?: number,
+    resultCount?: number
   ): void {
     this.info('Database operation', {
       operation,
@@ -139,7 +139,7 @@ class Logger {
     method: string,
     statusCode?: number,
     duration?: number,
-    error?: Error,
+    error?: Error
   ): void {
     const logLevel =
       error || (statusCode && statusCode >= 400) ? 'error' : 'info';
@@ -157,7 +157,7 @@ class Logger {
   logUserAction(
     action: string,
     userId?: string,
-    metadata?: Record<string, unknown>,
+    metadata?: Record<string, unknown>
   ): void {
     this.info('User action', {
       action,
@@ -182,7 +182,7 @@ class Logger {
     return { error: String(error) };
   }
   private sanitizeQuery(
-    query: Record<string, unknown>,
+    query: Record<string, unknown>
   ): Record<string, unknown> {
     // Create a copy to avoid modifying original
     const sanitized = JSON.parse(JSON.stringify(query));
@@ -191,7 +191,7 @@ class Logger {
     const sensitiveFields = ['password', 'token', 'key', 'secret'];
 
     const sanitizeObject = (
-      obj: Record<string, unknown>,
+      obj: Record<string, unknown>
     ): Record<string, unknown> => {
       if (typeof obj !== 'object' || obj === null) {
         return obj;
@@ -220,7 +220,7 @@ export function measurePerformance(operation: string) {
   return function (
     target: object,
     propertyName: string,
-    descriptor: PropertyDescriptor,
+    descriptor: PropertyDescriptor
   ) {
     const method = descriptor.value;
 
