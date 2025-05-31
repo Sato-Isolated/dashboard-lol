@@ -155,10 +155,20 @@ export function useMatchHistoryInfinite(
       : ['matches', 'disabled'],
     queryFn: ({ pageParam = 0 }) => fetcher(
       `/api/summoner/matches?region=${encodeURIComponent(region!)}&name=${encodeURIComponent(name!)}&tagline=${encodeURIComponent(tagline!)}&start=${pageParam}&count=${count}`
-    ),
-    getNextPageParam: (lastPage, pages) => {
+    ),    getNextPageParam: (lastPage, pages) => {
+      // More robust pagination logic
       const hasMore = lastPage?.data?.length === count;
-      return hasMore ? pages.length * count : undefined;
+      const nextStart = pages.length * count;
+      
+      console.log('getNextPageParam:', {
+        lastPageLength: lastPage?.data?.length,
+        expectedCount: count,
+        hasMore,
+        nextStart,
+        totalPages: pages.length,
+      });
+      
+      return hasMore ? nextStart : undefined;
     },
     enabled: !!(region && name && tagline),
     staleTime: 5 * 60 * 1000, // 5 minutes - match history can change
