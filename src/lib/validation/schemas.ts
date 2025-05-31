@@ -55,7 +55,7 @@ export const matchIdSchema = z
   .string()
   .min(1, 'Match ID is required')
   .regex(
-    /^[A-Z]+_[0-9]+$/,
+    /^[A-Z]+[0-9]*_[0-9]+$/,
     'Invalid Match ID format (expected format: REGION_NUMBER)',
   );
 

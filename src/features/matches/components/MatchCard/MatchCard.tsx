@@ -9,7 +9,6 @@ import { useMatchCalculations } from './hooks/useMatchCalculations';
 
 // Components
 import AnimatedBackgroundEffects from './components/AnimatedBackgroundEffects';
-import ResultBadge from './components/ResultBadge';
 import ExpandCollapseButton from './components/ExpandCollapseButton';
 import CollapsibleContent from './components/CollapsibleContent';
 
@@ -40,9 +39,6 @@ const MatchCardComponent: React.FC<MatchCardProps> = ({ match }) => {
     >
       {/* Animated Background Effects */}
       <AnimatedBackgroundEffects isWin={isWin} />
-
-      {/* Result Badge */}
-      <ResultBadge isWin={isWin} />
 
       {/* Expand/Collapse Button */}
       <ExpandCollapseButton open={state.open} onClick={actions.toggleOpen} />

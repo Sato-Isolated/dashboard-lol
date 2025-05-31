@@ -39,7 +39,9 @@ export abstract class RiotApiClient {
 
   private readonly SECOND_MS = 1000;
   private readonly TWO_MINUTES_MS = 120000;
-  private readonly RATE_LIMIT_CHECK_INTERVAL_MS = 50;
+  private readonly RATE_LIMIT_CHECK_INTERVAL_MS = 100; // Increased from 50ms
+  private readonly MIN_DELAY_BETWEEN_REQUESTS_MS = 2000; // 2 seconds minimum delay
+
   constructor(region: string, customRateLimits?: Partial<RateLimitConfig>) {
     // Validate region - accept both platform regions and regional regions
     const platformRegionValidation = regionSchema.safeParse(region);
@@ -50,7 +52,7 @@ export abstract class RiotApiClient {
       !regionalRegionValidation.success
     ) {
       throw new Error(
-        `Invalid region: ${region}. Must be a valid platform region (e.g., 'euw1', 'na1') or regional region (e.g., 'europe', 'americas')`,
+        `Invalid region: ${region}. Must be a valid platform region (e.g., 'euw1', 'na1') or regional region (e.g., 'europe', 'americas')`
       );
     }
 
@@ -91,14 +93,18 @@ export abstract class RiotApiClient {
         this.rateLimits.perTwoMinutes
     );
   }
-
   private async waitForRateLimit(): Promise<void> {
     while (this.isRateLimited()) {
       await new Promise(resolve =>
-        setTimeout(resolve, this.RATE_LIMIT_CHECK_INTERVAL_MS),
+        setTimeout(resolve, this.RATE_LIMIT_CHECK_INTERVAL_MS)
       );
       this.resetRateLimitCountersIfNeeded();
     }
+
+    // Always wait minimum delay between requests
+    await new Promise(resolve =>
+      setTimeout(resolve, this.MIN_DELAY_BETWEEN_REQUESTS_MS)
+    );
   }
 
   private incrementRateLimitCounters(): void {
@@ -148,7 +154,7 @@ export abstract class RiotApiClient {
               endpoint,
               'GET',
               response.status,
-              duration,
+              duration
             );
 
             return data;
@@ -161,7 +167,7 @@ export abstract class RiotApiClient {
               'GET',
               undefined,
               duration,
-              error as Error,
+              error as Error
             );
 
             throw error;
@@ -184,7 +190,7 @@ export abstract class RiotApiClient {
           service: 'RiotAPI',
           endpoint,
           url: fullUrl,
-        },
+        }
       );
     });
   }
@@ -192,7 +198,7 @@ export abstract class RiotApiClient {
   private async handleHttpError(
     response: Response,
     endpoint: string,
-    duration: number,
+    duration: number
   ): Promise<never> {
     const errorBody = await response.text().catch(() => 'No error details');
 
@@ -217,7 +223,7 @@ export abstract class RiotApiClient {
           'RiotAPI',
           'Unauthorized: Invalid API key',
           401,
-          endpoint,
+          endpoint
         );
 
       case 403:
@@ -225,7 +231,7 @@ export abstract class RiotApiClient {
           'RiotAPI',
           'Forbidden: API key lacks required permissions',
           403,
-          endpoint,
+          endpoint
         );
 
       case 404:
@@ -233,7 +239,7 @@ export abstract class RiotApiClient {
           'RiotAPI',
           'Resource not found',
           404,
-          endpoint,
+          endpoint
         );
 
       case 500:
@@ -244,7 +250,7 @@ export abstract class RiotApiClient {
           'RiotAPI',
           `Server error: ${response.statusText}`,
           response.status,
-          endpoint,
+          endpoint
         );
 
       default:
@@ -252,7 +258,7 @@ export abstract class RiotApiClient {
           'RiotAPI',
           `HTTP ${response.status}: ${response.statusText}. Details: ${errorBody}`,
           response.status,
-          endpoint,
+          endpoint
         );
     }
   }
@@ -270,7 +276,7 @@ export abstract class RiotApiClient {
       throw new Error(
         `Failed to parse JSON response: ${
           error instanceof Error ? error.message : 'Unknown parsing error'
-        }`,
+        }`
       );
     }
   }

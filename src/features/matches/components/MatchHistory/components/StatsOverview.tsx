@@ -59,14 +59,6 @@ const StatsOverviewComponent: React.FC<StatsOverviewProps> = ({ stats }) => {
       iconColor: 'text-purple-400',
       valueColor: 'text-purple-400',
     },
-    {
-      icon: Users,
-      label: 'Avg CS',
-      value: stats.avgCs,
-      gradient: 'from-cyan-500/10 to-teal-500/10',
-      iconColor: 'text-cyan-400',
-      valueColor: 'text-cyan-400',
-    },
   ];
 
   return (
@@ -82,7 +74,7 @@ const StatsOverviewComponent: React.FC<StatsOverviewProps> = ({ stats }) => {
       </motion.h3>
 
       <motion.div
-        className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4'
+        className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4'
         variants={containerVariants}
       >
         {statsCards.map(card => {

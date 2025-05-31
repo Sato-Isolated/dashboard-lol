@@ -24,15 +24,49 @@ const getMatchesSchema = z.object({
 // POST /api/summoner/matches: refresh matches from Riot and store in DB
 export const POST = withMiddleware(postMatchesSchema, {
   rateLimit: {
-    windowMs: 5 * 60 * 1000, // 5 minutes
-    maxRequests: 10, // 10 requests per 5 minutes (heavy operation)
+    windowMs: 10 * 60 * 1000, // 10 minutes (increased from 5)
+    maxRequests: 5, // 5 requests per 10 minutes (reduced from 10 per 5 minutes)
   },
 })(async (req, validatedData) => {
   const { region, name, tagline } = validatedData;
 
-  const { totalFetched } = await fetchAndStoreMatches(region, name, tagline);
+  console.log(`[API] Starting match fetch for ${name}#${tagline} in ${region}`);
 
-  return NextResponse.json({ success: true, totalFetched });
+  try {
+    const { totalFetched } = await fetchAndStoreMatches(region, name, tagline);
+
+    console.log(
+      `[API] Successfully fetched ${totalFetched} matches for ${name}#${tagline}`
+    );
+    return NextResponse.json({ success: true, totalFetched });
+  } catch (error) {
+    console.error(
+      `[API] Error fetching matches for ${name}#${tagline}:`,
+      error
+    );
+
+    // Return appropriate error response
+    if (
+      error instanceof Error &&
+      error.message?.includes('Too Many Requests')
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Rate limit exceeded. Please try again later.',
+        },
+        { status: 429 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to fetch matches. Please try again later.',
+      },
+      { status: 500 }
+    );
+  }
 });
 
 // GET /api/summoner/matches: read stored matches
@@ -75,5 +109,5 @@ export const GET = withValidation(
       .toArray();
 
     return NextResponse.json({ success: true, data: matches });
-  },
+  }
 );

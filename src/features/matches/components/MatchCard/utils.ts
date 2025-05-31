@@ -116,13 +116,3 @@ export const getMatchResultStyles = (isWin: boolean) => {
 export const isMatchWin = (result: string): boolean => {
   return result === 'Win';
 };
-
-/**
- * Formats match result for display
- */
-export const getResultDisplay = (isWin: boolean) => {
-  return {
-    text: isWin ? 'Victory' : 'Defeat',
-    emoji: isWin ? '🏆' : '💀',
-  };
-};
