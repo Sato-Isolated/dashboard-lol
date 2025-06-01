@@ -61,19 +61,61 @@ const ThemeContext = createContext<ThemeContextType>({
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // Initialize with null to avoid hydration mismatch
   const [theme, setThemeState] = useState<string | null>(null);
-  
   // Initialize theme on client side only
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setThemeState(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }, []);
+    const initializeTheme = async () => {
+      try {
+        // First check localStorage for immediate theme application
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setThemeState(savedTheme);
+        document.documentElement.setAttribute('data-theme', savedTheme);
 
+        // Then try to load from database if user is authenticated
+        try {
+          const response = await fetch('/api/settings/preferences');
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.data?.preferences?.theme) {
+              const dbTheme = data.data.preferences.theme;
+              if (dbTheme !== savedTheme) {
+                setThemeState(dbTheme);
+                document.documentElement.setAttribute('data-theme', dbTheme);
+                localStorage.setItem('theme', dbTheme);
+              }
+            }
+          }
+        } catch (dbError) {
+          // Ignore database errors (user might not be authenticated)
+          console.log('Could not load theme from database:', dbError);
+        }
+      } catch (error) {
+        // Fallback to default theme
+        setThemeState('light');
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    };
+
+    initializeTheme();
+  }, []);
   const setTheme = useCallback((newTheme: string) => {
     setThemeState(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', newTheme);
+
+      // Also save to database if user is authenticated
+      fetch('/api/settings/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          theme: newTheme,
+        }),
+      }).catch(error => {
+        // Ignore errors (user might not be authenticated)
+        console.log('Could not save theme to database:', error);
+      });
     }
   }, []);
 

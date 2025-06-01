@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { User, Mail, Save, Camera, AlertCircle } from 'lucide-react';
+import { settingsApi } from '@/lib/api/settings';
 
 interface User {
   id: string;
@@ -30,22 +31,29 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage(null);
 
     try {
-      // Here you would call your API to update user profile
-      // For now, we'll simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await settingsApi.updateProfile({
+        name: formData.name || undefined,
+        email: formData.email || undefined,
+      });
 
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      if (response.success) {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      } else {
+        throw new Error(response.error || 'Failed to update profile');
+      }
     } catch (error) {
       setMessage({
         type: 'error',
-        text: 'Failed to update profile. Please try again.',
+        text:
+          error instanceof Error
+            ? error.message
+            : 'Failed to update profile. Please try again.',
       });
     } finally {
       setIsLoading(false);
